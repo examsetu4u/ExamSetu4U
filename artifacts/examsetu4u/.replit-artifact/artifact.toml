@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ExamSetu4U"
+description = "A Hindi-first exam preparation web app that helps students discover exams, organize study plans, and track their preparation progress in one focused workspace."
+version = "1.0.0"
+id = "artifacts/examsetu4u"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24675
+
+[services.development]
+run = "pnpm --filter @workspace/examsetu4u run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/examsetu4u", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/examsetu4u/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24675"
+BASE_PATH = "/"

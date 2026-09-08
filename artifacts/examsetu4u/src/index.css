@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: 39 45% 96%;
+  --foreground: 198 35% 16%;
+  --border: 36 24% 87%;
+  --card: 40 55% 99%;
+  --card-foreground: 198 35% 16%;
+  --card-border: 36 24% 87%;
+  --sidebar: 198 38% 17%;
+  --sidebar-foreground: 40 42% 94%;
+  --sidebar-border: 198 27% 27%;
+  --sidebar-primary: 41 90% 60%;
+  --sidebar-primary-foreground: 198 38% 17%;
+  --sidebar-accent: 198 30% 24%;
+  --sidebar-accent-foreground: 40 42% 94%;
+  --sidebar-ring: 41 90% 60%;
+  --popover: 40 55% 99%;
+  --popover-foreground: 198 35% 16%;
+  --popover-border: 36 24% 87%;
+  --primary: 198 43% 27%;
+  --primary-foreground: 40 55% 98%;
+  --secondary: 39 35% 91%;
+  --secondary-foreground: 198 35% 20%;
+  --muted: 39 31% 92%;
+  --muted-foreground: 198 14% 46%;
+  --accent: 41 90% 60%;
+  --accent-foreground: 198 38% 17%;
+  --destructive: 4 67% 53%;
+  --destructive-foreground: 40 55% 98%;
+  --input: 36 24% 82%;
+  --ring: 41 90% 60%;
+  --chart-1: 41 90% 60%;
+  --chart-2: 165 42% 40%;
+  --chart-3: 198 43% 27%;
+  --chart-4: 4 67% 53%;
+  --chart-5: 35 67% 48%;
+  --app-font-sans: 'Manrope', 'Noto Sans Devanagari', sans-serif;
+  --app-font-mono: 'DM Mono', monospace;
+  --radius: 0.9rem;
+  --shadow: 0 10px 25px hsl(198 35% 16% / .07);
+  --shadow-md: 0 14px 35px hsl(198 35% 16% / .1);
+}
+
+* { border-color: hsl(var(--border)); }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--app-font-sans);
+  font-feature-settings: "ss01" 1, "cv11" 1;
+}
+button, a, input { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+
+.app-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 78% -5%, hsl(41 90% 60% / .13), transparent 31rem),
+    hsl(var(--background));
+}
+.sidebar-grid {
+  background-image: linear-gradient(hsl(40 42% 94% / .045) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(40 42% 94% / .045) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.paper-dots {
+  background-image: radial-gradient(hsl(198 43% 27% / .12) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+.rise-in { animation: rise-in .55s cubic-bezier(.2,.8,.2,1) both; }
+.delay-1 { animation-delay: 80ms; }
+.delay-2 { animation-delay: 150ms; }
+.delay-3 { animation-delay: 220ms; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.progress-sweep { animation: progress-sweep 1.2s ease-out both; transform-origin: left; }
+@keyframes progress-sweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.focus-ring:focus-visible { outline: 3px solid hsl(var(--accent) / .65); outline-offset: 3px; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { scrollbar-width: none; }
+
+@media (max-width: 767px) {
+  .mobile-scroll { overflow-x: auto; }
+}
