@@ -1,0 +1,336 @@
+Build ONLY Module 1 of my project: ExamSetu4U.
+
+Do not build the complete website yet.
+
+PROJECT PURPOSE:
+
+ExamSetu4U is a completely free educational exam preparation platform for Indian students.
+
+Future features will include:
+
+- Exam-wise study material
+- Subject-wise and chapter-wise notes
+- Previous Year Questions
+- MCQ practice
+- Mock tests
+- Theory questions
+- User accounts
+- Progress tracking
+- Admin content management
+
+For now, implement ONLY the frontend foundation.
+
+==================================================
+TECHNOLOGY
+
+Use a lightweight React-based web application.
+
+Preferred:
+
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Lucide React
+
+Do not add unnecessary libraries.
+
+DO NOT add:
+
+- Supabase
+- Firebase
+- Authentication
+- Database
+- Payment system
+- External APIs
+- AI chatbot
+- Quiz engine
+- Admin backend
+
+==================================================
+BRAND
+
+Brand:
+ExamSetu4U
+
+Tagline:
+Study Smart. Practice Free. Succeed.
+
+The website should feel:
+
+- modern
+- professional
+- educational
+- trustworthy
+- clean
+- fast
+- mobile-first
+
+Avoid excessive gradients, animations, glassmorphism and unnecessary visual effects.
+
+==================================================
+ROUTES
+
+Create these routes:
+
+/
+/exams
+/study-material
+/pyq
+/quiz
+/theory
+/login
+/dashboard
+/admin
+
+Create a 404 page for invalid routes.
+
+==================================================
+HEADER
+
+Create a reusable responsive header.
+
+Desktop navigation:
+
+ExamSetu4U
+Home
+Exams
+Study Material
+PYQ
+Quiz
+Theory
+Search
+Login
+
+On mobile:
+
+Show the ExamSetu4U logo/text and hamburger menu.
+
+The mobile menu must open and close correctly.
+
+==================================================
+FOOTER
+
+Create a reusable footer.
+
+Include:
+
+ExamSetu4U
+
+Study Smart. Practice Free. Succeed.
+
+Quick Links:
+Home
+Exams
+Study Material
+PYQ
+Quiz
+Theory
+
+Information:
+About Us
+Contact
+Privacy Policy
+Terms & Conditions
+
+© 2026 ExamSetu4U
+
+==================================================
+HOME PAGE
+
+Create a basic homepage foundation.
+
+Sections:
+
+1. Hero
+2. Popular Exams
+3. Study Material
+4. MCQ Practice
+5. Previous Year Questions
+6. Theory Questions
+7. Why ExamSetu4U
+8. Call To Action
+9. Footer
+
+Use local placeholder data.
+
+Do not overbuild the homepage.
+
+The premium homepage design will be implemented in Module 2.
+
+==================================================
+EXAMS PAGE
+
+Create a basic Exams page.
+
+Create reusable ExamCard components.
+
+Use sample exams:
+
+- Super TET
+- CTET
+- UPTET
+- SSC
+
+Each card should show:
+
+- Exam name
+- Short description
+- View button
+
+Use local data only.
+
+==================================================
+OTHER PAGES
+
+Create clean placeholder pages for:
+
+Study Material
+PYQ
+Quiz
+Theory
+Login
+Dashboard
+Admin
+
+Do not implement their actual functionality yet.
+
+==================================================
+404 PAGE
+
+Create:
+
+404
+
+Page Not Found
+
+Return Home button.
+
+==================================================
+COMPONENTS
+
+Create reusable components where useful:
+
+Header
+Footer
+Container
+Button
+Card
+SectionTitle
+SearchBar
+ExamCard
+
+Do not create unnecessary components.
+
+==================================================
+DATA
+
+Create local data under:
+
+src/data/
+
+At minimum:
+
+exams.js
+
+The data structure should be clean and easy to replace with Supabase later.
+
+==================================================
+RESPONSIVE DESIGN
+
+The website must work on:
+
+320px
+375px
+390px
+430px
+768px
+1024px
+1280px
+1440px
+1920px
+
+Use mobile-first design.
+
+There must be no accidental horizontal scrolling.
+
+==================================================
+ACCESSIBILITY
+
+Use semantic HTML.
+
+Use:
+
+- proper buttons
+- proper links
+- alt text for images
+- keyboard-friendly controls
+- visible focus states
+- logical heading hierarchy
+
+==================================================
+SEO FOUNDATION
+
+Add basic title and description.
+
+Homepage title:
+
+ExamSetu4U - Free Exam Preparation Platform
+
+Homepage description:
+
+Free exam preparation platform for Indian students with study material, previous year questions, MCQs and mock tests.
+
+==================================================
+IMPORTANT DEVELOPMENT RULES
+
+1. Do NOT rebuild the project unnecessarily.
+2. Do NOT delete working functionality.
+3. Modify only required files.
+4. Do NOT install unnecessary packages.
+5. Do NOT create fake APIs.
+6. Do NOT create fake authentication.
+7. Do NOT create database functionality.
+8. Do NOT implement future modules.
+9. Keep components reusable.
+10. Keep the project mobile-first.
+11. Keep the code clean and maintainable.
+
+==================================================
+VALIDATION
+
+After implementation, verify:
+
+- Homepage works
+- All routes work
+- Navigation works
+- Mobile menu works
+- 404 works
+- No console errors
+- No broken imports
+- No broken links
+- No horizontal overflow
+- Production build succeeds
+
+Run the appropriate development/build checks available in Replit.
+
+==================================================
+VERY IMPORTANT
+
+This is MODULE 1 ONLY.
+
+Do not start Module 2.
+
+Do not add extra features.
+
+After completing Module 1, provide:
+
+1. Files created
+2. Files modified
+3. Components created
+4. Routes created
+5. Dependencies installed
+6. Test/build result
+7. Remaining issues
+
+Then STOP.
