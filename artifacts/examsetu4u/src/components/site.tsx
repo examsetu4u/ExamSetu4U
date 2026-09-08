@@ -61,7 +61,7 @@ export function Header() {
         <div className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] py-3">
           <Container className="flex items-center gap-3">
             <Search size={17} className="text-[hsl(var(--muted-foreground))]" />
-            <input autoFocus type="search" placeholder="Search exams and subjects" className="focus-ring min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[hsl(var(--muted-foreground))]" data-testid="input-header-search" />
+            <input autoFocus type="search" aria-label="Search exams and subjects" placeholder="Search exams and subjects" className="focus-ring min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[hsl(var(--muted-foreground))]" data-testid="input-header-search" />
             <Button href="/exams" variant="secondary" className="min-h-9 px-3 py-1.5 text-xs" onClick={() => setSearchOpen(false)} data-testid="button-search-exams">Browse exams</Button>
           </Container>
         </div>
@@ -104,8 +104,9 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
   return <article className={`rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-[var(--shadow)] ${className}`}>{children}</article>;
 }
 
-export function SectionTitle({ eyebrow, title, description }: { eyebrow?: string; title: string; description?: string }) {
-  return <div className="max-w-2xl"><>{eyebrow && <p className="eyebrow">{eyebrow}</p>}</><h2 className="font-display mt-2 text-3xl leading-tight tracking-[-.035em] text-[hsl(var(--primary))] sm:text-4xl">{title}</h2>{description && <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))] sm:text-base">{description}</p>}</div>;
+export function SectionTitle({ eyebrow, title, description, as = 'h2' }: { eyebrow?: string; title: string; description?: string; as?: 'h1' | 'h2' }) {
+  const Heading = as;
+  return <div className="max-w-2xl"><>{eyebrow && <p className="eyebrow">{eyebrow}</p>}</><Heading className="font-display mt-2 text-3xl leading-tight tracking-[-.035em] text-[hsl(var(--primary))] sm:text-4xl">{title}</Heading>{description && <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))] sm:text-base">{description}</p>}</div>;
 }
 
 export function SearchBar({ value, onChange, placeholder = 'Search exams' }: { value: string; onChange: (value: string) => void; placeholder?: string }) {
