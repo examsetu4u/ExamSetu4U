@@ -1,0 +1,742 @@
+मैं ExamSetu4U नाम की existing React + Vite + TypeScript web app पर काम कर रहा हूं।
+
+Modules 1–4 पहले से complete हैं:
+
+- Module 1: Frontend foundation
+- Module 2: Exam → Subject → Topic syllabus navigation
+- Module 3: Study Material system
+- Module 4: PYQ system
+
+अब केवल MODULE 5 – FULL MCQ QUIZ ENGINE implement करना है।
+
+IMPORTANT:
+
+- Existing project को rebuild मत करना।
+- Existing UI/design को unnecessarily change मत करना।
+- Modules 1–4 की functionality बिल्कुल break नहीं होनी चाहिए।
+- Existing routes/components/data/progress system को preserve करो।
+- पहले existing code inspect करो और उसी architecture के ऊपर Module 5 बनाओ।
+- अभी backend/database/auth मत बनाओ।
+- अभी local sample data + localStorage इस्तेमाल करो।
+- Code future में thousands of questions और backend/API/database पर migrate करने योग्य होना चाहिए।
+- Module 6 शुरू मत करना।
+
+━━━━━━━━━━━━━━━━━━
+
+1. MODULE 5 GOAL
+   ━━━━━━━━━━━━━━━━━━
+
+एक complete reusable MCQ Quiz Engine बनाना है जो आगे चलकर:
+
+- Super TET
+- CTET
+- UPTET
+- SSC CGL
+- CBSE Class 10
+- CBSE Class 12
+- UPPCS Pre
+- UPPCS Mains
+
+सभी exams के हजारों MCQs संभाल सके।
+
+विशेष रूप से यह system भविष्य में Super TET शिक्षण कौशल के 1000+ MCQs के लिए तैयार होना चाहिए।
+
+━━━━━━━━━━━━━━━━━━
+2. ROUTES
+━━━━━━━━━━━━━━━━━━
+
+Existing routes को preserve रखते हुए ये routes implement करो:
+
+/quiz
+
+/quiz/:examId
+
+/quiz/:examId/:subjectId
+
+/quiz/:examId/:subjectId/:topicId
+
+जहां संभव हो existing exam/subject/topic navigation से Quiz buttons connect करो।
+
+Flow:
+
+Exam
+↓
+Subject
+↓
+Topic
+↓
+Quiz
+
+और global /quiz से भी exam/subject/topic चुनकर quiz शुरू किया जा सके।
+
+━━━━━━━━━━━━━━━━━━
+3. GLOBAL QUIZ PAGE
+━━━━━━━━━━━━━━━━━━
+
+/quiz पर:
+
+- Exam selection
+- Subject selection
+- Topic selection
+- Difficulty selection
+- Number of questions
+- Random Questions toggle
+- Start Quiz button
+
+Question count options:
+
+10
+20
+30
+50
+100
+
+अगर available questions कम हों तो available count दिखाओ।
+
+Example:
+
+Available Questions: 25
+Selected: 20
+
+Start Quiz
+
+━━━━━━━━━━━━━━━━━━
+4. QUIZ QUESTION SCREEN
+━━━━━━━━━━━━━━━━━━
+
+एक समय पर एक MCQ दिखाओ।
+
+ऊपर:
+
+- Exam name
+- Subject
+- Topic
+- Question X of Y
+- Progress bar
+
+Question card:
+
+Question text
+
+Options:
+
+A. Option
+B. Option
+C. Option
+D. Option
+
+User option select कर सके।
+
+जब तक "Submit Answer" नहीं दबाया जाता:
+
+- सही उत्तर reveal नहीं होना चाहिए।
+- Explanation नहीं दिखनी चाहिए।
+- Correct/incorrect status नहीं दिखना चाहिए।
+
+Submit Answer के बाद:
+
+- Selected answer
+- Correct answer
+- Correct / Incorrect
+- Explanation
+- Important Point
+- Additional Exam Fact
+- Common Mistake
+- PYQ Reference अगर applicable हो
+
+दिखाओ।
+
+━━━━━━━━━━━━━━━━━━
+5. BUTTONS
+━━━━━━━━━━━━━━━━━━
+
+Question screen पर:
+
+- Submit Answer
+- Next Question
+- Previous Question
+- Skip
+- Mark for Review
+- Clear Answer
+- Exit Quiz
+
+Buttons mobile friendly होने चाहिए।
+
+Submit किए बिना Next Question करने पर confirmation दे सकते हो:
+
+"क्या आप इस प्रश्न को unanswered छोड़ना चाहते हैं?"
+
+━━━━━━━━━━━━━━━━━━
+6. MARK FOR REVIEW
+━━━━━━━━━━━━━━━━━━
+
+User किसी question को:
+
+"Mark for Review"
+
+कर सके।
+
+Question navigator में अलग status दिखे:
+
+- Answered
+- Unanswered
+- Marked for Review
+- Current
+
+User किसी भी question पर वापस जा सके।
+
+━━━━━━━━━━━━━━━━━━
+7. QUESTION NAVIGATOR
+━━━━━━━━━━━━━━━━━━
+
+Quiz में एक question palette/navigator बनाओ।
+
+Example:
+
+1  2  3  4  5
+6  7  8  9  10
+
+Status:
+
+- Current
+- Answered
+- Unanswered
+- Review
+
+Mobile पर यह horizontal scroll या compact grid हो सकता है।
+
+━━━━━━━━━━━━━━━━━━
+8. QUIZ SUBMISSION
+━━━━━━━━━━━━━━━━━━
+
+अंत में:
+
+"Submit Quiz"
+
+बटन हो।
+
+Confirmation:
+
+"क्या आप Quiz submit करना चाहते हैं?"
+
+Submit के बाद Result Page दिखाओ।
+
+━━━━━━━━━━━━━━━━━━
+9. RESULT PAGE
+━━━━━━━━━━━━━━━━━━
+
+Result page में:
+
+Total Questions
+Attempted
+Correct
+Incorrect
+Unanswered
+Marked for Review
+Accuracy
+Score
+Percentage
+
+Example:
+
+Total: 20
+Attempted: 18
+Correct: 14
+Incorrect: 4
+Unanswered: 2
+
+Accuracy: 77.78%
+
+Score: 14/20
+
+Percentage: 70%
+
+साथ में motivational message:
+
+90%+ → Excellent
+75–89% → Very Good
+60–74% → Good, improve further
+Below 60% → More practice required
+
+━━━━━━━━━━━━━━━━━━
+10. QUESTION-WISE RESULT
+━━━━━━━━━━━━━━━━━━
+
+Result page पर प्रत्येक question का review उपलब्ध हो।
+
+Example:
+
+Question 1
+✓ Correct
+
+Question 2
+✗ Incorrect
+
+Question 3
+— Unanswered
+
+Click करने पर पूरा question और explanation दिखाई दे।
+
+━━━━━━━━━━━━━━━━━━
+11. EXPLANATION
+━━━━━━━━━━━━━━━━━━
+
+Answer submit होने के बाद explanation section में:
+
+Correct Answer
+Explanation
+Important Point
+Additional Exam Fact
+Common Mistake
+
+अगर PYQ है:
+
+PYQ Reference:
+Exam + Year
+
+अगर वास्तविक PYQ नहीं है तो उसे PYQ मत बताना।
+
+sourceType support करो:
+
+- PYQ
+- PYQ-based
+- Practice
+
+━━━━━━━━━━━━━━━━━━
+12. DATA MODEL
+━━━━━━━━━━━━━━━━━━
+
+Centralized reusable TypeScript interfaces बनाओ।
+
+Example structure:
+
+MCQQuestion:
+
+- id
+- examId
+- subjectId
+- topicId
+- question
+- options
+- correctAnswer
+- explanation
+- importantPoint
+- additionalFact
+- commonMistake
+- year
+- examName
+- difficulty
+- sourceType
+- pyqReference
+
+Options:
+
+- id
+- text
+
+Difficulty:
+
+- easy
+- moderate
+- hard
+- very-hard
+
+Source:
+
+- PYQ
+- PYQ-based
+- Practice
+
+━━━━━━━━━━━━━━━━━━
+13. DATA ARCHITECTURE
+━━━━━━━━━━━━━━━━━━
+
+Questions components के अंदर hardcode मत करो।
+
+Centralized structure रखो:
+
+src/data/mcq/
+
+या existing project में अगर इससे बेहतर centralized data structure पहले से मौजूद है तो उसी को extend करो।
+
+Example:
+
+src/data/mcq/index.ts
+src/data/mcq/types.ts
+src/data/mcq/super-tet.ts
+
+Architecture ऐसा हो कि भविष्य में:
+
+JSON
+CSV
+Database
+API
+
+से हजारों questions आसानी से load किए जा सकें।
+
+━━━━━━━━━━━━━━━━━━
+14. SAMPLE MCQs
+━━━━━━━━━━━━━━━━━━
+
+Module 5 test करने के लिए meaningful sample MCQs डालो।
+
+कम से कम:
+
+Super TET → शिक्षण कौशल
+
+के लिए 20–30 sample MCQs रखो।
+
+हर question में:
+
+- Question
+- 4 options
+- Correct answer
+- Explanation
+- Important point
+- Additional fact
+- Common mistake
+- Difficulty
+- sourceType
+
+हो।
+
+Dummy text जैसे:
+
+"Sample question"
+"Lorem ipsum"
+
+मत डालना।
+
+━━━━━━━━━━━━━━━━━━
+15. RANDOM QUIZ
+━━━━━━━━━━━━━━━━━━
+
+Random Questions option बनाओ।
+
+Important:
+
+Original question data mutate मत करो।
+
+Shuffle करके नया quiz session बनाओ।
+
+Options को भी optionally randomize किया जा सके, लेकिन correctAnswer mapping कभी गलत नहीं होनी चाहिए।
+
+━━━━━━━━━━━━━━━━━━
+16. DIFFICULTY FILTER
+━━━━━━━━━━━━━━━━━━
+
+User quiz शुरू करने से पहले difficulty चुन सके:
+
+All
+Easy
+Moderate
+Hard
+Very Hard
+
+Combined filtering सही तरीके से काम करे।
+
+━━━━━━━━━━━━━━━━━━
+17. LOCAL STORAGE
+━━━━━━━━━━━━━━━━━━
+
+Backend अभी नहीं है इसलिए localStorage में quiz session/progress save करो।
+
+Save:
+
+- Quiz attempts
+- Question answers
+- Correct/incorrect
+- Score
+- Accuracy
+- Completed quizzes
+- Topic-wise quiz progress
+- Subject-wise quiz progress
+- Exam-wise quiz progress
+- Marked questions जहां उचित हो
+
+Page refresh होने पर active quiz unnecessarily lose नहीं होना चाहिए।
+
+लेकिन user "Exit Quiz" करे तो confirmation के साथ session clear किया जा सके।
+
+━━━━━━━━━━━━━━━━━━
+18. EXISTING PROGRESS SYSTEM
+━━━━━━━━━━━━━━━━━━
+
+Module 1–4 के existing progress system को break मत करना।
+
+Quiz progress को existing progress architecture में integrate करो।
+
+Study Material progress
+PYQ progress
+Quiz progress
+
+अलग-अलग track हो सकते हैं लेकिन future profile/dashboard के लिए aggregate करने योग्य हों।
+
+━━━━━━━━━━━━━━━━━━
+19. QUIZ HISTORY
+━━━━━━━━━━━━━━━━━━
+
+User के completed quizzes की local history बनाओ।
+
+History में:
+
+- Exam
+- Subject
+- Topic
+- Date/time
+- Total questions
+- Score
+- Accuracy
+
+दिखाया जा सकता है।
+
+इसके लिए simple reusable component बनाओ।
+
+━━━━━━━━━━━━━━━━━━
+20. RETRY QUIZ
+━━━━━━━━━━━━━━━━━━
+
+Result page पर:
+
+Retry Quiz
+Practice Incorrect Questions
+Back to Topic
+
+buttons हों।
+
+"Practice Incorrect Questions" केवल गलत questions से नया quiz बनाए।
+
+अगर गलत questions नहीं हैं तो appropriate message दिखाओ।
+
+━━━━━━━━━━━━━━━━━━
+21. EMPTY STATES
+━━━━━━━━━━━━━━━━━━
+
+अगर selected combination में questions नहीं हैं:
+
+"इस topic के लिए अभी MCQs उपलब्ध नहीं हैं।"
+
+साथ में:
+
+Back
+Choose Another Topic
+
+buttons।
+
+━━━━━━━━━━━━━━━━━━
+22. MOBILE-FIRST DESIGN
+━━━━━━━━━━━━━━━━━━
+
+यह website mobile users के लिए बहुत महत्वपूर्ण है।
+
+इसलिए:
+
+- Large touch-friendly buttons
+- readable Hindi text
+- proper spacing
+- no horizontal overflow
+- responsive question cards
+- mobile-friendly question palette
+- sticky/accessible action area जहां उचित हो
+
+Desktop और mobile दोनों पर test करो।
+
+━━━━━━━━━━━━━━━━━━
+23. ACCESSIBILITY
+━━━━━━━━━━━━━━━━━━
+
+- Proper button labels
+- Keyboard accessible controls
+- visible focus states
+- semantic HTML
+- radio/option controls accessible
+- sufficient contrast
+- screen-reader friendly labels
+
+━━━━━━━━━━━━━━━━━━
+24. PERFORMANCE
+━━━━━━━━━━━━━━━━━━
+
+Architecture thousands of MCQs के लिए scalable हो।
+
+पूरे question bank को unnecessary रूप से हर component में duplicate मत करो।
+
+Quiz state और source data अलग रखो।
+
+Large question bank आने पर भी architecture आसानी से optimize किया जा सके।
+
+━━━━━━━━━━━━━━━━━━
+25. FUTURE IMPORT SUPPORT
+━━━━━━━━━━━━━━━━━━
+
+Future में मैं 1000+ MCQs एक साथ import करूंगा।
+
+इसलिए:
+
+- Stable unique IDs
+- Consistent schema
+- Validation-friendly structure
+- Duplicate detection के लिए suitable fields
+- JSON/CSV import के लिए compatible architecture
+
+रखो।
+
+अभी actual bulk import system मत बनाओ।
+
+वह Module 6 में होगा।
+
+━━━━━━━━━━━━━━━━━━
+26. TIMER ARCHITECTURE
+━━━━━━━━━━━━━━━━━━
+
+अभी mandatory timer मत लगाओ।
+
+लेकिन quiz engine को future timer support के लिए तैयार रखो।
+
+Timer बाद में:
+
+- exam-specific
+- quiz-specific
+- optional
+
+बनाया जा सके।
+
+━━━━━━━━━━━━━━━━━━
+27. ERROR HANDLING
+━━━━━━━━━━━━━━━━━━
+
+Handle:
+
+- Invalid examId
+- Invalid subjectId
+- Invalid topicId
+- Missing question
+- Empty question bank
+- Invalid question data
+- LocalStorage failure
+
+User-friendly error states दिखाओ।
+
+━━━━━━━━━━━━━━━━━━
+28. EXISTING COMPONENTS REUSE
+━━━━━━━━━━━━━━━━━━
+
+जहां संभव हो existing:
+
+Header
+Footer
+Layout
+Container
+Button
+Card
+SectionTitle
+SearchBar
+ExamCard
+Mobile navigation
+
+reuse करो।
+
+Unnecessary duplicate components मत बनाओ।
+
+━━━━━━━━━━━━━━━━━━
+29. DO NOT BREAK
+━━━━━━━━━━━━━━━━━━
+
+इन existing routes को verify करो:
+
+/
+/exams
+/study-material
+/pyq
+/quiz
+/theory
+/login
+/dashboard
+/admin
+
+Existing routes काम करते रहने चाहिए।
+
+Study Material और PYQ functionality बिल्कुल break नहीं होनी चाहिए।
+
+━━━━━━━━━━━━━━━━━━
+30. TESTING
+━━━━━━━━━━━━━━━━━━
+
+Implementation के बाद:
+
+1. TypeScript check
+2. Production build
+3. Existing routes test
+4. Quiz routes test
+5. Mobile layout test
+6. Desktop layout test
+7. Answer submission test
+8. Correct/incorrect calculation test
+9. Result calculation test
+10. Randomization test
+11. Difficulty filtering test
+12. LocalStorage refresh test
+13. Retry quiz test
+14. Incorrect-only quiz test
+15. Invalid route test
+16. Browser console errors check
+
+करो।
+
+अगर कोई error मिले तो उसे fix करो।
+
+━━━━━━━━━━━━━━━━━━
+31. IMPORTANT ARCHITECTURE RULE
+━━━━━━━━━━━━━━━━━━
+
+UI को question data source से loosely coupled रखो।
+
+Future में मुझे केवल data बदलकर:
+
+1000
+5000
+10000+
+
+MCQs add करने में आसानी होनी चाहिए।
+
+Question rendering component को specific Super TET questions पर dependent मत बनाओ।
+
+━━━━━━━━━━━━━━━━━━
+32. DO NOT DO MODULE 6
+━━━━━━━━━━━━━━━━━━
+
+अभी:
+
+- Bulk 1000 MCQ import
+- CSV uploader
+- JSON uploader
+- Duplicate detection UI
+- Admin content import
+- Backend
+- Database
+- Authentication
+
+मत बनाओ।
+
+ये अगले modules में होंगे।
+
+━━━━━━━━━━━━━━━━━━
+33. FINAL VERIFICATION REPORT
+━━━━━━━━━━━━━━━━━━
+
+काम पूरा होने के बाद मुझे बताओ:
+
+1. कौन-कौन सी files बनाई/modify कीं
+2. कौन-कौन से routes बने
+3. Quiz में कौन-कौन से features हैं
+4. Sample MCQs कितने डाले
+5. LocalStorage में क्या save हो रहा है
+6. Existing Modules 1–4 कैसे preserved हैं
+7. Testing में क्या-क्या pass हुआ
+8. कोई limitation हो तो बताओ
+
+सबसे महत्वपूर्ण:
+
+Existing project को preserve करते हुए केवल Module 5 implement करो।
+
+काम पूरा होने के बाद production build और tests run करके ही final response दो।

@@ -1,0 +1,291 @@
+Continue from the CURRENT ExamSetu4U React + Vite project.
+
+IMPORTANT:
+
+- Module 1, Module 2 and Module 3 are already completed and working.
+- DO NOT rebuild the application.
+- DO NOT remove or break existing routes, components, Study Material system, syllabus navigation or localStorage progress.
+- Inspect the existing codebase before making changes.
+- This is MODULE 4 ONLY: Previous Year Questions (PYQ) System.
+- Use local sample data only.
+- Do NOT implement backend/database/authentication yet.
+- Do NOT implement the complete MCQ quiz engine yet.
+
+GOAL:
+
+Create a reusable PYQ browsing and practice system connected to:
+
+Exam → Subject → Topic → PYQ
+
+USER FLOW:
+
+Exam
+→ Subject
+→ Topic
+→ Previous Year Questions
+
+Also keep the existing global /pyq route working.
+
+PYQ ROUTES:
+
+Add dynamic routes such as:
+
+/pyq/:examId
+/pyq/:examId/:subjectId
+/pyq/:examId/:subjectId/:topicId
+
+Use the existing React Router architecture.
+
+GLOBAL PYQ PAGE:
+
+The existing /pyq page should become a useful PYQ dashboard.
+
+Show:
+
+- Exam selection
+- Subject selection
+- Year filter
+- Topic filter
+- Difficulty filter
+- Search
+- Number of available questions
+
+EXAM PYQ PAGE:
+
+For a selected exam show:
+
+- Exam name
+- Total PYQs
+- Subjects
+- Years available
+- Topic-wise PYQ counts
+
+SUBJECT PYQ PAGE:
+
+Show:
+
+- Breadcrumb
+- Subject name
+- Topic list
+- PYQ count per topic
+- Year-wise availability
+- Start Practice button
+
+TOPIC PYQ PAGE:
+
+Display PYQs one at a time.
+
+Each question should have:
+
+- Question number
+- Question text
+- Four options A/B/C/D
+- Year
+- Exam
+- Subject
+- Topic
+- Difficulty
+- "Show Answer" button
+
+Initially keep answers hidden.
+
+When user clicks "Show Answer":
+
+Display:
+
+- Correct answer
+- Explanation
+- Important point
+- Additional exam fact
+- Common mistake
+
+Do NOT automatically mark an answer correct simply because the user clicked Show Answer.
+
+DATA MODEL:
+
+Create reusable TypeScript interfaces:
+
+PYQQuestion
+PYQOption
+PYQMetadata
+PYQExplanation
+
+Suggested fields:
+
+id
+examId
+subjectId
+topicId
+question
+options
+correctAnswer
+explanation
+importantPoint
+additionalFact
+commonMistake
+year
+examName
+difficulty
+sourceType
+
+sourceType can support:
+
+- PYQ
+- PYQ-based
+- Practice
+
+IMPORTANT:
+
+Do not falsely label practice/sample questions as actual PYQs.
+
+Use clearly marked sample data until real PYQs are imported.
+
+CENTRALIZED DATA:
+
+Do not hard-code questions inside React components.
+
+Create a centralized structure such as:
+
+src/data/pyq/
+
+The architecture must support thousands of questions later.
+
+FILTERING:
+
+Implement:
+
+- Exam filter
+- Subject filter
+- Topic filter
+- Year filter
+- Difficulty filter
+- Search by question text
+
+Filters should work together.
+
+PRACTICE NAVIGATION:
+
+On the topic PYQ page provide:
+
+- Previous
+- Next
+- Question counter
+- Back to topic
+- Reset/clear filters
+
+After reaching the final question show a summary:
+
+- Questions attempted/viewed
+- Correct
+- Incorrect
+- Unanswered
+- Accuracy
+
+For this module, this can be a local session/localStorage implementation.
+
+PROGRESS:
+
+Integrate with the existing localStorage progress system.
+
+Track:
+
+- PYQs viewed
+- PYQs answered
+- Correct answers
+- Incorrect answers
+- Topic PYQ progress
+- Subject PYQ progress
+- Exam PYQ progress
+
+Do not break existing Study Material progress.
+
+DESIGN:
+
+- Follow existing ExamSetu4U design.
+- Mobile-first.
+- Four options must be easy to tap on mobile.
+- Clear visual distinction between question and explanation.
+- Avoid unnecessary animations.
+- Reuse existing Button/Card/SectionTitle/Container components.
+
+IMPORTANT UX:
+
+Do NOT reveal the correct answer before "Show Answer" is clicked.
+
+After showing the answer, clearly indicate:
+
+✓ Correct Answer
+
+and visually distinguish it from incorrect options.
+
+Add a "Next Question" button.
+
+EMPTY STATES:
+
+Handle:
+
+- No PYQs available
+- No results after filtering
+- Invalid exam
+- Invalid subject
+- Invalid topic
+
+Use the existing design/404 system.
+
+ACCESSIBILITY:
+
+Maintain:
+
+- Semantic HTML
+- Keyboard accessibility
+- Proper labels
+- Focus states
+- Good contrast
+- Mobile-friendly touch targets
+
+TESTING:
+
+After implementation:
+
+1. Run TypeScript check.
+2. Run production build.
+3. Test:
+   - /pyq
+   - Exam PYQ page
+   - Subject PYQ page
+   - Topic PYQ page
+   - Filters
+   - Search
+   - Show Answer
+   - Next/Previous
+   - Summary
+   - localStorage persistence
+   - Mobile layout
+   - Invalid routes
+4. Check browser console.
+5. Fix all errors before finishing.
+
+IMPORTANT ARCHITECTURE RULE:
+
+The UI must remain independent from the question data source.
+
+Later we should be able to replace local sample data with:
+
+- JSON
+- CSV import
+- Database
+- API
+
+without rewriting the PYQ UI.
+
+Do NOT start Module 5.
+
+At the end provide:
+
+- Files created/modified
+- Routes added
+- PYQ features implemented
+- Sample data added
+- Progress integration details
+- Tests passed
+- Any remaining limitations

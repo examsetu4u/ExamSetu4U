@@ -11,6 +11,7 @@ import ExamDetailPage from '@/pages/exam-detail';
 import SubjectDetailPage from '@/pages/subject-detail';
 import TopicDetailPage from '@/pages/topic-detail';
 import StudyMaterialPage from '@/pages/study-material';
+import { PYQDashboardPage, PYQExamPage, PYQPracticePage, PYQSubjectPage } from '@/pages/pyq';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ function PlaceholderRoute({ path }: { path: string }) {
 }
 
 function Router() {
-  return <ErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/exams" component={ExamsPage} /><Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} /><Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} /><Route path="/exams/:examId" component={ExamDetailPage} /><Route path="/study-material/:examId/:subjectId/:topicId" component={StudyMaterialPage} /><Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route><Route path="/pyq"><PlaceholderRoute path="/pyq" /></Route><Route path="/quiz"><PlaceholderRoute path="/quiz" /></Route><Route path="/theory"><PlaceholderRoute path="/theory" /></Route><Route path="/login"><PlaceholderRoute path="/login" /></Route><Route path="/dashboard"><PlaceholderRoute path="/dashboard" /></Route><Route path="/admin"><PlaceholderRoute path="/admin" /></Route><Route component={NotFoundPage} /></Switch></ErrorBoundary>;
+  return <ErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/exams" component={ExamsPage} /><Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} /><Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} /><Route path="/exams/:examId" component={ExamDetailPage} /><Route path="/study-material/:examId/:subjectId/:topicId" component={StudyMaterialPage} /><Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route><Route path="/pyq" component={PYQDashboardPage} /><Route path="/pyq/:examId/:subjectId/:topicId" component={PYQPracticePage} /><Route path="/pyq/:examId/:subjectId" component={PYQSubjectPage} /><Route path="/pyq/:examId" component={PYQExamPage} /><Route path="/quiz"><PlaceholderRoute path="/quiz" /></Route><Route path="/theory"><PlaceholderRoute path="/theory" /></Route><Route path="/login"><PlaceholderRoute path="/login" /></Route><Route path="/dashboard"><PlaceholderRoute path="/dashboard" /></Route><Route path="/admin"><PlaceholderRoute path="/admin" /></Route><Route component={NotFoundPage} /></Switch></ErrorBoundary>;
 }
 
 function App() {

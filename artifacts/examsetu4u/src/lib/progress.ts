@@ -4,9 +4,17 @@ import { getSubjectsForExam, getTopicsForSubject } from '@/data/curriculum';
 const STORAGE_KEY = 'examsetu4u-module-2-progress';
 const BOOKMARKS_STORAGE_KEY = 'examsetu4u-study-bookmarks';
 const READING_PROGRESS_STORAGE_KEY = 'examsetu4u-study-reading-progress';
+const PYQ_PROGRESS_STORAGE_KEY = 'examsetu4u-module-4-pyq-progress';
 type ProgressMap = Record<string, number>;
 type BookmarkMap = Record<string, boolean>;
 type ReadingProgressMap = Record<string, number>;
+export type PYQProgressRecord = {
+  viewed: boolean;
+  answered: number;
+  correct: number;
+  incorrect: number;
+};
+export type PYQProgressMap = Record<string, PYQProgressRecord>;
 
 function readProgress(): ProgressMap {
   if (typeof window === 'undefined') return {};
@@ -51,6 +59,44 @@ function readReadingProgress(): ReadingProgressMap {
 
 function writeReadingProgress(progress: ReadingProgressMap) {
   window.localStorage.setItem(READING_PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+}
+
+function readPYQProgress(): PYQProgressMap {
+  if (typeof window === 'undefined') return {};
+  try {
+    const value = JSON.parse(window.localStorage.getItem(PYQ_PROGRESS_STORAGE_KEY) ?? '{}') as unknown;
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+    return Object.fromEntries(Object.entries(value).map(([id, record]) => {
+      const item = record && typeof record === 'object' ? record as Partial<PYQProgressRecord> : {};
+      return [id, {
+        viewed: item.viewed === true,
+        answered: typeof item.answered === 'number' ? Math.max(0, item.answered) : 0,
+        correct: typeof item.correct === 'number' ? Math.max(0, item.correct) : 0,
+        incorrect: typeof item.incorrect === 'number' ? Math.max(0, item.incorrect) : 0,
+      }];
+    })) as PYQProgressMap;
+  } catch {
+    return {};
+  }
+}
+
+function writePYQProgress(progress: PYQProgressMap) {
+  window.localStorage.setItem(PYQ_PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+}
+
+export function getPYQProgressRecord(questionId: string, progress = readPYQProgress()): PYQProgressRecord {
+  return progress[questionId] ?? { viewed: false, answered: 0, correct: 0, incorrect: 0 };
+}
+
+export function summarizePYQProgress(questionIds: string[], progress = readPYQProgress()) {
+  return questionIds.reduce((summary, questionId) => {
+    const record = getPYQProgressRecord(questionId, progress);
+    summary.viewed += record.viewed ? 1 : 0;
+    summary.answered += record.answered;
+    summary.correct += record.correct;
+    summary.incorrect += record.incorrect;
+    return summary;
+  }, { viewed: 0, answered: 0, correct: 0, incorrect: 0 });
 }
 
 export function getTopicProgress(topicId: string, progress = readProgress()) {
@@ -117,5 +163,43 @@ export function useProgress() {
     getTopicProgress: (topicId: string) => getTopicProgress(topicId, progress),
     getSubjectProgress: (subjectId: string) => getSubjectProgress(subjectId, progress),
     getExamProgress: (examId: string) => getExamProgress(examId, progress),
+  };
+}
+
+export function usePYQProgress() {
+  const [pyqProgress, setPYQProgress] = useState<PYQProgressMap>(() => readPYQProgress());
+
+  const markPYQViewed = useCallback((questionId: string) => {
+    setPYQProgress((current) => {
+      const next = { ...current, [questionId]: { ...getPYQProgressRecord(questionId, current), viewed: true } };
+      writePYQProgress(next);
+      return next;
+    });
+  }, []);
+
+  const recordPYQAnswer = useCallback((questionId: string, correct: boolean) => {
+    setPYQProgress((current) => {
+      const record = getPYQProgressRecord(questionId, current);
+      const next = {
+        ...current,
+        [questionId]: {
+          ...record,
+          viewed: true,
+          answered: record.answered + 1,
+          correct: record.correct + (correct ? 1 : 0),
+          incorrect: record.incorrect + (correct ? 0 : 1),
+        },
+      };
+      writePYQProgress(next);
+      return next;
+    });
+  }, []);
+
+  return {
+    pyqProgress,
+    markPYQViewed,
+    recordPYQAnswer,
+    getQuestionProgress: (questionId: string) => getPYQProgressRecord(questionId, pyqProgress),
+    summarize: (questionIds: string[]) => summarizePYQProgress(questionIds, pyqProgress),
   };
 }
