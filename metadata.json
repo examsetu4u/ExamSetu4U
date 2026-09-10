@@ -1,0 +1,6 @@
+{
+  "name": "ExamSetu4U",
+  "description": "Free exam preparation platform for Indian students with study material, previous year questions, MCQs and mock tests.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
