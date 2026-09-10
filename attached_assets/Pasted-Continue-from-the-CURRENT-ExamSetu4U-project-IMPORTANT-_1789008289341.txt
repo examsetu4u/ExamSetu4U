@@ -1,0 +1,230 @@
+Continue from the CURRENT ExamSetu4U project.
+
+IMPORTANT:
+
+- Module 1 and Module 2 are already completed and working.
+- DO NOT rebuild the project.
+- DO NOT change the existing visual design unnecessarily.
+- DO NOT remove existing routes, components, exam/subject/topic navigation or localStorage progress.
+- Inspect the existing code first and extend the current architecture.
+- This is MODULE 3 ONLY: Study Material System.
+- Do not implement authentication, backend, database or the full quiz engine yet.
+
+GOAL:
+Create a complete, reusable Study Material reading system connected to the existing:
+
+Exam → Subject → Topic
+
+structure.
+
+USER FLOW:
+
+Home
+→ Exam
+→ Subject
+→ Topic
+→ Study Material
+→ Material Reader
+
+TOPIC PAGE:
+
+The existing Topic page should have a clearly visible "Study Material" section/card.
+
+When the user clicks Study Material, open a dedicated material page.
+
+ROUTE:
+
+Add a route similar to:
+
+/study-material/:examId/:subjectId/:topicId
+
+Use the existing routing architecture.
+
+STUDY MATERIAL PAGE:
+
+Display:
+
+- Breadcrumb
+- Exam name
+- Subject name
+- Topic name
+- Material title
+- Reading progress
+- Estimated reading time
+- Previous/Next topic navigation
+- Bookmark button
+- Mark as Completed button
+
+CONTENT STRUCTURE:
+
+Create reusable TypeScript interfaces/types for:
+
+StudyMaterial
+MaterialSection
+MaterialParagraph
+MaterialPoint
+MaterialImage (future support)
+MaterialQuestion (future support)
+
+The architecture must support:
+
+- Hindi text
+- English text
+- Headings
+- Subheadings
+- Paragraphs
+- Bullet points
+- Numbered points
+- Tables
+- Important notes
+- Examples
+- Definitions
+- Exam facts
+
+Do not hard-code content directly inside React components.
+
+Keep content in centralized local data files.
+
+Suggested structure:
+
+src/data/studyMaterial/
+
+with separate files or organized objects for subjects/topics.
+
+SAMPLE CONTENT:
+
+Create meaningful sample Study Material for:
+
+Super TET → शिक्षण कौशल
+
+At minimum cover these sample sections:
+
+1. शिक्षण का अर्थ एवं परिभाषा
+2. शिक्षण के उद्देश्य
+3. शिक्षण के सिद्धांत
+4. शिक्षण की विशेषताएँ
+5. प्रभावी शिक्षण
+6. शिक्षक की भूमिका
+7. विद्यार्थी की भूमिका
+8. शिक्षण की विभिन्न विधियाँ
+9. बाल-केंद्रित शिक्षण
+10. व्यक्तिगत भिन्नताएँ
+11. प्रेरणा एवं अधिगम
+12. कक्षा प्रबंधन
+13. मूल्यांकन एवं शिक्षण
+14. शिक्षण में ICT
+15. परीक्षा की दृष्टि से महत्वपूर्ण तथ्य
+
+Content should be concise but exam-oriented.
+
+Do NOT claim that sample content is official unless it actually is.
+
+READER FEATURES:
+
+Implement:
+
+1. Reading progress bar.
+2. Mark topic as completed.
+3. Bookmark/save material.
+4. Previous topic.
+5. Next topic.
+6. Back to topic.
+7. Mobile-friendly reading layout.
+8. Print-friendly basic layout if easy to implement.
+9. "Important for Exam" callout.
+10. "Quick Revision" section at the end.
+
+LOCAL STORAGE:
+
+Use localStorage for:
+
+- Reading progress
+- Completed material
+- Bookmarks
+
+Use a clean reusable utility/service rather than scattering localStorage logic across components.
+
+PROGRESS INTEGRATION:
+
+When a user marks Study Material as completed:
+
+- Update the existing topic progress.
+- Update subject progress.
+- Update exam progress.
+
+Do not break the existing Module 2 progress system.
+
+CONTENT AVAILABILITY:
+
+The existing topic cards should automatically show Study Material as:
+
+Available / Not Available
+
+based on actual data.
+
+Do not manually hard-code availability badges.
+
+SEARCH:
+
+If the existing subject/topic search exists, ensure Study Material titles/topics can be searched where appropriate.
+
+ERROR/EMPTY STATES:
+
+Create clean states for:
+
+- Material not found
+- Topic not found
+- Material unavailable
+- Invalid URL
+
+Use the existing 404/design system.
+
+ACCESSIBILITY:
+
+Maintain:
+
+- Semantic headings
+- Keyboard accessibility
+- Visible focus states
+- Good text contrast
+- Proper button labels
+- Mobile touch targets
+
+PERFORMANCE:
+
+Do not introduce heavy libraries unnecessarily.
+
+TESTING:
+
+After implementation:
+
+1. Run TypeScript check.
+2. Run production build.
+3. Test:
+   - Super TET
+   - शिक्षण कौशल
+   - Topic page
+   - Study Material page
+   - Previous/Next navigation
+   - Mark Complete
+   - Bookmark
+   - Refresh and verify localStorage persistence
+   - Mobile layout
+   - Invalid material URL
+4. Check browser console.
+5. Fix all errors.
+
+IMPORTANT ARCHITECTURE RULE:
+
+The Study Material system must be designed so that later we can replace local sample data with a database/API containing thousands of topics without rewriting the UI.
+
+Do not start Module 4.
+
+At the end provide:
+
+- Files created/modified
+- New routes
+- Features implemented
+- Sample content added
+- Tests passed
+- Any remaining limitations

@@ -84,3 +84,9 @@ button { font: inherit; }
 .rise-in { animation: rise-in .5s ease-out both; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; } }
+@media print {
+  header, footer, .print-hide { display: none !important; }
+  body { background: #fff !important; color: #111 !important; }
+  .site-shell, main, article { min-height: auto !important; }
+  a { color: inherit !important; text-decoration: none !important; }
+}
