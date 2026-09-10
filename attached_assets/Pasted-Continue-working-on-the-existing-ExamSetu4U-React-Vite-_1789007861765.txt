@@ -1,0 +1,207 @@
+Continue working on the existing ExamSetu4U React + Vite project.
+
+IMPORTANT:
+
+- Do NOT rebuild or redesign the existing application.
+- Do NOT remove any existing routes or components.
+- Preserve the current responsive design, Header, Footer, Mobile Navigation, Layout, Container, Button, Card, SectionTitle, SearchBar and ExamCard components.
+- Preserve all currently working routes.
+- Before making changes, inspect the existing codebase and understand its current structure.
+- This is MODULE 2 only.
+
+GOAL:
+Build the complete Exam → Subject → Topic/Syllabus navigation system using local sample data only. No backend/database/authentication yet.
+
+EXAM STRUCTURE:
+
+1. UPTET / CTET / Super TET
+2. SSC CGL
+3. CBSE Class 10
+4. CBSE Class 12
+5. UPPCS Pre
+6. UPPCS Mains
+
+Create a centralized structured local data model for:
+Exam → Subject → Topics/Chapters → Content availability.
+
+Do NOT hard-code the same UI separately for every exam.
+
+ROUTES:
+
+Keep all existing routes.
+
+Add dynamic routes similar to:
+
+/exams/:examId
+/exams/:examId/:subjectId
+/exams/:examId/:subjectId/:topicId
+
+If React Router is already being used, extend the existing routing system instead of replacing it.
+
+EXAM PAGE:
+
+When a user opens an exam, show:
+
+- Exam name
+- Short description
+- Total subjects
+- Total topics
+- Progress percentage
+- Subject cards
+
+Each subject card should show:
+
+- Subject name
+- Number of topics
+- Available Study Material
+- Available PYQs
+- Available Quiz
+- Progress indicator
+- Continue button
+
+SUBJECT PAGE:
+
+Show:
+
+- Breadcrumb: Home → Exam → Subject
+- Subject title
+- Subject description
+- Overall subject progress
+- List/grid of topics
+
+Each topic should display:
+
+- Topic name
+- Study Material available/not available
+- PYQ available/not available
+- Quiz available/not available
+- Topic progress
+- Open Topic button
+
+TOPIC PAGE:
+
+Create a clean topic dashboard containing:
+
+1. Study Material
+2. Previous Year Questions
+3. MCQ Quiz
+4. Theory Questions
+
+For now use sample placeholder content.
+
+IMPORTANT:
+The architecture must allow us later to replace placeholder data with thousands of real questions and study materials without changing the UI.
+
+SAMPLE CONTENT:
+
+For Super TET include at least these subjects:
+
+- बाल विकास एवं शिक्षाशास्त्र
+- शिक्षण कौशल
+- भाषा हिंदी
+- भाषा अंग्रेजी
+- गणित
+- पर्यावरण अध्ययन
+- विज्ञान
+- सामाजिक अध्ययन
+- सामान्य ज्ञान
+- करंट अफेयर्स
+- सूचना प्रौद्योगिकी
+
+For CTET include:
+
+- Child Development & Pedagogy
+- Mathematics
+- Environmental Studies
+- Language I
+- Language II
+- Social Studies/Social Science
+- Science
+
+For SSC CGL include:
+
+- General Intelligence & Reasoning
+- General Awareness
+- Quantitative Aptitude
+- English Comprehension
+
+For CBSE Class 10 and 12:
+Create a reasonable sample subject structure, but keep the data architecture extensible.
+
+For UPPCS Pre:
+
+- General Studies I
+- General Studies II / CSAT
+
+For UPPCS Mains:
+Create subject/paper-wise structure suitable for UPPCS Mains.
+
+DESIGN:
+
+- Maintain the existing ExamSetu4U visual identity.
+- Mobile-first.
+- Clean educational dashboard style.
+- Cards should be touch-friendly.
+- Use existing reusable components wherever possible.
+- Do not introduce unnecessary animations.
+- Keep pages fast and lightweight.
+
+SEARCH/FILTER:
+
+On exam subject pages add a simple search/filter capability so users can search subjects/topics.
+
+DATA ARCHITECTURE:
+
+Create reusable TypeScript interfaces/types for:
+
+Exam
+Subject
+Topic
+ContentAvailability
+Progress
+
+Keep all sample data in centralized files, for example:
+
+src/data/exams.ts
+src/data/subjects.ts
+src/data/topics.ts
+
+Use IDs rather than display names for relationships.
+
+PROGRESS:
+
+For this module only, create a localStorage-based mock progress system.
+
+Users should be able to see:
+
+- Topic progress
+- Subject progress
+- Exam progress
+
+Do not build real authentication yet.
+
+TESTING:
+
+After implementation:
+
+1. Run TypeScript check.
+2. Run production build.
+3. Test:
+   - Home
+   - Exams
+   - Each exam
+   - Subject
+   - Topic
+   - Invalid route
+4. Test mobile layout.
+5. Check browser console for errors.
+6. Fix all errors before finishing.
+
+At the end, provide a concise summary of:
+
+- Files created/modified
+- Routes added
+- Features implemented
+- Tests passed
+
+Do not proceed to Module 3 until Module 2 is completely working.

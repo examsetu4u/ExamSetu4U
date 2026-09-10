@@ -7,6 +7,9 @@ import ExamsPage from '@/pages/exams';
 import Home from '@/pages/home';
 import NotFoundPage from '@/pages/not-found';
 import PlaceholderPage from '@/pages/placeholder';
+import ExamDetailPage from '@/pages/exam-detail';
+import SubjectDetailPage from '@/pages/subject-detail';
+import TopicDetailPage from '@/pages/topic-detail';
 
 const queryClient = new QueryClient();
 
@@ -15,7 +18,7 @@ function PlaceholderRoute({ path }: { path: string }) {
 }
 
 function Router() {
-  return <ErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/exams" component={ExamsPage} /><Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route><Route path="/pyq"><PlaceholderRoute path="/pyq" /></Route><Route path="/quiz"><PlaceholderRoute path="/quiz" /></Route><Route path="/theory"><PlaceholderRoute path="/theory" /></Route><Route path="/login"><PlaceholderRoute path="/login" /></Route><Route path="/dashboard"><PlaceholderRoute path="/dashboard" /></Route><Route path="/admin"><PlaceholderRoute path="/admin" /></Route><Route component={NotFoundPage} /></Switch></ErrorBoundary>;
+  return <ErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/exams" component={ExamsPage} /><Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} /><Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} /><Route path="/exams/:examId" component={ExamDetailPage} /><Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route><Route path="/pyq"><PlaceholderRoute path="/pyq" /></Route><Route path="/quiz"><PlaceholderRoute path="/quiz" /></Route><Route path="/theory"><PlaceholderRoute path="/theory" /></Route><Route path="/login"><PlaceholderRoute path="/login" /></Route><Route path="/dashboard"><PlaceholderRoute path="/dashboard" /></Route><Route path="/admin"><PlaceholderRoute path="/admin" /></Route><Route component={NotFoundPage} /></Switch></ErrorBoundary>;
 }
 
 function App() {
