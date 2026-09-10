@@ -503,6 +503,18 @@ export function ProfilePage() {
                       style={{ width: `${dailyGoal.percentage}%` }}
                     />
                   </div>
+                  <div className="mt-2.5 flex justify-between items-center text-[11px]">
+                    <span className="text-[hsl(var(--muted-foreground))]">
+                      {dailyGoal.isCompleted ? 'आज का लक्ष्य पूर्ण 🎉' : `${dailyGoal.remaining} प्रश्न शेष`}
+                    </span>
+                    <Link
+                      href="/study-planner"
+                      className="font-bold text-[hsl(var(--primary))] hover:underline flex items-center gap-1"
+                      data-testid="link-profile-to-planner"
+                    >
+                      दैनिक प्लानर खोलें <ArrowRight size={11} />
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Overall Progress Breakdown */}

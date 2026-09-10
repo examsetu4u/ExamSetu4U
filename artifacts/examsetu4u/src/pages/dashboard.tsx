@@ -138,6 +138,10 @@ export function DashboardPage() {
                 </select>
               </div>
 
+              <Button href="/study-planner" variant="primary" className="min-h-10 text-xs font-bold" data-testid="button-go-study-planner">
+                <Target size={14} /> दैनिक प्लानर
+              </Button>
+
               <Button href="/analytics" variant="secondary" className="min-h-10 text-xs" data-testid="button-go-analytics">
                 <BarChart3 size={14} /> विश्लेषण
               </Button>
@@ -235,24 +239,34 @@ export function DashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between border-t border-[hsl(var(--border))] pt-3 text-xs">
-                <span className="text-[hsl(var(--muted-foreground))]">लक्ष्य बदलें:</span>
-                <div className="flex items-center gap-1">
-                  {DAILY_GOAL_OPTIONS.map((num) => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => handleGoalChange(num)}
-                      className={`rounded px-2 py-0.5 text-[11px] font-bold transition ${
-                        dailyGoal.targetQuestions === num
-                          ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'
-                          : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]'
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
+              <div className="mt-4 flex flex-col gap-2 border-t border-[hsl(var(--border))] pt-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-[hsl(var(--muted-foreground))]">लक्ष्य बदलें:</span>
+                  <div className="flex items-center gap-1">
+                    {DAILY_GOAL_OPTIONS.map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => handleGoalChange(num)}
+                        className={`rounded px-2 py-0.5 text-[11px] font-bold transition ${
+                          dailyGoal.targetQuestions === num
+                            ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'
+                            : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+                <Link
+                  href="/study-planner"
+                  className="font-bold text-[hsl(var(--primary))] hover:underline flex items-center justify-between pt-1"
+                  data-testid="link-dash-to-study-planner"
+                >
+                  <span>दैनिक अध्ययन प्लानर (Daily Planner) खोलें</span>
+                  <ArrowRight size={13} />
+                </Link>
               </div>
             </Card>
 
@@ -316,6 +330,43 @@ export function DashboardPage() {
               </div>
             </Card>
           </div>
+
+          {/* Recommended Action Today (Module 13 Requirement 14) */}
+          {recommendedStep && (
+            <div
+              className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl border border-[hsl(var(--primary)/.2)] bg-[hsl(var(--card))] p-4 sm:p-5 shadow-xs"
+              data-testid="banner-recommended-action"
+            >
+              <div className="flex items-start gap-3.5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-amber-400">
+                  <Target size={18} />
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-900 dark:bg-amber-950 dark:text-amber-300">
+                      आज की अनुशंसित गतिविधि
+                    </span>
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">Recommended Action</span>
+                  </div>
+                  <p className="text-sm font-bold text-[hsl(var(--primary))] mt-1">
+                    {recommendedStep.title}
+                  </p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] max-w-xl">
+                    {recommendedStep.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                <Button href={recommendedStep.url} variant="primary" className="min-h-10 px-4 text-xs font-bold w-full sm:w-auto" data-testid="button-recommended-step-action">
+                  {recommendedStep.actionLabel} <ArrowRight size={14} />
+                </Button>
+                <Button href="/study-planner" variant="secondary" className="min-h-10 px-3 text-xs font-bold hidden sm:inline-flex" data-testid="button-recommended-to-planner">
+                  पूरा प्लानर
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Continue Learning Banner (if available) */}
           {continueItem && (

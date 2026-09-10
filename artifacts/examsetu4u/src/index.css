@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -53,9 +53,9 @@
   --chart-3: 224 44% 28%;
   --chart-4: 5 63% 48%;
   --chart-5: 192 40% 43%;
-  --app-font-sans: 'DM Sans', sans-serif;
+  --app-font-sans: 'DM Sans', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
   --app-font-display: 'Fraunces', Georgia, serif;
-  --app-font-mono: 'DM Sans', sans-serif;
+  --app-font-mono: 'DM Sans', monospace;
   --radius: 0.75rem;
   --shadow: 0 8px 24px hsl(224 29% 18% / .06);
   --shadow-md: 0 16px 36px hsl(224 29% 18% / .1);

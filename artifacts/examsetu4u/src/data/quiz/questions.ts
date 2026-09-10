@@ -1,3 +1,4 @@
+import { loadShikshanKaushalAsMCQQuestions, resolveTopicId } from '@/data/questions/super-tet/shikshan-kaushal';
 import type { MCQQuestion, QuizFilterOptions } from './types';
 
 export const sampleMCQQuestions: MCQQuestion[] = [
@@ -618,21 +619,29 @@ export const sampleMCQQuestions: MCQQuestion[] = [
   },
 ];
 
-// Helper query and indexing functions designed for scaling to 1000+ questions
-let cachedIndexedById: Map<string, MCQQuestion> | null = null;
-
-function getIndexedQuestions(): Map<string, MCQQuestion> {
-  if (!cachedIndexedById) {
-    cachedIndexedById = new Map();
-    for (const q of sampleMCQQuestions) {
-      cachedIndexedById.set(q.id, q);
-    }
+// Unified getter for all quiz questions including Shikshan Kaushal 1000 MCQ system
+export function getAllQuizQuestions(): MCQQuestion[] {
+  const map = new Map<string, MCQQuestion>();
+  sampleMCQQuestions.forEach((q) => map.set(q.id, q));
+  try {
+    const skList = loadShikshanKaushalAsMCQQuestions();
+    skList.forEach((q) => map.set(q.id, q));
+  } catch (err) {
+    console.warn('[QuizQuestions] Failed to load Shikshan Kaushal batch questions:', err);
   }
-  return cachedIndexedById;
+  return Array.from(map.values());
 }
 
-export function getAllQuizQuestions(): MCQQuestion[] {
-  return [...sampleMCQQuestions];
+function getIndexedQuestions(): Map<string, MCQQuestion> {
+  const map = new Map<string, MCQQuestion>();
+  sampleMCQQuestions.forEach((q) => map.set(q.id, q));
+  try {
+    const skList = loadShikshanKaushalAsMCQQuestions();
+    skList.forEach((q) => map.set(q.id, q));
+  } catch (err) {
+    console.warn('[QuizQuestions] Failed to index Shikshan Kaushal questions:', err);
+  }
+  return map;
 }
 
 export function getQuestionById(id: string): MCQQuestion | undefined {
@@ -652,14 +661,31 @@ export function getQuestionsByIds(ids: string[]): MCQQuestion[] {
 export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
   const { examId, subjectId, topicId, difficulty, count, random, search } = options;
   const query = (search || '').trim().toLowerCase();
+  const allQuestions = getAllQuizQuestions();
 
-  let filtered = sampleMCQQuestions.filter((q) => {
+  const isMatchingSubject = (qSubId: string, filterSubId?: string): boolean => {
+    if (!filterSubId) return true;
+    if (qSubId === filterSubId) return true;
+    const isSkFilter = filterSubId === 'shikshan-kaushal' || filterSubId === 'teaching-skills' || filterSubId === 'super-tet-teaching-skills';
+    const isSkQ = qSubId === 'shikshan-kaushal' || qSubId === 'teaching-skills' || qSubId === 'super-tet-teaching-skills';
+    return isSkFilter && isSkQ;
+  };
+
+  const isMatchingTopic = (qTopicId: string, filterTopicId?: string): boolean => {
+    if (!filterTopicId) return true;
+    if (qTopicId === filterTopicId) return true;
+    const resolvedFilter = resolveTopicId(filterTopicId) || filterTopicId;
+    const resolvedQ = resolveTopicId(qTopicId) || qTopicId;
+    return resolvedFilter === resolvedQ;
+  };
+
+  let filtered = allQuestions.filter((q) => {
     if (examId && q.examId !== examId) return false;
-    if (subjectId && q.subjectId !== subjectId) return false;
-    if (topicId && q.topicId !== topicId) return false;
+    if (!isMatchingSubject(q.subjectId, subjectId)) return false;
+    if (!isMatchingTopic(q.topicId, topicId)) return false;
     if (difficulty && difficulty !== 'All' && q.difficulty !== difficulty) return false;
     if (query) {
-      const matchText = `${q.question} ${q.options.A} ${q.options.B} ${q.options.C} ${q.options.D} ${q.explanation} ${q.importantPoint}`.toLowerCase();
+      const matchText = `${q.question} ${q.options.A} ${q.options.B} ${q.options.C} ${q.options.D} ${q.explanation} ${q.importantPoint} ${q.id}`.toLowerCase();
       if (!matchText.includes(query)) return false;
     }
     return true;

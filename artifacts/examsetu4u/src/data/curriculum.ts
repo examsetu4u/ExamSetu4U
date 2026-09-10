@@ -147,7 +147,28 @@ const curriculumDefinitions: ExamDefinition[] = [
     description: 'A guided preparation path for Super TET with pedagogy, languages, subject knowledge and general awareness.',
     subjects: [
       { id: 'child-development', name: 'बाल विकास एवं शिक्षाशास्त्र', description: 'Understand how children learn, grow and respond to different teaching approaches.', topics: ['बाल विकास के सिद्धांत', 'अधिगम और प्रेरणा', 'समावेशी शिक्षा'] },
-      { id: 'teaching-skills', name: 'शिक्षण कौशल', description: 'Strengthen classroom practice, assessment and learner-centred teaching skills.', topics: ['शिक्षण का अर्थ एवं परिभाषा', 'शिक्षण के उद्देश्य', 'शिक्षण के सिद्धांत', 'शिक्षण की विशेषताएँ', 'प्रभावी शिक्षण', 'शिक्षक की भूमिका', 'विद्यार्थी की भूमिका', 'शिक्षण विधियाँ', 'बाल-केंद्रित शिक्षण', 'व्यक्तिगत भिन्नताएँ', 'प्रेरणा एवं अधिगम', 'कक्षा प्रबंधन', 'मूल्यांकन एवं शिक्षण', 'शिक्षण में ICT'] },
+      {
+        id: 'teaching-skills',
+        name: 'शिक्षण कौशल',
+        description: 'Strengthen classroom practice, assessment and learner-centred teaching skills.',
+        topics: [
+          'शिक्षण का अर्थ एवं परिभाषा',
+          'शिक्षण के उद्देश्य',
+          'शिक्षण के सिद्धांत',
+          'शिक्षण की विशेषताएँ',
+          'प्रभावी शिक्षण',
+          'शिक्षक की भूमिका',
+          'विद्यार्थी की भूमिका',
+          'शिक्षण की विभिन्न विधियाँ',
+          'बाल-केंद्रित शिक्षण',
+          'व्यक्तिगत भिन्नताएँ',
+          'प्रेरणा एवं अधिगम',
+          'कक्षा प्रबंधन',
+          'मूल्यांकन एवं शिक्षण',
+          'शिक्षण में ICT',
+          'परीक्षा की दृष्टि से महत्वपूर्ण तथ्य',
+        ],
+      },
       { id: 'hindi', name: 'भाषा हिंदी', description: 'Revise Hindi language understanding, grammar and comprehension.', topics: ['हिंदी व्याकरण', 'अपठित गद्यांश', 'शब्द ज्ञान'] },
       { id: 'english', name: 'भाषा अंग्रेजी', description: 'Build practical English comprehension and grammar skills.', topics: ['Parts of Speech', 'Reading Comprehension', 'Vocabulary and Usage'] },
       { id: 'mathematics', name: 'गणित', description: 'Practice foundational mathematics concepts used in the teaching eligibility syllabus.', topics: ['संख्या पद्धति', 'भिन्न और दशमलव', 'ज्यामिति और मापन'] },
@@ -477,11 +498,27 @@ export function getExam(examId: string) {
 }
 
 export function getSubject(subjectId: string) {
-  return subjects.find((subject) => subject.id === subjectId);
+  return subjects.find(
+    (subject) =>
+      subject.id === subjectId ||
+      (subjectId === 'shikshan-kaushal' && subject.id === 'super-tet-teaching-skills') ||
+      (subjectId === 'teaching-skills' && subject.id === 'super-tet-teaching-skills')
+  );
 }
 
 export function getTopic(topicId: string) {
-  return topics.find((topic) => topic.id === topicId);
+  return (
+    topics.find((topic) => topic.id === topicId) ||
+    topics.find((topic) => {
+      // Handle st-sk-01 / ST-SK-TOP-01 aliases to super-tet-teaching-skills-1
+      const normalized = topicId.toLowerCase().replace('st-sk-top-', '').replace('st-sk-', '');
+      const num = parseInt(normalized, 10);
+      if (!isNaN(num) && num >= 1 && num <= 15) {
+        return topic.id === `super-tet-teaching-skills-${num}`;
+      }
+      return false;
+    })
+  );
 }
 
 export function getSubjectsForExam(examId: string) {

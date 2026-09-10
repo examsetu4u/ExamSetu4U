@@ -30,6 +30,7 @@ export function Button({ children, href, variant = 'primary', className = '', ..
 const navItems = [
   { label: 'Home', href: '/' },
   { label: 'Exams', href: '/exams' },
+  { label: 'Study Planner', href: '/study-planner' },
   { label: 'Study Material', href: '/study-material' },
   { label: 'PYQ', href: '/pyq' },
   { label: 'Quiz', href: '/quiz' },
@@ -58,6 +59,7 @@ export function Header() {
             <Link key={item.href} href={item.href} className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === item.href ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-nav-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
           ))}
           <Link href="/dashboard" className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === '/dashboard' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid="link-nav-dashboard">Dashboard</Link>
+          <Link href="/admin" className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location.startsWith('/admin') ? 'text-[hsl(var(--primary))] font-bold' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid="link-nav-admin">Admin</Link>
           
           <div className="w-44 xl:w-60 ml-1">
             <GlobalSearchBar />
@@ -117,7 +119,7 @@ export function Header() {
       {open && (
         <nav className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-3 lg:hidden" aria-label="Mobile navigation">
           <div className="mx-auto flex max-w-6xl flex-col gap-1 sm:px-3">
-            {[...navItems, { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'Search', href: '/search' }].map((item) => (
+            {[...navItems, { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'Search', href: '/search' }, { label: 'Admin Portal', href: '/admin' }].map((item) => (
               <Link key={item.label} href={item.href} onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]" data-testid={`link-mobile-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
             ))}
             {isAuthenticated ? (
@@ -136,10 +138,11 @@ export function Header() {
 }
 
 const footerLinks = [
-  { label: 'Home', href: '/' }, { label: 'Exams', href: '/exams' }, { label: 'Study Material', href: '/study-material' },
+  { label: 'Home', href: '/' }, { label: 'Study Planner', href: '/study-planner' }, { label: 'Exams', href: '/exams' }, { label: 'Study Material', href: '/study-material' },
   { label: 'PYQ', href: '/pyq' }, { label: 'Quiz', href: '/quiz' }, { label: 'Mock Tests', href: '/mock-tests' }, { label: 'Mistake Book', href: '/mistakes' },
   { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Smart Search', href: '/search' },
   { label: 'Analytics', href: '/analytics' }, { label: 'Achievements', href: '/achievements' }, { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Admin Portal', href: '/admin' },
 ];
 
 export function Footer() {

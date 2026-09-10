@@ -11,6 +11,8 @@ import ExamDetailPage from '@/pages/exam-detail';
 import SubjectDetailPage from '@/pages/subject-detail';
 import TopicDetailPage from '@/pages/topic-detail';
 import StudyMaterialPage from '@/pages/study-material';
+import StudyMaterialDirectoryPage from '@/pages/study-material-directory';
+import TheoryGuidePage from '@/pages/theory';
 import QuizPage from '@/pages/quiz';
 import LoginPage from '@/pages/login';
 import SignupPage from '@/pages/signup';
@@ -28,6 +30,9 @@ import MockTestStartPage from '@/pages/mock-tests/start';
 import MockTestLiveExamPage from '@/pages/mock-tests/live';
 import MockTestResultPage from '@/pages/mock-tests/result';
 import MockTestHistoryPage from '@/pages/mock-tests/history';
+import AdminPage from '@/pages/admin';
+import StudyPlannerPage from '@/pages/study-planner';
+import StudyPlannerHistoryPage from '@/pages/study-planner-history';
 import { PYQDashboardPage, PYQExamPage, PYQPracticePage, PYQSubjectPage } from '@/pages/pyq';
 
 const queryClient = new QueryClient();
@@ -47,7 +52,7 @@ function Router() {
         <Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} />
         <Route path="/exams/:examId" component={ExamDetailPage} />
         <Route path="/study-material/:examId/:subjectId/:topicId" component={StudyMaterialPage} />
-        <Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route>
+        <Route path="/study-material" component={StudyMaterialDirectoryPage} />
         <Route path="/pyq" component={PYQDashboardPage} />
         <Route path="/pyq/:examId/:subjectId/:topicId" component={PYQPracticePage} />
         <Route path="/pyq/:examId/:subjectId" component={PYQSubjectPage} />
@@ -65,14 +70,16 @@ function Router() {
         <Route path="/mistakes/practice" component={MistakesPracticePage} />
         <Route path="/mistakes" component={MistakesPage} />
         <Route path="/practice/weak-topics" component={WeakTopicsPage} />
-        <Route path="/theory"><PlaceholderRoute path="/theory" /></Route>
+        <Route path="/theory" component={TheoryGuidePage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={SignupPage} />
         <Route path="/profile" component={ProfilePage} />
+        <Route path="/study-planner/history" component={StudyPlannerHistoryPage} />
+        <Route path="/study-planner" component={StudyPlannerPage} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/analytics" component={AnalyticsPage} />
         <Route path="/achievements" component={AchievementsPage} />
-        <Route path="/admin"><PlaceholderRoute path="/admin" /></Route>
+        <Route path="/admin" component={AdminPage} />
         <Route component={NotFoundPage} />
       </Switch>
     </ErrorBoundary>

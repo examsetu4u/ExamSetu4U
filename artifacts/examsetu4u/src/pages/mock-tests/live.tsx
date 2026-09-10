@@ -489,7 +489,24 @@ export default function MockTestLiveExamPage() {
     setLocation(`/mock-tests/result/${result.attemptId}`);
   }, [activeAttempt, testConfig, questions, setLocation]);
 
-  if (!testConfig || !activeAttempt || questions.length === 0) {
+  if (!testConfig) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-4 text-center">
+        <Card className="max-w-md p-8">
+          <AlertCircle size={44} className="mx-auto text-rose-500 mb-3" />
+          <h2 className="font-display text-lg font-bold">मॉक टेस्ट नहीं मिला</h2>
+          <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+            अनुरोधित मॉक टेस्ट ({testId}) अमान्य है या हटा दिया गया है।
+          </p>
+          <Button href="/mock-tests" variant="primary" className="mt-5 text-xs">
+            मॉक टेस्ट सूची पर लौटें
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!activeAttempt || questions.length === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-4 text-center">
         <Card className="max-w-md p-8">
@@ -498,6 +515,11 @@ export default function MockTestLiveExamPage() {
           <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
             कृपया प्रतीक्षा करें, आपकी परीक्षा सामग्री लोड की जा रही है।
           </p>
+          <div className="mt-4">
+            <Button href={`/mock-tests/start/${testConfig.id}`} variant="secondary" className="text-xs">
+              प्रारंभ पृष्ठ पर लौटें
+            </Button>
+          </div>
         </Card>
       </div>
     );

@@ -11,7 +11,7 @@ import {
   topics,
 } from '@/data/curriculum';
 import { pyqQuestions } from '@/data/pyq';
-import { sampleMCQQuestions } from '@/data/quiz/questions';
+import { getAllQuizQuestions } from '@/data/quiz/questions';
 import {
   calculateOverallProgress,
   calculateSubjectProgress,
@@ -414,6 +414,53 @@ export function searchContent(
       }
     }
   });
+
+  // 6. Search Individual MCQs / Questions (including Shikshan Kaushal 1000 content dataset)
+  if (normalizedQuery.length >= 2) {
+    const allQuestions = getAllQuizQuestions();
+    allQuestions.forEach((q) => {
+      const score = calculateMatchScore(
+        [
+          q.id,
+          q.question,
+          q.options.A,
+          q.options.B,
+          q.options.C,
+          q.options.D,
+          q.explanation,
+          q.importantPoint || '',
+          q.additionalFact || '',
+        ],
+        normalizedQuery,
+        expandedTerms
+      );
+
+      if (score > 35) {
+        const topic = getTopic(q.topicId);
+        const subject = getSubject(q.subjectId);
+        const exam = getExam(q.examId);
+
+        results.push({
+          id: `q_${q.id}`,
+          type: 'quiz',
+          title: `${q.id}: ${q.question.length > 75 ? q.question.slice(0, 72) + '...' : q.question}`,
+          subtitle: `${exam?.name || 'Super TET'} · ${subject?.name || 'शिक्षण कौशल'} · ${q.difficulty}`,
+          description: q.explanation || q.importantPoint || 'अवधारणा-आधारित बहुविकल्पीय प्रश्न एवं समाधान।',
+          examId: q.examId,
+          examName: exam?.name || 'Super TET',
+          subjectId: q.subjectId,
+          subjectName: subject?.name || 'शिक्षण कौशल',
+          topicId: q.topicId,
+          topicName: topic?.name,
+          url: `/quiz/${q.examId}/${q.subjectId}/${q.topicId}`,
+          badgeLabel: `${q.id} · MCQ`,
+          badgeTone: 'blue',
+          matchScore: score + (q.id.toLowerCase().includes(normalizedQuery) ? 30 : 0),
+          difficulty: q.difficulty,
+        });
+      }
+    });
+  }
 
   // Filter by options if provided
   let filteredResults = results;
