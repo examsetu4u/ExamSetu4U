@@ -11,6 +11,23 @@ import ExamDetailPage from '@/pages/exam-detail';
 import SubjectDetailPage from '@/pages/subject-detail';
 import TopicDetailPage from '@/pages/topic-detail';
 import StudyMaterialPage from '@/pages/study-material';
+import QuizPage from '@/pages/quiz';
+import LoginPage from '@/pages/login';
+import SignupPage from '@/pages/signup';
+import ProfilePage from '@/pages/profile';
+import DashboardPage from '@/pages/dashboard';
+import AnalyticsPage from '@/pages/analytics';
+import AchievementsPage from '@/pages/achievements';
+import SearchPage from '@/pages/search';
+import MistakesPage from '@/pages/mistakes';
+import MistakesPracticePage from '@/pages/mistakes-practice';
+import WeakTopicsPage from '@/pages/weak-topics';
+import MockTestsListPage from '@/pages/mock-tests';
+import ExamMockTestsPage from '@/pages/mock-tests/exam';
+import MockTestStartPage from '@/pages/mock-tests/start';
+import MockTestLiveExamPage from '@/pages/mock-tests/live';
+import MockTestResultPage from '@/pages/mock-tests/result';
+import MockTestHistoryPage from '@/pages/mock-tests/history';
 import { PYQDashboardPage, PYQExamPage, PYQPracticePage, PYQSubjectPage } from '@/pages/pyq';
 
 const queryClient = new QueryClient();
@@ -20,7 +37,46 @@ function PlaceholderRoute({ path }: { path: string }) {
 }
 
 function Router() {
-  return <ErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/exams" component={ExamsPage} /><Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} /><Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} /><Route path="/exams/:examId" component={ExamDetailPage} /><Route path="/study-material/:examId/:subjectId/:topicId" component={StudyMaterialPage} /><Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route><Route path="/pyq" component={PYQDashboardPage} /><Route path="/pyq/:examId/:subjectId/:topicId" component={PYQPracticePage} /><Route path="/pyq/:examId/:subjectId" component={PYQSubjectPage} /><Route path="/pyq/:examId" component={PYQExamPage} /><Route path="/quiz"><PlaceholderRoute path="/quiz" /></Route><Route path="/theory"><PlaceholderRoute path="/theory" /></Route><Route path="/login"><PlaceholderRoute path="/login" /></Route><Route path="/dashboard"><PlaceholderRoute path="/dashboard" /></Route><Route path="/admin"><PlaceholderRoute path="/admin" /></Route><Route component={NotFoundPage} /></Switch></ErrorBoundary>;
+  return (
+    <ErrorBoundary>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/search" component={SearchPage} />
+        <Route path="/exams" component={ExamsPage} />
+        <Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} />
+        <Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} />
+        <Route path="/exams/:examId" component={ExamDetailPage} />
+        <Route path="/study-material/:examId/:subjectId/:topicId" component={StudyMaterialPage} />
+        <Route path="/study-material"><PlaceholderRoute path="/study-material" /></Route>
+        <Route path="/pyq" component={PYQDashboardPage} />
+        <Route path="/pyq/:examId/:subjectId/:topicId" component={PYQPracticePage} />
+        <Route path="/pyq/:examId/:subjectId" component={PYQSubjectPage} />
+        <Route path="/pyq/:examId" component={PYQExamPage} />
+        <Route path="/quiz/:examId/:subjectId/:topicId" component={QuizPage} />
+        <Route path="/quiz/:examId/:subjectId" component={QuizPage} />
+        <Route path="/quiz/:examId" component={QuizPage} />
+        <Route path="/quiz" component={QuizPage} />
+        <Route path="/mock-tests/history" component={MockTestHistoryPage} />
+        <Route path="/mock-tests/result/:attemptId" component={MockTestResultPage} />
+        <Route path="/mock-tests/live/:testId" component={MockTestLiveExamPage} />
+        <Route path="/mock-tests/start/:testId" component={MockTestStartPage} />
+        <Route path="/mock-tests/:examId" component={ExamMockTestsPage} />
+        <Route path="/mock-tests" component={MockTestsListPage} />
+        <Route path="/mistakes/practice" component={MistakesPracticePage} />
+        <Route path="/mistakes" component={MistakesPage} />
+        <Route path="/practice/weak-topics" component={WeakTopicsPage} />
+        <Route path="/theory"><PlaceholderRoute path="/theory" /></Route>
+        <Route path="/login" component={LoginPage} />
+        <Route path="/signup" component={SignupPage} />
+        <Route path="/profile" component={ProfilePage} />
+        <Route path="/dashboard" component={DashboardPage} />
+        <Route path="/analytics" component={AnalyticsPage} />
+        <Route path="/achievements" component={AchievementsPage} />
+        <Route path="/admin"><PlaceholderRoute path="/admin" /></Route>
+        <Route component={NotFoundPage} />
+      </Switch>
+    </ErrorBoundary>
+  );
 }
 
 function App() {

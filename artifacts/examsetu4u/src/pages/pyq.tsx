@@ -6,6 +6,8 @@ import { Button, Card, Container, Layout, SectionTitle } from '@/components/site
 import { exams, getSubjectsForExam, getTopicsForSubject, getExam, getSubject, subjects, topics } from '@/data/curriculum';
 import { getPYQExam, getPYQsForExam, getPYQsForSubject, getPYQsForTopic, getPYQSubject, getPYQTopic, pyqQuestions, uniquePYQYears, type PYQDifficulty, type PYQQuestion } from '@/data/pyq';
 import { usePYQProgress } from '@/lib/progress';
+import { recordPYQAttempt } from '@/lib/user-progress';
+import { recordPYQMistake } from '@/lib/mistakes';
 import NotFoundPage from '@/pages/not-found';
 
 const difficulties: PYQDifficulty[] = ['Easy', 'Moderate', 'Challenging'];
@@ -193,6 +195,10 @@ export function PYQPracticePage() {
     setSelectedOption(optionId);
     setSession((current) => ({ answered: current.answered + 1, correct: current.correct + (isCorrect ? 1 : 0), incorrect: current.incorrect + (isCorrect ? 0 : 1) }));
     recordPYQAnswer(question.id, isCorrect);
+    recordPYQAttempt(question.id, exam.id, subject.id, topic.id, isCorrect);
+    if (!isCorrect) {
+      recordPYQMistake(question, optionId);
+    }
   };
   const next = () => {
     if (currentIndex < questions.length - 1) setCurrentIndex((index) => index + 1);

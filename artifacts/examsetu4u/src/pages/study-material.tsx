@@ -5,6 +5,7 @@ import { Breadcrumbs, EstimatedTime, ProgressBar } from '@/components/curriculum
 import { Button, Card, Container, Layout, SectionTitle } from '@/components/site';
 import { getExam, getStudyMaterial, getSubject, getTopic, getTopicsForSubject, type MaterialParagraph, type MaterialPoint } from '@/data/curriculum';
 import { useProgress } from '@/lib/progress';
+import { recordStudyProgress } from '@/lib/user-progress';
 import NotFoundPage from '@/pages/not-found';
 
 export default function StudyMaterialPage() {
@@ -93,7 +94,15 @@ export default function StudyMaterialPage() {
                 <div className="flex w-full gap-2 sm:w-auto">
                  <Button type="button" variant="secondary" className="flex-1 sm:flex-none" onClick={() => window.print()} aria-label="Print study material"><Printer size={16} /><span className="sr-only sm:not-sr-only">Print</span></Button>
                 <Button type="button" variant="secondary" className="flex-1 sm:flex-none" onClick={() => topic && toggleBookmark(topic.id)} aria-pressed={bookmarked} data-testid="button-bookmark-topic">{bookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}{bookmarked ? 'Bookmarked' : 'Bookmark'}</Button>
-                <Button type="button" variant={completed ? 'secondary' : 'primary'} className="flex-1 sm:flex-none" onClick={() => completed ? resetTopicProgress(topic.id) : setTopicProgress(topic.id, 100)} data-testid="button-complete-topic">{completed ? <><Check size={16} /> Reset</> : <><CheckCircle2 size={16} /> Complete</>}</Button>
+                <Button type="button" variant={completed ? 'secondary' : 'primary'} className="flex-1 sm:flex-none" onClick={() => {
+                  if (completed) {
+                    resetTopicProgress(topic.id);
+                    recordStudyProgress(topic.id, 0);
+                  } else {
+                    setTopicProgress(topic.id, 100);
+                    recordStudyProgress(topic.id, 100);
+                  }
+                }} data-testid="button-complete-topic">{completed ? <><Check size={16} /> Reset</> : <><CheckCircle2 size={16} /> Complete</>}</Button>
               </div>
             </div>
 

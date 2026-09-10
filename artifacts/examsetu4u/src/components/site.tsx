@@ -1,7 +1,9 @@
-import { ArrowRight, BookOpen, Check, Menu, Search, X } from 'lucide-react';
+import { ArrowRight, BookOpen, Check, LogOut, Menu, Search, Sparkles, User, X } from 'lucide-react';
 import { type ButtonHTMLAttributes, type MouseEventHandler, type ReactNode, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import type { Exam } from '@/data/exams';
+import { getInitials, useAuth } from '@/lib/auth';
+import { GlobalSearchBar } from '@/components/global-search-bar';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   href?: string;
@@ -31,13 +33,18 @@ const navItems = [
   { label: 'Study Material', href: '/study-material' },
   { label: 'PYQ', href: '/pyq' },
   { label: 'Quiz', href: '/quiz' },
-  { label: 'Theory', href: '/theory' },
+  { label: 'Mock Tests', href: '/mock-tests' },
+  { label: 'Mistakes', href: '/mistakes' },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [location] = useLocation();
+  const { isAuthenticated, profile, user, logout } = useAuth();
+
+  const displayName = profile?.name || user?.name || 'User';
+  const initials = getInitials(displayName);
 
   return (
     <header className="sticky top-0 z-40 border-b border-[hsl(var(--border)/.8)] bg-[hsl(var(--background)/.94)] backdrop-blur-sm">
@@ -48,30 +55,79 @@ export function Header() {
         </Link>
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className={`focus-ring rounded-md px-3 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === item.href ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-nav-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
+            <Link key={item.href} href={item.href} className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === item.href ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-nav-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
           ))}
-          <button type="button" onClick={() => setSearchOpen((current) => !current)} className="focus-ring ml-1 flex items-center gap-2 rounded-md px-3 py-2 text-[13px] font-semibold text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]" aria-expanded={searchOpen} data-testid="button-header-search"><Search size={15} /> Search</button>
-          <Link href="/login" className="focus-ring ml-2 rounded-md bg-[hsl(var(--primary))] px-3.5 py-2.5 text-[13px] font-bold text-[hsl(var(--primary-foreground))] hover:bg-[hsl(224_44%_34%)]" data-testid="link-nav-login">Login</Link>
+          <Link href="/dashboard" className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === '/dashboard' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid="link-nav-dashboard">Dashboard</Link>
+          
+          <div className="w-44 xl:w-60 ml-1">
+            <GlobalSearchBar />
+          </div>
+          
+          {isAuthenticated ? (
+            <div className="ml-2 flex items-center gap-2">
+              <Link
+                href="/profile"
+                className="focus-ring flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2.5 py-1.5 text-xs font-bold text-[hsl(var(--primary))] hover:border-[hsl(var(--accent))] shadow-sm"
+                data-testid="link-header-profile"
+              >
+                <span
+                  className="flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold text-white"
+                  style={{ backgroundColor: profile?.avatarColor || '#1e3a8a' }}
+                >
+                  {initials}
+                </span>
+                <span className="max-w-[100px] truncate">{displayName.split(' ')[0]}</span>
+              </Link>
+              <button
+                type="button"
+                onClick={logout}
+                title="लॉगआउट"
+                className="focus-ring rounded-lg p-2 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[#a34f46]"
+                data-testid="button-header-logout"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="focus-ring ml-1 rounded-md bg-[hsl(var(--primary))] px-3.5 py-2 text-[13px] font-bold text-[hsl(var(--primary-foreground))] hover:bg-[hsl(224_44%_34%)]" data-testid="link-nav-login">Login</Link>
+          )}
         </nav>
-        <button type="button" onClick={() => setOpen((current) => !current)} className="focus-ring rounded-md p-2 text-[hsl(var(--primary))] lg:hidden" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} data-testid="button-mobile-menu">
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="flex items-center gap-1.5 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setSearchOpen((current) => !current)}
+            className="focus-ring rounded-md p-2 text-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))]"
+            aria-label="Search"
+            data-testid="button-mobile-search-toggle"
+          >
+            <Search size={20} />
+          </button>
+          <button type="button" onClick={() => setOpen((current) => !current)} className="focus-ring rounded-md p-2 text-[hsl(var(--primary))]" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} data-testid="button-mobile-menu">
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </Container>
       {searchOpen && (
-        <div className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] py-3">
-          <Container className="flex items-center gap-3">
-            <Search size={17} className="text-[hsl(var(--muted-foreground))]" />
-            <input autoFocus type="search" aria-label="Search exams and subjects" placeholder="Search exams and subjects" className="focus-ring min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[hsl(var(--muted-foreground))]" data-testid="input-header-search" />
-            <Button href="/exams" variant="secondary" className="min-h-9 px-3 py-1.5 text-xs" onClick={() => setSearchOpen(false)} data-testid="button-search-exams">Browse exams</Button>
-          </Container>
+        <div className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] px-4 py-3 shadow-sm lg:hidden">
+          <div className="mx-auto max-w-xl">
+            <GlobalSearchBar autoFocus onClose={() => setSearchOpen(false)} isMobileDrawer />
+          </div>
         </div>
       )}
       {open && (
         <nav className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-3 lg:hidden" aria-label="Mobile navigation">
           <div className="mx-auto flex max-w-6xl flex-col gap-1 sm:px-3">
-            {[...navItems, { label: 'Search', href: '/exams' }, { label: 'Login', href: '/login' }].map((item) => (
+            {[...navItems, { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'Search', href: '/search' }].map((item) => (
               <Link key={item.label} href={item.href} onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]" data-testid={`link-mobile-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
             ))}
+            {isAuthenticated ? (
+              <>
+                <Link href="/profile" onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]">प्रोफ़ाइल ({displayName})</Link>
+                <button type="button" onClick={() => { logout(); setOpen(false); }} className="focus-ring text-left rounded-md px-3 py-3 text-sm font-semibold text-[#a34f46] hover:bg-[#f8e9e5]">लॉगआउट</button>
+              </>
+            ) : (
+              <Link href="/login" onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]">Login / Sign Up</Link>
+            )}
           </div>
         </nav>
       )}
@@ -81,7 +137,9 @@ export function Header() {
 
 const footerLinks = [
   { label: 'Home', href: '/' }, { label: 'Exams', href: '/exams' }, { label: 'Study Material', href: '/study-material' },
-  { label: 'PYQ', href: '/pyq' }, { label: 'Quiz', href: '/quiz' }, { label: 'Theory', href: '/theory' },
+  { label: 'PYQ', href: '/pyq' }, { label: 'Quiz', href: '/quiz' }, { label: 'Mock Tests', href: '/mock-tests' }, { label: 'Mistake Book', href: '/mistakes' },
+  { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Smart Search', href: '/search' },
+  { label: 'Analytics', href: '/analytics' }, { label: 'Achievements', href: '/achievements' }, { label: 'Dashboard', href: '/dashboard' },
 ];
 
 export function Footer() {
