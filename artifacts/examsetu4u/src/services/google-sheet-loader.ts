@@ -299,9 +299,7 @@ function formatExamNameFallback(examId: string): string {
  */
 export function validateAndConvertSheetRows(
   rawRows: string[][],
-  existingLocalIds: Set<string> = new Set(),
-  sharedSeenSheetIds?: Set<string>,
-  rowNumberOffset: number = 0
+  existingLocalIds: Set<string> = new Set()
 ): {
   validations: GoogleSheetRowValidation[];
   publishedQuestions: MCQQuestion[];
@@ -349,7 +347,7 @@ export function validateAndConvertSheetRows(
 
   const validations: GoogleSheetRowValidation[] = [];
   const publishedQuestions: MCQQuestion[] = [];
-  const seenSheetIds = sharedSeenSheetIds || new Set<string>();
+  const seenSheetIds = new Set<string>();
 
   let draftCount = 0;
   let reviewCount = 0;
@@ -363,29 +361,29 @@ export function validateAndConvertSheetRows(
     // Skip completely empty rows
     if (row.length === 0 || row.every((c) => c === '')) continue;
 
-    const rowNum = rowNumberOffset + r + 1;
+    const rowNum = r + 1;
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    const id = getCell(row, 'id').trim();
-    const examId = getCell(row, 'examId').trim();
-    const subjectId = getCell(row, 'subjectId').trim();
-    const topicId = getCell(row, 'topicId').trim();
-    const question = getCell(row, 'question').trim();
-    const optionA = getCell(row, 'optionA').trim();
-    const optionB = getCell(row, 'optionB').trim();
-    const optionC = getCell(row, 'optionC').trim();
-    const optionD = getCell(row, 'optionD').trim();
-    const rawAnswer = getCell(row, 'correctAnswer').trim().toUpperCase();
-    const explanation = getCell(row, 'explanation').trim();
-    const importantPoint = getCell(row, 'importantPoint').trim();
-    const additionalFact = getCell(row, 'additionalFact').trim();
-    const commonMistake = getCell(row, 'commonMistake').trim();
-    const rawDifficulty = getCell(row, 'difficulty').trim();
-    const rawSourceType = getCell(row, 'sourceType').trim();
-    const rawYear = getCell(row, 'year').trim();
-    const examName = getCell(row, 'examName').trim();
-    const rawStatus = getCell(row, 'status').trim();
+    const id = getCell(row, 'id');
+    const examId = getCell(row, 'examId');
+    const subjectId = getCell(row, 'subjectId');
+    const topicId = getCell(row, 'topicId');
+    const question = getCell(row, 'question');
+    const optionA = getCell(row, 'optionA');
+    const optionB = getCell(row, 'optionB');
+    const optionC = getCell(row, 'optionC');
+    const optionD = getCell(row, 'optionD');
+    const rawAnswer = getCell(row, 'correctAnswer').toUpperCase();
+    const explanation = getCell(row, 'explanation');
+    const importantPoint = getCell(row, 'importantPoint');
+    const additionalFact = getCell(row, 'additionalFact');
+    const commonMistake = getCell(row, 'commonMistake');
+    const rawDifficulty = getCell(row, 'difficulty');
+    const rawSourceType = getCell(row, 'sourceType');
+    const rawYear = getCell(row, 'year');
+    const examName = getCell(row, 'examName');
+    const rawStatus = getCell(row, 'status');
 
     const status = normalizeStatus(rawStatus);
 
@@ -463,16 +461,12 @@ export function validateAndConvertSheetRows(
 
     let convertedMCQ: MCQQuestion | undefined;
     if (isValid) {
-      const cleanExamId = examId.toLowerCase().replace(/[\s_]+/g, '-');
-      const cleanSubjectId = subjectId.toLowerCase().replace(/[\s_]+/g, '-');
-      const cleanTopicId = topicId.toLowerCase().replace(/[\s_]+/g, '-');
-
       convertedMCQ = {
         id,
-        examId: cleanExamId,
-        examName: examName || formatExamNameFallback(cleanExamId),
-        subjectId: cleanSubjectId,
-        topicId: cleanTopicId,
+        examId,
+        examName: examName || formatExamNameFallback(examId),
+        subjectId,
+        topicId,
         question,
         options: {
           A: optionA,
@@ -522,93 +516,6 @@ export function validateAndConvertSheetRows(
       duplicateCount,
     },
   };
-}
-
-/**
- * Discovers and fetches all CSVs from a Google Sheet (supporting multi-tab workbooks and multiple URLs).
- */
-async function fetchAllSheetCSVs(
-  rawUrl: string,
-  options: { forceRefresh?: boolean } = {}
-): Promise<{ sourceName: string; csvText: string }[]> {
-  const targetUrls = rawUrl
-    .split(/[\n,;]+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const results: { sourceName: string; csvText: string }[] = [];
-
-  for (const url of targetUrls) {
-    const isGoogleSpreadsheet = /docs\.google\.com\/spreadsheets\/d\/(?:e\/)?([a-zA-Z0-9-_]+)/.test(url);
-    const hasExplicitGid = /[?&]gid=\d+/.test(url);
-
-    // If it's a Google Spreadsheet without an explicit single-tab GID, discover all sheet tabs
-    if (isGoogleSpreadsheet && !hasExplicitGid) {
-      const baseMatch = url.match(/(https:\/\/docs\.google\.com\/spreadsheets\/d\/(?:e\/)?[a-zA-Z0-9-_]+)/);
-      if (baseMatch) {
-        const baseUrl = baseMatch[1];
-        let discoveredGids: string[] = [];
-
-        try {
-          const pubhtmlUrl = `${baseUrl}/pubhtml${options.forceRefresh ? `?_t=${Date.now()}` : ''}`;
-          const htmlRes = await fetch(pubhtmlUrl);
-          if (htmlRes.ok) {
-            const html = await htmlRes.text();
-            const gidRegex = /gid=([0-9]+)/g;
-            let m: RegExpExecArray | null;
-            while ((m = gidRegex.exec(html)) !== null) {
-              if (!discoveredGids.includes(m[1])) {
-                discoveredGids.push(m[1]);
-              }
-            }
-          }
-        } catch (err) {
-          console.warn('[GoogleSheetLoader] Multi-tab discovery warning:', err);
-        }
-
-        // If multiple GIDs (or at least one) were found in the workbook, fetch all tabs
-        if (discoveredGids.length > 0) {
-          const tabFetches = discoveredGids.map(async (gid) => {
-            const tabUrl = `${baseUrl}/pub?gid=${gid}&single=true&output=csv${
-              options.forceRefresh ? `&_t=${Date.now()}` : ''
-            }`;
-            const res = await fetch(tabUrl, {
-              method: 'GET',
-              headers: { Accept: 'text/csv, text/plain, */*' },
-            });
-            if (!res.ok) {
-              throw new Error(`HTTP ${res.status} on tab gid=${gid}`);
-            }
-            const text = await res.text();
-            return { sourceName: `Tab gid=${gid}`, csvText: text };
-          });
-
-          const tabResults = await Promise.all(tabFetches);
-          results.push(...tabResults);
-          continue;
-        }
-      }
-    }
-
-    // Direct fetch fallback for single-tab, non-Google, or fallback URLs
-    const fetchUrl = options.forceRefresh
-      ? `${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`
-      : url;
-
-    const response = await fetch(fetchUrl, {
-      method: 'GET',
-      headers: { Accept: 'text/csv, text/plain, */*' },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-    }
-
-    const csvText = await response.text();
-    results.push({ sourceName: url, csvText });
-  }
-
-  return results;
 }
 
 /**
@@ -671,9 +578,25 @@ export async function fetchGoogleSheetQuestions(
   notifySubscribers(loadingReport);
 
   try {
-    const csvSources = await fetchAllSheetCSVs(url, options);
+    // Add cache buster when force refreshing
+    const fetchUrl = options.forceRefresh
+      ? `${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`
+      : url;
 
-    if (csvSources.length === 0 || csvSources.every((s) => !s.csvText || s.csvText.trim().length === 0)) {
+    const response = await fetch(fetchUrl, {
+      method: 'GET',
+      headers: {
+        Accept: 'text/csv, text/plain, */*',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+    }
+
+    const csvText = await response.text();
+
+    if (!csvText || csvText.trim().length === 0) {
       const emptyReport: GoogleSheetBankReport = {
         url,
         isConfigured: true,
@@ -696,54 +619,28 @@ export async function fetchGoogleSheetQuestions(
       return emptyReport;
     }
 
-    const allValidations: GoogleSheetRowValidation[] = [];
-    const allPublishedQuestions: MCQQuestion[] = [];
-    const seenSheetIds = new Set<string>();
+    // Parse CSV
+    const parsedRows = parseCSV(csvText);
+
+    // Get current local question IDs to enforce no overwriting rule
     const localIds = localQuestionIdsSupplier ? localQuestionIdsSupplier() : new Set<string>();
 
-    let totalRows = 0;
-    let draftCount = 0;
-    let reviewCount = 0;
-    let archivedCount = 0;
-    let malformedCount = 0;
-    let duplicateCount = 0;
-
-    for (const source of csvSources) {
-      if (!source.csvText || source.csvText.trim().length === 0) continue;
-      const parsedRows = parseCSV(source.csvText);
-      if (parsedRows.length === 0) continue;
-
-      const converted = validateAndConvertSheetRows(
-        parsedRows,
-        localIds,
-        seenSheetIds,
-        totalRows
-      );
-
-      allValidations.push(...converted.validations);
-      allPublishedQuestions.push(...converted.publishedQuestions);
-
-      totalRows += converted.counts.totalRows;
-      draftCount += converted.counts.draftCount;
-      reviewCount += converted.counts.reviewCount;
-      archivedCount += converted.counts.archivedCount;
-      malformedCount += converted.counts.malformedCount;
-      duplicateCount += converted.counts.duplicateCount;
-    }
+    const { validations, publishedQuestions, counts } = validateAndConvertSheetRows(
+      parsedRows,
+      localIds
+    );
 
     let status: GoogleSheetStatus = 'success';
     let statusMessage = 'Questions loaded successfully';
 
-    if (allPublishedQuestions.length === 0) {
+    if (counts.publishedCount === 0) {
       status = 'empty';
-      statusMessage = totalRows > 0
-        ? `No published questions found. (${totalRows} rows in Sheet, but none marked as PUBLISHED)`
+      statusMessage = counts.totalRows > 0
+        ? `No published questions found. (${counts.totalRows} rows in Sheet, but none marked as PUBLISHED)`
         : 'No questions found in Google Sheet.';
-    } else if (malformedCount > 0) {
+    } else if (counts.malformedCount > 0) {
       status = 'success';
-      statusMessage = `Loaded ${allPublishedQuestions.length} published questions across ${csvSources.length} sheets (${malformedCount} malformed rows skipped).`;
-    } else {
-      statusMessage = `Loaded ${allPublishedQuestions.length} published questions across ${csvSources.length} sheets.`;
+      statusMessage = `Loaded ${counts.publishedCount} published questions (${counts.malformedCount} malformed rows skipped).`;
     }
 
     const successReport: GoogleSheetBankReport = {
@@ -752,19 +649,19 @@ export async function fetchGoogleSheetQuestions(
       status,
       statusMessage,
       lastFetchedAt: new Date().toISOString(),
-      totalRows,
-      publishedCount: allPublishedQuestions.length,
-      draftCount,
-      reviewCount,
-      archivedCount,
-      malformedRowsCount: malformedCount,
-      duplicateIdsCount: duplicateCount,
-      validations: allValidations,
-      publishedQuestions: allPublishedQuestions,
+      totalRows: counts.totalRows,
+      publishedCount: counts.publishedCount,
+      draftCount: counts.draftCount,
+      reviewCount: counts.reviewCount,
+      archivedCount: counts.archivedCount,
+      malformedRowsCount: counts.malformedCount,
+      duplicateIdsCount: counts.duplicateCount,
+      validations,
+      publishedQuestions,
     };
 
     cachedReport = successReport;
-    cachedPublishedQuestions = allPublishedQuestions;
+    cachedPublishedQuestions = publishedQuestions;
 
     // Invalidate mock test pool & other consumers
     if (onCacheInvalidateCallback) {
@@ -948,20 +845,3 @@ export function generateSampleGoogleSheetCSV(): string {
 
   return [headers, ...sampleRows].join('\n');
 }
-
-// Automatic bootstrap: Load Google Sheet questions eagerly in client runtime
-if (typeof window !== 'undefined') {
-  setTimeout(() => {
-    try {
-      const currentUrl = getEffectiveSheetUrl();
-      if (isSheetConfigured(currentUrl)) {
-        fetchGoogleSheetQuestions().catch((err) => {
-          console.warn('[GoogleSheetLoader] Background bootstrap fetch warning:', err);
-        });
-      }
-    } catch {
-      // safe fallback
-    }
-  }, 100);
-}
-
