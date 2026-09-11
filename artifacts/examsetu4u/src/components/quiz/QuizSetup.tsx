@@ -16,6 +16,7 @@ import { Button, Card } from '@/components/site';
 import { exams, getSubjectsForExam, getTopicsForSubject } from '@/data/curriculum';
 import { filterQuizQuestions, getAllQuizQuestions } from '@/data/quiz/questions';
 import type { MCQDifficulty, MCQQuestion } from '@/data/quiz/types';
+import { useQuestionBank } from '@/hooks/useQuestionBank';
 
 interface QuizSetupProps {
   initialExamId?: string;
@@ -95,6 +96,8 @@ export function QuizSetup({
     setSelectedTopicId('');
   };
 
+  const { publishedSheetCount } = useQuestionBank();
+
   // Calculate matching questions in real-time
   const matchingQuestions = useMemo(() => {
     return filterQuizQuestions({
@@ -105,7 +108,7 @@ export function QuizSetup({
       random: isRandom,
       search: searchQuery,
     });
-  }, [selectedExamId, selectedSubjectId, selectedTopicId, difficulty, isRandom, searchQuery]);
+  }, [selectedExamId, selectedSubjectId, selectedTopicId, difficulty, isRandom, searchQuery, publishedSheetCount]);
 
   const currentExamObj = exams.find((e) => e.id === selectedExamId);
   const currentSubjectObj = availableSubjects.find((s) => s.id === selectedSubjectId);

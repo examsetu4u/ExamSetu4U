@@ -1,5 +1,19 @@
 import { loadShikshanKaushalAsMCQQuestions, resolveTopicId } from '@/data/questions/super-tet/shikshan-kaushal';
+import { getPublishedGoogleSheetQuestions, registerLocalQuestionIdsSupplier } from '@/services/google-sheet-loader';
 import type { MCQQuestion, QuizFilterOptions } from './types';
+
+// Register supplier so Google Sheet validator knows existing local question IDs and avoids overwriting
+registerLocalQuestionIdsSupplier(() => {
+  const ids = new Set<string>();
+  sampleMCQQuestions.forEach((q) => ids.add(q.id));
+  try {
+    const skList = loadShikshanKaushalAsMCQQuestions();
+    skList.forEach((q) => ids.add(q.id));
+  } catch {
+    // Ignore
+  }
+  return ids;
+});
 
 export const sampleMCQQuestions: MCQQuestion[] = [
   // Topic 1: शिक्षण का अर्थ एवं परिभाषा (super-tet-teaching-skills-1)
@@ -619,7 +633,7 @@ export const sampleMCQQuestions: MCQQuestion[] = [
   },
 ];
 
-// Unified getter for all quiz questions including Shikshan Kaushal 1000 MCQ system
+// Unified getter for all quiz questions including Shikshan Kaushal 1000 MCQ system and Google Sheets
 export function getAllQuizQuestions(): MCQQuestion[] {
   const map = new Map<string, MCQQuestion>();
   sampleMCQQuestions.forEach((q) => map.set(q.id, q));
@@ -628,6 +642,17 @@ export function getAllQuizQuestions(): MCQQuestion[] {
     skList.forEach((q) => map.set(q.id, q));
   } catch (err) {
     console.warn('[QuizQuestions] Failed to load Shikshan Kaushal batch questions:', err);
+  }
+  try {
+    const sheetQuestions = getPublishedGoogleSheetQuestions();
+    sheetQuestions.forEach((q) => {
+      // Rule: Do not overwrite an existing local question having the same ID
+      if (!map.has(q.id)) {
+        map.set(q.id, q);
+      }
+    });
+  } catch (err) {
+    console.warn('[QuizQuestions] Failed to load Google Sheet questions:', err);
   }
   return Array.from(map.values());
 }
@@ -640,6 +665,16 @@ function getIndexedQuestions(): Map<string, MCQQuestion> {
     skList.forEach((q) => map.set(q.id, q));
   } catch (err) {
     console.warn('[QuizQuestions] Failed to index Shikshan Kaushal questions:', err);
+  }
+  try {
+    const sheetQuestions = getPublishedGoogleSheetQuestions();
+    sheetQuestions.forEach((q) => {
+      if (!map.has(q.id)) {
+        map.set(q.id, q);
+      }
+    });
+  } catch (err) {
+    console.warn('[QuizQuestions] Failed to index Google Sheet questions:', err);
   }
   return map;
 }

@@ -4,17 +4,19 @@ import * as schema from "./schema";
 
 const { Pool } = pg;
 
-export let pool: any;
+export let pool: any = null;
 let db: any;
 
-try {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL not set");
+if (process.env.DATABASE_URL) {
+  try {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    db = drizzle(pool, { schema });
+  } catch (err) {
+    console.warn("[Database] Could not connect to DATABASE_URL, using fallback mock:", err);
   }
-  pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  db = drizzle(pool, { schema });
-} catch {
-  console.warn('[AI Studio] Database not connected — using mock');
+}
+
+if (!db) {
   const noOp = {
     findMany: async () => [],
     findFirst: async () => null,

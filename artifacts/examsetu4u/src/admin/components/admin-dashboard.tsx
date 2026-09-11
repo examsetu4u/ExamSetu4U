@@ -9,6 +9,7 @@ import {
   Download,
   FileCheck2,
   FileQuestion,
+  FileSpreadsheet,
   FileText,
   FolderTree,
   GraduationCap,
@@ -368,6 +369,19 @@ export function AdminDashboard({ onNavigateTab }: AdminDashboardProps) {
             <div>
               <div className="text-sm font-bold text-[hsl(var(--foreground))]">Import & Export</div>
               <p className="text-xs text-[hsl(var(--muted-foreground))]">JSON/CSV batch pipelines</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onNavigateTab('google-sheets')}
+            className="flex flex-col items-start gap-2 rounded-xl border border-emerald-300/80 bg-emerald-50/30 dark:border-emerald-800/60 dark:bg-emerald-950/20 p-4 text-left transition hover:border-emerald-500 hover:bg-emerald-50/60"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <FileSpreadsheet className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-[hsl(var(--foreground))]">Google Sheets Bank</div>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">Module 19 external CSV sync</p>
             </div>
           </button>
         </div>

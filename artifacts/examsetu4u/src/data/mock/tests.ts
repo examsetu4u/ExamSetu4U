@@ -2,6 +2,7 @@ import { getExam, getSubject } from '@/data/curriculum';
 import { pyqQuestions, type PYQQuestion } from '@/data/pyq';
 import { getAllQuizQuestions, getQuestionById } from '@/data/quiz/questions';
 import type { MCQQuestion } from '@/data/quiz/types';
+import { registerOnCacheInvalidate } from '@/services/google-sheet-loader';
 import type { MockTestConfig } from './types';
 
 // Convert PYQ questions to MCQQuestion structure without modifying original data
@@ -321,6 +322,15 @@ export function getMockTestsForExam(examId: string): MockTestConfig[] {
 
 // Build Unified Question Pool without duplicating datasets
 let cachedUnifiedPool: MCQQuestion[] | null = null;
+
+export function invalidateUnifiedQuestionPool(): void {
+  cachedUnifiedPool = null;
+}
+
+// Automatically reset pool cache whenever Google Sheet questions are loaded or refreshed
+registerOnCacheInvalidate(() => {
+  invalidateUnifiedQuestionPool();
+});
 
 export function getUnifiedQuestionPool(): MCQQuestion[] {
   if (!cachedUnifiedPool) {

@@ -8,6 +8,7 @@ import {
   ExternalLink,
   FileCheck2,
   FileQuestion,
+  FileSpreadsheet,
   FileText,
   FolderTree,
   GraduationCap,
@@ -21,6 +22,7 @@ import { useState } from 'react';
 import { resetAdminStoreToDefaults } from '../services/admin-service';
 import { AdminDashboard } from './admin-dashboard';
 import { ExamManager } from './exam-manager';
+import { GoogleSheetManager } from './google-sheet-manager';
 import { ImportExportHub } from './import-export-hub';
 import { MockTestManager } from './mock-test-manager';
 import { QuestionManager } from './question-manager';
@@ -40,6 +42,7 @@ export type AdminTabId =
   | 'topics'
   | 'study-material'
   | 'questions'
+  | 'google-sheets'
   | 'mock-tests'
   | 'validation'
   | 'import-export';
@@ -58,6 +61,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'topics', label: 'Topics', icon: FolderTree },
   { id: 'study-material', label: 'Study Material', icon: FileText },
   { id: 'questions', label: 'Questions & MCQs', icon: FileQuestion },
+  { id: 'google-sheets', label: 'Google Sheets Bank', icon: FileSpreadsheet, badge: 'M19' },
   { id: 'mock-tests', label: 'Mock Tests', icon: Clock },
   { id: 'validation', label: 'Content Audit', icon: FileCheck2 },
   { id: 'import-export', label: 'Import / Export', icon: Download },
@@ -269,6 +273,7 @@ export function AdminLayout({ onReturnToStudentApp }: AdminLayoutProps) {
             {activeTab === 'topics' && <TopicManager />}
             {activeTab === 'study-material' && <StudyMaterialManager />}
             {activeTab === 'questions' && <QuestionManager />}
+            {activeTab === 'google-sheets' && <GoogleSheetManager />}
             {activeTab === 'mock-tests' && <MockTestManager />}
             {activeTab === 'validation' && <ValidationReport />}
             {activeTab === 'import-export' && <ImportExportHub />}
