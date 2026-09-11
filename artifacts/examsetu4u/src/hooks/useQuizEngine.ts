@@ -4,6 +4,7 @@ import type { MCQQuestion, QuizAttemptResult, QuizSessionState } from '@/data/qu
 import { clearQuizSession, loadQuizSession, saveQuizAttempt, saveQuizSession } from '@/lib/quiz-storage';
 import { recordQuizAttempt } from '@/lib/user-progress';
 import { recordQuizMistake, recordRevisionAttempt } from '@/lib/mistakes';
+import { subscribeToQuestionBank } from '@/services/google-sheet-loader';
 
 export type PaletteQuestionStatus = 'current' | 'answered_marked' | 'marked' | 'answered' | 'unanswered';
 
@@ -18,6 +19,14 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
   random?: boolean;
   title?: string;
 }) {
+  const [bankRevision, setBankRevision] = useState(0);
+
+  useEffect(() => {
+    return subscribeToQuestionBank(() => {
+      setBankRevision((r) => r + 1);
+    });
+  }, []);
+
   const [session, setSession] = useState<QuizSessionState | null>(() => {
     // Attempt to resume existing active session from localStorage
     const saved = loadQuizSession();
@@ -36,7 +45,7 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
       return initialQuestions || [];
     }
     return getQuestionsByIds(session.questionIds);
-  }, [session, initialQuestions]);
+  }, [session, initialQuestions, bankRevision]);
 
   const currentIndex = session ? session.currentIndex : 0;
   const currentQuestion: MCQQuestion | undefined = currentQuestions[currentIndex];

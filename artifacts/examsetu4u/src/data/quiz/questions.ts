@@ -693,31 +693,126 @@ export function getQuestionsByIds(ids: string[]): MCQQuestion[] {
   return list;
 }
 
+export function areExamsEquivalent(a?: string, b?: string): boolean {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const normA = a.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  const normB = b.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  if (normA === normB) return true;
+  const superTetAliases = new Set(['super-tet', 'supertet', 'super-tet-exam']);
+  if (superTetAliases.has(normA) && superTetAliases.has(normB)) return true;
+  return false;
+}
+
+export function areSubjectsEquivalent(a?: string, b?: string): boolean {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const normA = a.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  const normB = b.trim().toLowerCase().replace(/[\s_]+/g, '-');
+  if (normA === normB) return true;
+
+  const skAliases = new Set([
+    'shikshan-kaushal',
+    'teaching-skills',
+    'super-tet-teaching-skills',
+    'super-tet-shikshan-kaushal',
+  ]);
+  if (skAliases.has(normA) && skAliases.has(normB)) return true;
+
+  const cdpAliases = new Set([
+    'bal-vikas-shikshan-vidhiyan',
+    'bal-vikas',
+    'child-development',
+    'super-tet-child-development',
+    'cdp',
+    'super-tet-cdp',
+    'super-tet-bal-vikas',
+    'super-tet-bal-vikas-shikshan-vidhiyan',
+  ]);
+  if (cdpAliases.has(normA) && cdpAliases.has(normB)) return true;
+
+  return false;
+}
+
 export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
   const { examId, subjectId, topicId, difficulty, count, random, search } = options;
   const query = (search || '').trim().toLowerCase();
   const allQuestions = getAllQuizQuestions();
 
-  const isMatchingSubject = (qSubId: string, filterSubId?: string): boolean => {
-    if (!filterSubId) return true;
-    if (qSubId === filterSubId) return true;
-    const isSkFilter = filterSubId === 'shikshan-kaushal' || filterSubId === 'teaching-skills' || filterSubId === 'super-tet-teaching-skills';
-    const isSkQ = qSubId === 'shikshan-kaushal' || qSubId === 'teaching-skills' || qSubId === 'super-tet-teaching-skills';
-    return isSkFilter && isSkQ;
-  };
-
   const isMatchingTopic = (qTopicId: string, filterTopicId?: string): boolean => {
-    if (!filterTopicId) return true;
+    if (!filterTopicId || filterTopicId === 'all') return true;
     if (qTopicId === filterTopicId) return true;
-    const resolvedFilter = resolveTopicId(filterTopicId) || filterTopicId;
-    const resolvedQ = resolveTopicId(qTopicId) || qTopicId;
-    return resolvedFilter === resolvedQ;
+    const normQ = qTopicId.trim().toLowerCase().replace(/[\s_]+/g, '-');
+    const normFilter = filterTopicId.trim().toLowerCase().replace(/[\s_]+/g, '-');
+    if (normQ === normFilter) return true;
+
+    const resolvedFilter = resolveTopicId(filterTopicId) || normFilter;
+    const resolvedQ = resolveTopicId(qTopicId) || normQ;
+    if (resolvedFilter === resolvedQ) return true;
+
+    // Child Development curriculum topics mapping:
+    // super-tet-child-development-1 = 'बाल विकास के सिद्धांत'
+    if (
+      (normFilter === 'super-tet-child-development-1' || normFilter === 'bal-vikas-ke-siddhant') &&
+      [
+        'bal-vikas',
+        'vikas-siddhant',
+        'vanshanukram-vatavaran',
+        'vyaktigat-bhinnata',
+        'piaget',
+        'vygotsky',
+        'kohlberg',
+        'erikson',
+        'buddhi',
+        'bahubuddhi',
+        'srijanatmakta',
+      ].includes(normQ)
+    ) {
+      return true;
+    }
+
+    // super-tet-child-development-2 = 'अधिगम और प्रेरणा'
+    if (
+      (normFilter === 'super-tet-child-development-2' || normFilter === 'adhigam-aur-prerna') &&
+      [
+        'adhigam',
+        'adhigam-prerna',
+        'behaviorism',
+        'rachnavad',
+        'mulyankan',
+        'rachnatmak-mulyankan',
+        'portfolio',
+        'naidanik-mulyankan',
+      ].includes(normQ)
+    ) {
+      return true;
+    }
+
+    // super-tet-child-development-3 = 'समावेशी शिक्षा'
+    if (
+      (normFilter === 'super-tet-child-development-3' || normFilter === 'samaveshi-shikshan') &&
+      [
+        'samaveshi-shikshan',
+        'vishesh-avashyakta',
+        'adhigam-kathinaiyan',
+        'autism',
+        'pratibhashali-vidyarthi',
+        'bal-adhikar',
+        'saman-avsar',
+      ].includes(normQ)
+    ) {
+      return true;
+    }
+
+    return false;
   };
 
   let filtered = allQuestions.filter((q) => {
-    if (examId && q.examId !== examId) return false;
-    if (!isMatchingSubject(q.subjectId, subjectId)) return false;
-    if (!isMatchingTopic(q.topicId, topicId)) return false;
+    if (examId && !areExamsEquivalent(q.examId, examId)) return false;
+    if (subjectId && !areSubjectsEquivalent(q.subjectId, subjectId)) return false;
+    if (topicId && !isMatchingTopic(q.topicId, topicId)) return false;
     if (difficulty && difficulty !== 'All' && q.difficulty !== difficulty) return false;
     if (query) {
       const matchText = `${q.question} ${q.options.A} ${q.options.B} ${q.options.C} ${q.options.D} ${q.explanation} ${q.importantPoint} ${q.id}`.toLowerCase();

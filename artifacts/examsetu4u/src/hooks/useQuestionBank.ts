@@ -34,7 +34,7 @@ export function useQuestionBank(): UseQuestionBankResult {
     });
 
     // If report is not loaded yet and it's configured, kick off initial load
-    if (!report && isConfigured) {
+    if ((!report || report.status === 'unconfigured') && isConfigured) {
       fetchGoogleSheetQuestions().catch((err) => {
         console.warn('[useQuestionBank] Initial fetch error:', err);
       });
