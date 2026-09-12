@@ -24,7 +24,7 @@ export function QuickActions({
       desc: 'अवधारणात्मक नोट्स एवं रिवीजन',
       href: '/study-material',
       icon: BookOpen,
-      tone: 'bg-[#f7e3bb] text-[#825413]',
+      tone: 'bg-blue-50 text-blue-700 border border-blue-200/80',
     },
     {
       id: 'action-pyq',
@@ -33,7 +33,7 @@ export function QuickActions({
       desc: 'पूर्व परीक्षा प्रश्न एवं विस्तृत हल',
       href: '/pyq',
       icon: FileText,
-      tone: 'bg-[#d6ebe5] text-[#246556]',
+      tone: 'bg-sky-50 text-sky-700 border border-sky-200/80',
     },
     {
       id: 'action-quiz',
@@ -42,7 +42,7 @@ export function QuickActions({
       desc: 'समयबद्ध वस्तुनिष्ठ टेस्ट',
       href: '/quiz',
       icon: Brain,
-      tone: 'bg-[#dce4f2] text-[#34547f]',
+      tone: 'bg-indigo-50 text-indigo-700 border border-indigo-200/80',
     },
     {
       id: 'action-progress',
@@ -51,7 +51,7 @@ export function QuickActions({
       desc: 'Intelligent Score एवं स्तर',
       href: '/analytics',
       icon: BarChart2,
-      tone: 'bg-[#f3dcd5] text-[#9a493e]',
+      tone: 'bg-blue-100/80 text-blue-800 border border-blue-200',
     },
   ];
 
@@ -125,22 +125,22 @@ export function QuickActions({
             className="group focus-ring block"
             id={act.id}
           >
-            <Card className="h-full p-4 transition duration-150 hover:-translate-y-0.5 hover:border-[hsl(var(--accent))] hover:shadow-sm">
+            <Card className="h-full p-4 transition-all duration-150 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-sm">
               <div className="flex items-start justify-between gap-2">
-                <span className={`flex h-10 w-10 items-center justify-center rounded-xl text-base font-bold ${act.tone}`}>
+                <span className={`flex h-10 w-10 items-center justify-center rounded-xl text-base font-bold shadow-2xs ${act.tone}`}>
                   <Icon size={18} />
                 </span>
-                <span className="text-[hsl(var(--muted-foreground))] transition group-hover:translate-x-1 group-hover:text-[hsl(var(--primary))]">
+                <span className="text-slate-400 transition group-hover:translate-x-1 group-hover:text-blue-600">
                   <ArrowRight size={15} />
                 </span>
               </div>
-              <h3 className="mt-3 text-sm font-bold text-[hsl(var(--primary))]">
+              <h3 className="mt-3 text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
                 {act.title}
               </h3>
-              <p className="text-[11px] font-semibold text-[hsl(var(--accent-foreground))]">
+              <p className="text-[11px] font-semibold text-blue-600">
                 {act.titleHi}
               </p>
-              <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))] line-clamp-2">
+              <p className="mt-1 text-xs text-slate-500 line-clamp-2 leading-relaxed">
                 {act.desc}
               </p>
             </Card>

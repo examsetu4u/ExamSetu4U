@@ -89,39 +89,43 @@ export default function SubjectDetailPage() {
 
   return (
     <Layout>
-      {/* 1. Subject Header */}
-      <section className="paper-grid border-b border-[hsl(var(--border))] py-10 sm:py-14">
+      {/* 1. Subject Header - Prepare with purpose theme */}
+      <section className="hero-wash text-white py-10 sm:py-14">
         <Container>
-          <Breadcrumbs
-            items={[
-              { label: 'Home', href: '/' },
-              { label: 'Exams', href: '/exams' },
-              { label: exam.name, href: `/exams/${exam.id}` },
-              { label: subject.name },
-            ]}
-          />
+          <div className="text-blue-200">
+            <Breadcrumbs
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Exams', href: '/exams' },
+                { label: exam.name, href: `/exams/${exam.id}` },
+                { label: subject.name },
+              ]}
+            />
+          </div>
 
           <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <span className="eyebrow">{exam.name}</span>
-              <h1 className="font-display mt-2 text-3xl font-bold tracking-[-.035em] text-[hsl(var(--primary))] sm:text-4xl">
-                {subject.name}
+              <span className="inline-flex rounded-md border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-blue-200 backdrop-blur-xs">
+                {exam.name}
+              </span>
+              <h1 className="font-display mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                <span className="text-blue-300">{subject.name}</span>
               </h1>
-              <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-base">
+              <p className="mt-3 text-sm leading-relaxed text-blue-100/90 sm:text-base">
                 {subject.description}
               </p>
             </div>
 
             {/* Quick Stats Pill */}
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-[hsl(var(--secondary))] px-3 py-1 text-xs font-bold text-[hsl(var(--primary))]">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-xs shadow-xs">
                 {subjectStats.totalTopics} Topics
               </span>
-              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-3.5 py-1.5 text-xs font-bold text-emerald-200 backdrop-blur-xs">
                 {subjectStats.completedTopics} Completed
               </span>
               {subjectStats.quizAccuracy !== null && (
-                <span className="rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold text-blue-200 backdrop-blur-xs shadow-xs">
                   {subjectStats.quizAccuracy}% Accuracy
                 </span>
               )}
@@ -130,28 +134,28 @@ export default function SubjectDetailPage() {
         </Container>
       </section>
 
-      {/* 2. Subject Progress Card (Requirement 3: Clean progress card) */}
-      <section className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] py-8">
+      {/* 2. Subject Progress Card */}
+      <section className="border-b border-slate-200 bg-white py-8">
         <Container>
-          <Card className="p-6 border border-[hsl(var(--border))] shadow-2xs" id="subject-progress-card">
+          <Card className="p-6 border border-blue-200/90 shadow-xs" id="subject-progress-card">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
                   विषयवार तैयारी स्तर (Subject Progress)
                 </p>
-                <h2 className="text-2xl font-bold text-[hsl(var(--primary))]">
+                <h2 className="text-2xl font-bold text-slate-900">
                   {subject.name}
                 </h2>
-                <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[hsl(var(--muted-foreground))]">
-                  <span className="text-[hsl(var(--primary))] font-bold">
-                    {subjectStats.completedTopics} / {subjectStats.totalTopics} Topics Completed
+                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
+                  <span className="text-slate-900 font-bold">
+                    {subjectStats.completedTopics} / {subjectStats.totalTopics} Topics Done
                   </span>
-                  <span>•</span>
-                  <span>{subjectStats.averageProgress}% Topic Progress</span>
+                  <span className="text-slate-300">•</span>
+                  <span>{subjectStats.averageProgress}% Progress</span>
                   {subjectStats.quizAccuracy !== null && (
                     <>
-                      <span>•</span>
-                      <span className="text-indigo-600 dark:text-indigo-400 font-bold">
+                      <span className="text-slate-300">•</span>
+                      <span className="text-blue-700 font-bold">
                         Quiz Accuracy: {subjectStats.quizAccuracy}%
                       </span>
                     </>
@@ -168,7 +172,7 @@ export default function SubjectDetailPage() {
                   <Button
                     href={continueItem.actionUrl}
                     variant="primary"
-                    className="w-full text-xs h-9 justify-center gap-1.5 shadow-xs"
+                    className="w-full text-xs h-9 justify-center gap-1.5 shadow-xs font-bold"
                   >
                     <Play size={12} className="fill-current" />
                     Continue Learning <ArrowRight size={13} />
@@ -180,14 +184,14 @@ export default function SubjectDetailPage() {
         </Container>
       </section>
 
-      {/* 3. Continue Learning Card for Subject (Requirement 8) */}
+      {/* 3. Continue Learning Card for Subject */}
       {continueItem && (
-        <section className="border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.2)] py-8">
+        <section className="border-b border-blue-100 bg-blue-50/40 py-8">
           <Container>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-[hsl(var(--accent-foreground))]" />
-                <h3 className="text-sm font-bold text-[hsl(var(--primary))]">
+                <Sparkles size={16} className="text-blue-700" />
+                <h3 className="text-sm font-bold text-slate-900">
                   इस विषय में अगला कदम (Next Step in {subject.name})
                 </h3>
               </div>
@@ -197,16 +201,16 @@ export default function SubjectDetailPage() {
         </section>
       )}
 
-      {/* 4. Topic List with Sorting and Status Badges (Requirement 8) */}
+      {/* 4. Topic List with Sorting and Status Badges */}
       <section className="py-12 sm:py-16">
         <Container>
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="eyebrow">अध्याय सूची (Topic Map)</p>
-              <h2 className="font-display mt-2 text-2xl font-bold tracking-[-.035em] text-[hsl(var(--primary))] sm:text-3xl">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-700">अध्याय सूची (Topic Map)</p>
+              <h2 className="font-display mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
                 {subject.name} के सभी अध्याय
               </h2>
-              <p className="mt-2 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="mt-2 text-xs sm:text-sm text-slate-600">
                 क्रमबद्ध तरीके से नोट्स पढ़ें, पिछले वर्षों के प्रश्न हल करें और क्विज़ दें।
               </p>
             </div>
@@ -220,11 +224,11 @@ export default function SubjectDetailPage() {
                 className="w-full sm:w-56"
               />
 
-              {/* Sorting Filter (Requirement 8: Recommended, Not Started, In Progress, Completed. Default: Recommended) */}
-              <div className="flex items-center gap-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-1">
+              {/* Sorting Filter */}
+              <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1">
                 {(
                   [
-                    { id: 'recommended', label: 'अनुशंसित (Recommended)' },
+                    { id: 'recommended', label: 'अनुशंसित' },
                     { id: 'in_progress', label: 'प्रगति पर' },
                     { id: 'not_started', label: 'शुरू नहीं किया' },
                     { id: 'completed', label: 'पूरा किया' },
@@ -234,10 +238,10 @@ export default function SubjectDetailPage() {
                     key={opt.id}
                     type="button"
                     onClick={() => setSortBy(opt.id)}
-                    className={`focus-ring rounded-md px-2.5 py-1 text-xs font-bold transition ${
+                    className={`focus-ring rounded-lg px-2.5 py-1 text-xs font-bold transition ${
                       sortBy === opt.id
-                        ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-xs'
-                        : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'
+                        ? 'bg-blue-700 text-white shadow-2xs'
+                        : 'text-slate-600 hover:text-blue-700'
                     }`}
                   >
                     {opt.label}
@@ -255,30 +259,30 @@ export default function SubjectDetailPage() {
 
                 const statusColor =
                   status === 'COMPLETED'
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                    ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
                     : status === 'IN_PROGRESS'
-                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
-                    : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]';
+                    ? 'border border-blue-200 bg-blue-50 text-blue-800'
+                    : 'border border-slate-200 bg-slate-50 text-slate-600';
 
                 return (
                   <Card
                     key={topic.id}
                     id={`topic-card-${topic.id}`}
-                    className="p-5 sm:p-6 transition hover:border-[hsl(var(--accent))] hover:shadow-2xs"
+                    className="p-5 sm:p-6 transition hover:border-blue-300 hover:shadow-xs"
                   >
                     <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2.5">
-                          <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${statusColor}`}>
+                          <span className={`rounded-full px-3 py-0.5 text-xs font-bold ${statusColor}`}>
                             {statusLabelHindi}
                           </span>
-                          <h3 className="text-base font-bold text-[hsl(var(--primary))] sm:text-lg">
+                          <h3 className="text-base font-bold text-slate-900 sm:text-lg">
                             {topic.name}
                           </h3>
                           <EstimatedTime minutes={topic.estimatedMinutes} />
                         </div>
 
-                        <p className="mt-2 text-xs sm:text-sm text-[hsl(var(--muted-foreground))] max-w-2xl">
+                        <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-2xl">
                           {topic.description}
                         </p>
 
@@ -287,14 +291,14 @@ export default function SubjectDetailPage() {
                           {steps.map((st) => (
                             <span
                               key={st.type}
-                              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold ${
+                              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold ${
                                 !st.isAvailable
-                                  ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] opacity-50'
+                                  ? 'border border-slate-200 bg-slate-50 text-slate-400 opacity-50'
                                   : st.status === 'completed'
-                                  ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                                  ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
                                   : st.status === 'in_progress'
-                                  ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
-                                  : 'bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]'
+                                  ? 'border border-blue-200 bg-blue-50 text-blue-800'
+                                  : 'border border-slate-200 bg-white text-slate-700'
                               }`}
                             >
                               {st.status === 'completed' && <Check size={12} strokeWidth={3} />}
@@ -303,7 +307,7 @@ export default function SubjectDetailPage() {
                               {st.type === 'quiz' && <Brain size={12} />}
                               <span>{st.title}</span>
                               {st.isAvailable && (
-                                <span className="text-[10px] opacity-70">
+                                <span className="text-[10px] opacity-75">
                                   ({st.status === 'completed' ? 'Done' : `${st.progress}%`})
                                 </span>
                               )}
@@ -318,7 +322,7 @@ export default function SubjectDetailPage() {
                         <Button
                           href={`/exams/${exam.id}/${subject.id}/${topic.id}`}
                           variant={status === 'IN_PROGRESS' ? 'primary' : 'secondary'}
-                          className="mt-4 w-full justify-center gap-1.5 text-xs h-9"
+                          className="mt-4 w-full justify-center gap-1.5 text-xs h-9 font-bold"
                         >
                           {status === 'COMPLETED' ? (
                             <>
@@ -341,10 +345,10 @@ export default function SubjectDetailPage() {
               })}
             </div>
           ) : (
-            <div className="mt-8 rounded-xl border border-dashed border-[hsl(var(--border))] p-10 text-center">
-              <CheckCircle2 className="mx-auto text-[hsl(var(--accent-foreground))]" />
-              <p className="mt-3 font-semibold text-[hsl(var(--primary))]">कोई अध्याय नहीं मिला</p>
-              <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
+            <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/30 p-10 text-center">
+              <CheckCircle2 className="mx-auto text-blue-700" size={28} />
+              <p className="mt-3 font-bold text-slate-900">कोई अध्याय नहीं मिला</p>
+              <p className="mt-1 text-sm text-slate-600">
                 फ़िल्टर या खोज शब्द बदलकर प्रयास करें।
               </p>
             </div>
@@ -353,7 +357,7 @@ export default function SubjectDetailPage() {
           <div className="mt-10">
             <Link
               href={`/exams/${exam.id}`}
-              className="focus-ring inline-flex items-center rounded text-sm font-bold text-[hsl(var(--primary))] hover:text-[hsl(var(--accent-foreground))]"
+              className="focus-ring inline-flex items-center rounded text-sm font-bold text-blue-700 hover:text-blue-800 transition"
             >
               <ArrowRight size={15} className="mr-2 rotate-180" />
               वापस {exam.name} पाठ्यक्रम पर जाएं
@@ -362,8 +366,8 @@ export default function SubjectDetailPage() {
         </Container>
       </section>
 
-      {/* 5. Quick Practice on Subject Page (Requirement 11) */}
-      <section className="py-10 border-t border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.15)]">
+      {/* 5. Quick Practice on Subject Page */}
+      <section className="py-10 border-t border-slate-200 bg-white">
         <Container>
           <QuickPractice
             examId={exam.id}

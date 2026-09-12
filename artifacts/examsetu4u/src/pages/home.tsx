@@ -56,39 +56,45 @@ export default function Home() {
   const getRecBadgeClass = (tone: string) => {
     switch (tone) {
       case 'warning':
-        return 'bg-[#f7e3bb] text-[#825413] border-[#ecd3a3]';
+        return 'bg-amber-50 text-amber-800 border-amber-200';
       case 'info':
-        return 'bg-[#dce4f2] text-[#34547f] border-[#c7d5ea]';
+        return 'bg-sky-50 text-sky-800 border-sky-200';
       case 'success':
-        return 'bg-[#d6ebe5] text-[#246556] border-[#bad8cf]';
+        return 'bg-emerald-50 text-emerald-800 border-emerald-200';
       case 'primary':
       default:
-        return 'bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] border-[hsl(var(--border))]';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
     }
   };
 
   return (
     <Layout>
       {/* 1. Hero Section */}
-      <section className="hero-wash overflow-hidden text-[hsl(var(--primary-foreground))]">
+      <section className="hero-wash overflow-hidden text-white">
         <Container className="grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-24">
           <div className="rise-in">
-            <p className="eyebrow text-[hsl(var(--accent))]">A clear start for your preparation</p>
-            <h1 className="font-display mt-4 max-w-2xl text-5xl leading-[.98] tracking-[-.055em] sm:text-6xl lg:text-7xl">
-              Prepare with <span className="text-[hsl(var(--accent))]">purpose.</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/40 bg-blue-500/20 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-200 backdrop-blur-xs">
+              <Sparkles size={13} className="text-blue-300" /> Free Exam Prep for Indian Aspirants
+            </span>
+            <h1 className="font-display mt-4 max-w-2xl text-4xl leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl font-extrabold text-white">
+              Prepare with <span className="text-blue-300">purpose.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-[hsl(var(--primary-foreground)/.75)] sm:text-lg">
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-blue-100/80 sm:text-base sm:leading-7">
               Free study material, previous year questions and exam-wise guidance for Indian students.
-              Search by subject, topic or concept.
+              Search by subject, topic or concept with real-time tracking.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href="/exams" data-testid="button-hero-browse-exams">
+              <Button
+                href="/exams"
+                className="bg-white text-blue-900 hover:bg-blue-50 border-white font-bold shadow-md"
+                data-testid="button-hero-browse-exams"
+              >
                 Browse exams <ArrowRight size={16} />
               </Button>
               <Button
                 href="/search"
                 variant="secondary"
-                className="border-[hsl(var(--primary-foreground)/.25)] bg-transparent text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary-foreground)/.1)]"
+                className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:border-white/50 backdrop-blur-xs"
                 data-testid="button-hero-search"
               >
                 Smart Search
@@ -96,31 +102,33 @@ export default function Home() {
             </div>
           </div>
           <div className="relative mx-auto w-full max-w-[390px] lg:justify-self-end">
-            <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full border border-[hsl(var(--accent)/.35)]" />
-            <div className="absolute -bottom-8 -left-8 h-20 w-20 rounded-full bg-[hsl(var(--accent)/.1)]" />
-            <Card className="relative overflow-hidden border-[hsl(var(--primary-foreground)/.16)] bg-[hsl(var(--primary-foreground)/.08)] p-6 text-[hsl(var(--primary-foreground))] shadow-none">
-              <div className="flex items-center justify-between border-b border-[hsl(var(--primary-foreground)/.14)] pb-5">
+            <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full border border-blue-400/20" />
+            <div className="absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-blue-500/10" />
+            <Card className="relative overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-6 text-white shadow-xl backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-white/15 pb-5">
                 <div>
-                  <p className="text-xs text-[hsl(var(--primary-foreground)/.55)]">Your preparation desk</p>
-                  <p className="mt-1 font-display text-2xl">One step at a time.</p>
+                  <p className="text-xs font-semibold text-blue-200">Your preparation desk</p>
+                  <p className="mt-1 font-display text-2xl font-bold">One step at a time.</p>
                 </div>
-                <Target size={26} className="text-[hsl(var(--accent))]" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/30 text-blue-200">
+                  <Target size={22} />
+                </span>
               </div>
-              <div className="mt-6 space-y-3">
-                <div className="rounded-lg bg-[hsl(var(--primary-foreground)/.09)] p-4">
-                  <div className="flex items-center justify-between text-xs">
-                    <span>Understand the concept</span>
-                    <span className="text-[hsl(var(--accent))]">01</span>
+              <div className="mt-5 space-y-3">
+                <div className="rounded-xl border border-blue-400/20 bg-blue-900/40 p-3.5">
+                  <div className="flex items-center justify-between text-xs font-semibold">
+                    <span>1. Understand the concept</span>
+                    <span className="font-bold text-blue-300">01</span>
                   </div>
-                  <div className="mt-3 h-1.5 rounded-full bg-[hsl(var(--primary-foreground)/.13)]">
-                    <div className="h-full w-[68%] rounded-full bg-[hsl(var(--accent))]" />
+                  <div className="mt-2.5 h-1.5 rounded-full bg-blue-950/60 overflow-hidden">
+                    <div className="h-full w-[68%] rounded-full bg-blue-400" />
                   </div>
                 </div>
-                <div className="rounded-lg border border-[hsl(var(--primary-foreground)/.14)] p-4 text-sm text-[hsl(var(--primary-foreground)/.7)]">
-                  <span className="mr-2 text-[hsl(var(--accent))]">02</span> Practice what you learn
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 p-3.5 text-xs text-blue-100 font-medium">
+                  <span className="font-bold text-blue-300">02</span> Practice what you learn
                 </div>
-                <div className="rounded-lg border border-[hsl(var(--primary-foreground)/.14)] p-4 text-sm text-[hsl(var(--primary-foreground)/.7)]">
-                  <span className="mr-2 text-[hsl(var(--accent))]">03</span> Return stronger tomorrow
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 p-3.5 text-xs text-blue-100 font-medium">
+                  <span className="font-bold text-blue-300">03</span> Return stronger tomorrow
                 </div>
               </div>
             </Card>
@@ -130,27 +138,27 @@ export default function Home() {
 
       {/* 2. Continue Learning Banner (if user has active session/topic) */}
       {continueItem && (
-        <section className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] py-6" id="home-continue-learning-section">
+        <section className="border-b border-blue-100 bg-blue-50/40 py-6" id="home-continue-learning-section">
           <Container>
-            <div className="flex flex-col justify-between gap-4 rounded-xl border border-[hsl(var(--accent)/.3)] bg-[hsl(var(--card))] p-5 shadow-xs sm:flex-row sm:items-center">
+            <div className="flex flex-col justify-between gap-4 rounded-xl border border-blue-200 bg-white p-5 shadow-xs sm:flex-row sm:items-center">
               <div className="flex items-start gap-3.5">
-                <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--accent))]">
-                  <Play size={18} className="fill-current" />
+                <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-white shadow-2xs">
+                  <Play size={17} className="fill-current" />
                 </span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
                       अध्ययन जारी रखें (Continue Learning)
                     </span>
-                    <span className="rounded bg-[hsl(var(--secondary))] px-1.5 py-0.5 text-[10px] font-semibold text-[hsl(var(--muted-foreground))]">
+                    <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-600">
                       {continueItem.examName}
                     </span>
                   </div>
-                  <h2 className="mt-1 text-base font-bold text-[hsl(var(--primary))] sm:text-lg">
+                  <h2 className="mt-1 text-base font-bold text-slate-900 sm:text-lg">
                     {continueItem.topicName}
                   </h2>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                    विषय: {continueItem.subjectName}
+                  <p className="text-xs text-slate-500">
+                    विषय: <span className="font-medium text-slate-700">{continueItem.subjectName}</span>
                   </p>
                 </div>
               </div>
@@ -167,9 +175,9 @@ export default function Home() {
       )}
 
       {/* 3. Popular Exams */}
-      <section className="py-16 sm:py-20">
+      <section className="py-14 sm:py-18">
         <Container>
-          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <SectionTitle
               eyebrow="Choose your path"
               title="Popular exams"
@@ -177,10 +185,10 @@ export default function Home() {
             />
             <Link
               href="/exams"
-              className="focus-ring flex w-fit items-center gap-2 rounded px-1 py-2 text-sm font-bold text-[hsl(var(--primary))]"
+              className="focus-ring flex w-fit items-center gap-1.5 rounded px-1 py-1.5 text-xs sm:text-sm font-bold text-blue-700 hover:text-blue-800 transition"
               data-testid="link-home-all-exams"
             >
-              View all exams <ArrowRight size={16} />
+              View all exams <ArrowRight size={15} />
             </Link>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -192,7 +200,7 @@ export default function Home() {
       </section>
 
       {/* 4. Practice Now (Quick Actions) */}
-      <section className="py-12 sm:py-16">
+      <section className="border-y border-blue-100/70 bg-blue-50/30 py-12 sm:py-16">
         <Container>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <SectionTitle
@@ -202,7 +210,7 @@ export default function Home() {
             />
             <Link
               href="/search"
-              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--primary))] hover:underline"
+              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:underline"
             >
               Smart Search & Discovery <ArrowRight size={14} />
             </Link>
@@ -214,7 +222,7 @@ export default function Home() {
       </section>
 
       {/* 5. Recommended Topics (Deterministic from local progress/performance) */}
-      <section className="paper-grid border-y border-[hsl(var(--border))] py-12 sm:py-16" id="home-recommended-topics-section">
+      <section className="paper-grid border-b border-[hsl(var(--border))] py-12 sm:py-16" id="home-recommended-topics-section">
         <Container>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <SectionTitle
@@ -224,7 +232,7 @@ export default function Home() {
             />
             <Link
               href="/dashboard"
-              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--primary))] hover:underline"
+              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:underline"
             >
               View in Dashboard <ArrowRight size={14} />
             </Link>
@@ -234,7 +242,7 @@ export default function Home() {
             {recommendations.map((rec) => (
               <Card
                 key={rec.id}
-                className="flex flex-col justify-between p-5 transition hover:-translate-y-0.5 hover:border-[hsl(var(--accent))] hover:shadow-xs"
+                className="flex flex-col justify-between p-5 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-xs"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2">
@@ -247,10 +255,10 @@ export default function Home() {
                     </span>
                   </div>
 
-                  <p className="mt-3 text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                  <p className="mt-3 text-xs font-bold uppercase tracking-wider text-blue-600">
                     {rec.examName} · {rec.subjectName}
                   </p>
-                  <h3 className="mt-1 text-base font-bold text-[hsl(var(--primary))]">
+                  <h3 className="mt-1 text-base font-bold text-slate-900">
                     {rec.topicName}
                   </h3>
 
@@ -262,7 +270,7 @@ export default function Home() {
                 </div>
 
                 <div className="mt-6 pt-3 border-t border-[hsl(var(--border))]">
-                  <Button href={rec.actionUrl} variant="secondary" className="w-full text-xs h-9">
+                  <Button href={rec.actionUrl} variant="secondary" className="w-full text-xs h-9 font-bold">
                     {rec.actionLabel} <ArrowRight size={13} />
                   </Button>
                 </div>
@@ -273,7 +281,7 @@ export default function Home() {
       </section>
 
       {/* 6. Popular Subjects Across Exams */}
-      <section className="bg-[hsl(var(--secondary)/.4)] border-y border-[hsl(var(--border))] py-14 sm:py-18" id="home-popular-subjects-section">
+      <section className="bg-slate-50/70 border-b border-[hsl(var(--border))] py-14 sm:py-18" id="home-popular-subjects-section">
         <Container>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <SectionTitle
@@ -283,7 +291,7 @@ export default function Home() {
             />
             <Link
               href="/study-material"
-              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--primary))] hover:underline"
+              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:underline"
             >
               Browse All Material <ArrowRight size={14} />
             </Link>
@@ -293,27 +301,27 @@ export default function Home() {
             {popularSubjects.map((sub) => (
               <Card
                 key={sub.id}
-                className="flex flex-col justify-between p-5 transition hover:border-[hsl(var(--accent))] hover:shadow-xs"
+                className="flex flex-col justify-between p-5 transition hover:border-blue-300 hover:shadow-sm"
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[hsl(var(--accent-foreground))]">
+                    <span className="text-xs font-bold text-blue-600">
                       {sub.examName}
                     </span>
-                    <span className="rounded-full bg-[hsl(var(--secondary))] px-2 py-0.5 text-[11px] font-semibold text-[hsl(var(--primary))]">
+                    <span className="rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">
                       {sub.topicCount} Topics
                     </span>
                   </div>
-                  <h3 className="mt-2 text-lg font-bold text-[hsl(var(--primary))]">
+                  <h3 className="mt-2 text-lg font-bold text-slate-900">
                     {sub.name}
                   </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-[hsl(var(--muted-foreground))] line-clamp-2">
+                  <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-2">
                     {sub.description}
                   </p>
                 </div>
 
                 <div className="mt-5">
-                  <Button href={sub.url} variant="secondary" className="w-full text-xs">
+                  <Button href={sub.url} variant="secondary" className="w-full text-xs font-bold">
                     Explore Subject <ArrowRight size={13} />
                   </Button>
                 </div>
@@ -334,7 +342,7 @@ export default function Home() {
             />
             <Link
               href="/analytics"
-              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--primary))] hover:underline"
+              className="focus-ring inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:underline"
             >
               Full Analytics <ArrowRight size={14} />
             </Link>
@@ -344,24 +352,24 @@ export default function Home() {
             {recentActivities.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {recentActivities.slice(0, 4).map((act) => (
-                  <Card key={act.id} className="p-4">
+                  <Card key={act.id} className="p-4 hover:border-blue-300 transition">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="rounded-md bg-[hsl(var(--secondary))] px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--primary))]">
+                      <span className="rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
                         {act.scoreText || 'Activity'}
                       </span>
-                      <span className="text-[10px] text-[hsl(var(--muted-foreground))] flex items-center gap-1">
+                      <span className="text-[10px] text-slate-500 flex items-center gap-1">
                         <Clock size={11} /> {new Date(act.timestamp).toLocaleDateString('hi-IN')}
                       </span>
                     </div>
-                    <h3 className="mt-2 text-xs font-bold text-[hsl(var(--primary))] line-clamp-2">
+                    <h3 className="mt-2 text-xs font-bold text-slate-900 line-clamp-2">
                       {act.title}
                     </h3>
-                    <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))] line-clamp-1">
+                    <p className="mt-1 text-[11px] text-slate-500 line-clamp-1">
                       {act.subtitle}
                     </p>
                     <Link
                       href={act.url}
-                      className="focus-ring mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--accent-foreground))] hover:underline"
+                      className="focus-ring mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:underline"
                     >
                       पुनः देखें (Review) <ArrowRight size={11} />
                     </Link>
@@ -392,33 +400,35 @@ export default function Home() {
               title="Theory questions for stronger recall."
               description="Reading is the first pass. Explaining an idea in your own words is where it stays."
             />
-            <Button href="/theory" variant="secondary" className="mt-7" data-testid="button-home-theory">
+            <Button href="/theory" variant="secondary" className="mt-7 font-bold" data-testid="button-home-theory">
               Explore theory questions <ArrowRight size={16} />
             </Button>
           </div>
-          <Card className="grid gap-0 overflow-hidden sm:grid-cols-2">
-            <div className="bg-[hsl(var(--primary))] p-7 text-[hsl(var(--primary-foreground))]">
-              <Library size={22} className="text-[hsl(var(--accent))]" />
-              <p className="mt-8 text-xs uppercase tracking-[.15em] text-[hsl(var(--primary-foreground)/.55)]">
+          <Card className="grid gap-0 overflow-hidden sm:grid-cols-2 rounded-2xl border border-blue-200/90 shadow-sm">
+            <div className="bg-gradient-to-br from-blue-900 via-blue-950 to-slate-900 p-7 text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300">
+                <Library size={20} />
+              </span>
+              <p className="mt-6 text-xs uppercase tracking-[.15em] text-blue-300 font-bold">
                 Try this prompt
               </p>
-              <h3 className="font-display mt-3 text-2xl leading-tight">
+              <h3 className="font-display mt-2.5 text-2xl font-bold leading-snug">
                 Explain one idea without looking at your notes.
               </h3>
             </div>
-            <div className="p-7">
-              <p className="text-sm font-bold text-[hsl(var(--primary))]">Good revision feels active.</p>
-              <ul className="mt-5 space-y-4 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
-                <li className="flex gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[hsl(var(--accent))]" />
+            <div className="p-7 bg-white">
+              <p className="text-sm font-bold text-slate-900">Good revision feels active.</p>
+              <ul className="mt-4 space-y-3.5 text-xs sm:text-sm leading-relaxed text-slate-600">
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600" />
                   Write a short answer in your own words.
                 </li>
-                <li className="flex gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[hsl(var(--accent))]" />
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600" />
                   Compare it with the key points.
                 </li>
-                <li className="flex gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[hsl(var(--accent))]" />
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600" />
                   Return to it after a few days.
                 </li>
               </ul>
@@ -427,31 +437,37 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* 9. Why ExamSetu4U */}
-      <section className="bg-[#e9e2d2] py-16 sm:py-20">
+      {/* 9. Why ExamSetu4U (Secondary Section) */}
+      <section className="border-y border-blue-100 bg-blue-50/50 py-16 sm:py-20">
         <Container className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-1">
             <SectionTitle eyebrow="Why ExamSetu4U" title="Less noise. More direction." />
           </div>
-          <div className="grid gap-7 sm:grid-cols-3 md:col-span-2">
-            <div>
-              <ShieldCheck size={20} className="text-[hsl(var(--primary))]" />
-              <h3 className="mt-4 font-bold">Free to start</h3>
-              <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+          <div className="grid gap-6 sm:grid-cols-3 md:col-span-2">
+            <div className="rounded-xl border border-blue-100/90 bg-white p-5 shadow-2xs">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                <ShieldCheck size={20} />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Free to start</h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">
                 A focused foundation without a paywall at the door.
               </p>
             </div>
-            <div>
-              <Target size={20} className="text-[hsl(var(--primary))]" />
-              <h3 className="mt-4 font-bold">Exam-wise</h3>
-              <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+            <div className="rounded-xl border border-blue-100/90 bg-white p-5 shadow-2xs">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                <Target size={20} />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Exam-wise</h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">
                 Find relevant material without sorting through everything.
               </p>
             </div>
-            <div>
-              <BookOpen size={20} className="text-[hsl(var(--primary))]" />
-              <h3 className="mt-4 font-bold">Made for practice</h3>
-              <p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">
+            <div className="rounded-xl border border-blue-100/90 bg-white p-5 shadow-2xs">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                <BookOpen size={20} />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Made for practice</h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">
                 Learn, revisit and test your understanding regularly.
               </p>
             </div>
@@ -459,20 +475,28 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* 10. Call to Action */}
+      {/* 10. Call to Action (Special Highlight Blue Treatment) */}
       <section className="py-16 sm:py-20">
         <Container>
-          <div className="rounded-xl bg-[hsl(var(--primary))] px-6 py-10 text-center text-[hsl(var(--primary-foreground))] sm:px-10">
-            <p className="eyebrow">Your next session starts here</p>
-            <h2 className="font-display mx-auto mt-3 max-w-xl text-3xl leading-tight sm:text-4xl">
+          <div className="rounded-3xl bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 px-6 py-12 text-center text-white shadow-xl border border-blue-700/60 sm:px-12 sm:py-16">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/40 bg-blue-950/40 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-200">
+              <Sparkles size={13} /> Your next session starts here
+            </span>
+            <h2 className="font-display mx-auto mt-4 max-w-xl text-3xl font-extrabold leading-tight sm:text-4xl text-white">
               Make today’s study time count.
             </h2>
-            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[hsl(var(--primary-foreground)/.7)]">
-              Choose an exam, open a topic and take the first useful step.
+            <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm leading-relaxed text-blue-100/80">
+              Choose an exam, open a topic and take the first useful step with free study resources.
             </p>
-            <Button href="/exams" className="mt-7" data-testid="button-home-cta">
-              Start with an exam <ArrowRight size={16} />
-            </Button>
+            <div className="mt-8 flex justify-center">
+              <Button
+                href="/exams"
+                className="bg-white text-blue-900 hover:bg-blue-50 border-white font-extrabold shadow-md px-6 py-3 text-sm"
+                data-testid="button-home-cta"
+              >
+                Start with an exam <ArrowRight size={16} />
+              </Button>
+            </div>
           </div>
         </Container>
       </section>

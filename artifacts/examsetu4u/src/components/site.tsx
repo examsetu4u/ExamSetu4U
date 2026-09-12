@@ -5,24 +5,38 @@ import type { Exam } from '@/data/exams';
 import { getInitials, useAuth } from '@/lib/auth';
 import { GlobalSearchBar } from '@/components/global-search-bar';
 
+// Re-export standardized callout components for site-wide consistency
+export {
+  ImportantPoint,
+  ExamTip,
+  QuickRevision,
+  WarningCallout,
+  SuccessCallout,
+  ProgressCallout,
+} from '@/components/ui/info-callout';
+
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   href?: string;
-  variant?: 'primary' | 'secondary' | 'text';
+  variant?: 'primary' | 'secondary' | 'cta' | 'destructive' | 'outline' | 'text';
   'data-testid'?: string;
   children: ReactNode;
 };
 
-export function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10 ${className}`}>{children}</div>;
+export function Container({ children, className = '', id }: { children: ReactNode; className?: string; id?: string }) {
+  return <div id={id} className={`mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
 }
 
 export function Button({ children, href, variant = 'primary', className = '', ...props }: ButtonProps) {
-  const styles = variant === 'primary'
-    ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] hover:bg-[hsl(36_79%_61%)]'
-    : variant === 'secondary'
-      ? 'border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] hover:border-[hsl(var(--accent))] hover:bg-[hsl(var(--secondary))]'
-      : 'text-[hsl(var(--primary))] hover:text-[hsl(var(--accent-foreground))]';
-  const classNames = `focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition ${styles} ${className}`;
+  const styles = {
+    primary: 'bg-blue-700 text-white hover:bg-blue-800 shadow-2xs active:bg-blue-900 border border-blue-700',
+    secondary: 'border border-[hsl(var(--border))] bg-white text-[hsl(var(--foreground))] hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700 shadow-2xs active:bg-blue-100/60',
+    cta: 'bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white shadow-xs hover:from-blue-800 hover:to-indigo-700 hover:shadow-md border border-blue-600 active:from-blue-900 active:to-indigo-800',
+    destructive: 'bg-rose-600 text-white hover:bg-rose-700 shadow-2xs border border-rose-600 active:bg-rose-800',
+    outline: 'border border-blue-200 bg-blue-50/50 text-blue-700 hover:bg-blue-100/70 hover:border-blue-300 shadow-2xs',
+    text: 'text-blue-700 hover:text-blue-800 hover:underline bg-transparent p-0 min-h-0',
+  }[variant];
+
+  const classNames = `focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all duration-150 ${styles} ${className}`;
   if (href) return <Link href={href} onClick={props.onClick as unknown as MouseEventHandler<HTMLAnchorElement>} className={classNames} data-testid={props['data-testid']}>{children}</Link>;
   return <button {...props} className={classNames}>{children}</button>;
 }
@@ -48,87 +62,177 @@ export function Header() {
   const initials = getInitials(displayName);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[hsl(var(--border)/.8)] bg-[hsl(var(--background)/.94)] backdrop-blur-sm">
-      <Container className="flex min-h-[68px] items-center justify-between gap-4">
-        <Link href="/" className="focus-ring flex shrink-0 items-center gap-2.5 rounded-lg" onClick={() => setOpen(false)} data-testid="link-brand">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--primary))] text-[hsl(var(--accent))]"><BookOpen size={18} strokeWidth={2.4} /></span>
-          <span className="text-[15px] font-bold tracking-[-.03em] text-[hsl(var(--primary))]">ExamSetu<span className="text-[hsl(var(--accent-foreground))]">4U</span></span>
+    <header className="sticky top-0 z-40 border-b border-[hsl(var(--border))] bg-white/95 backdrop-blur-md shadow-2xs">
+      <Container className="flex min-h-[64px] items-center justify-between gap-3 sm:gap-4">
+        <Link href="/" className="focus-ring flex shrink-0 items-center gap-2.5 rounded-xl py-1" onClick={() => setOpen(false)} data-testid="link-brand">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-700 text-white shadow-2xs">
+            <BookOpen size={18} strokeWidth={2.4} />
+          </span>
+          <span className="text-[16px] font-extrabold tracking-tight text-slate-900">
+            ExamSetu<span className="text-blue-600">4U</span>
+          </span>
         </Link>
+
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === item.href ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-nav-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
-          ))}
-          <Link href="/dashboard" className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location === '/dashboard' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid="link-nav-dashboard">Dashboard</Link>
-          <Link href="/admin" className={`focus-ring rounded-md px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[hsl(var(--secondary))] ${location.startsWith('/admin') ? 'text-[hsl(var(--primary))] font-bold' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid="link-nav-admin">Admin</Link>
+          {navItems.map((item) => {
+            const isActive = location === item.href || (item.href !== '/' && location.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`focus-ring rounded-lg px-2.5 py-1.5 text-[13px] font-bold transition-colors ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900'
+                }`}
+                data-testid={`link-nav-${item.label.toLowerCase().replaceAll(' ', '-')}`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          <Link
+            href="/dashboard"
+            className={`focus-ring rounded-lg px-2.5 py-1.5 text-[13px] font-bold transition-colors ${
+              location === '/dashboard'
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900'
+            }`}
+            data-testid="link-nav-dashboard"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/admin"
+            className={`focus-ring rounded-lg px-2 py-1.5 text-[12px] font-bold transition-colors ${
+              location.startsWith('/admin')
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-slate-500 hover:bg-slate-100/70 hover:text-slate-800'
+            }`}
+            data-testid="link-nav-admin"
+          >
+            Admin
+          </Link>
           
-          <div className="w-44 xl:w-60 ml-1">
+          <div className="w-40 xl:w-56 ml-1">
             <GlobalSearchBar />
           </div>
           
           {isAuthenticated ? (
-            <div className="ml-2 flex items-center gap-2">
+            <div className="ml-2 flex items-center gap-1.5">
               <Link
                 href="/profile"
-                className="focus-ring flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2.5 py-1.5 text-xs font-bold text-[hsl(var(--primary))] hover:border-[hsl(var(--accent))] shadow-sm"
+                className="focus-ring flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-white px-2.5 py-1 text-xs font-bold text-slate-800 hover:border-blue-300 hover:text-blue-700 shadow-2xs"
                 data-testid="link-header-profile"
               >
                 <span
-                  className="flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold text-white"
-                  style={{ backgroundColor: profile?.avatarColor || '#1e3a8a' }}
+                  className="flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold text-white shadow-2xs"
+                  style={{ backgroundColor: profile?.avatarColor || '#1d4ed8' }}
                 >
                   {initials}
                 </span>
-                <span className="max-w-[100px] truncate">{displayName.split(' ')[0]}</span>
+                <span className="max-w-[85px] truncate">{displayName.split(' ')[0]}</span>
               </Link>
               <button
                 type="button"
                 onClick={logout}
                 title="लॉगआउट"
-                className="focus-ring rounded-lg p-2 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[#a34f46]"
+                className="focus-ring rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition"
                 data-testid="button-header-logout"
               >
                 <LogOut size={16} />
               </button>
             </div>
           ) : (
-            <Link href="/login" className="focus-ring ml-1 rounded-md bg-[hsl(var(--primary))] px-3.5 py-2 text-[13px] font-bold text-[hsl(var(--primary-foreground))] hover:bg-[hsl(224_44%_34%)]" data-testid="link-nav-login">Login</Link>
+            <Link
+              href="/login"
+              className="focus-ring ml-1 rounded-xl bg-blue-700 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-blue-800 shadow-2xs transition"
+              data-testid="link-nav-login"
+            >
+              Login
+            </Link>
           )}
         </nav>
-        <div className="flex items-center gap-1.5 lg:hidden">
+
+        <div className="flex items-center gap-1 lg:hidden">
           <button
             type="button"
             onClick={() => setSearchOpen((current) => !current)}
-            className="focus-ring rounded-md p-2 text-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))]"
+            className="focus-ring rounded-lg p-2 text-slate-700 hover:bg-slate-100"
             aria-label="Search"
             data-testid="button-mobile-search-toggle"
           >
-            <Search size={20} />
+            <Search size={19} />
           </button>
-          <button type="button" onClick={() => setOpen((current) => !current)} className="focus-ring rounded-md p-2 text-[hsl(var(--primary))]" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} data-testid="button-mobile-menu">
-            {open ? <X size={22} /> : <Menu size={22} />}
+          <button
+            type="button"
+            onClick={() => setOpen((current) => !current)}
+            className="focus-ring rounded-lg p-2 text-slate-700 hover:bg-slate-100"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            data-testid="button-mobile-menu"
+          >
+            {open ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
       </Container>
+
       {searchOpen && (
-        <div className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] px-4 py-3 shadow-sm lg:hidden">
+        <div className="border-t border-[hsl(var(--border))] bg-white px-4 py-3 shadow-sm lg:hidden">
           <div className="mx-auto max-w-xl">
             <GlobalSearchBar autoFocus onClose={() => setSearchOpen(false)} isMobileDrawer />
           </div>
         </div>
       )}
+
       {open && (
-        <nav className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-3 lg:hidden" aria-label="Mobile navigation">
-          <div className="mx-auto flex max-w-6xl flex-col gap-1 sm:px-3">
-            {[...navItems, { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'Search', href: '/search' }, { label: 'Admin Portal', href: '/admin' }].map((item) => (
-              <Link key={item.label} href={item.href} onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]" data-testid={`link-mobile-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>
-            ))}
+        <nav className="border-t border-[hsl(var(--border))] bg-white px-4 py-3 shadow-lg lg:hidden" aria-label="Mobile navigation">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1">
+            {[...navItems, { label: 'Weak Topics', href: '/practice/weak-topics' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'Search', href: '/search' }, { label: 'Admin Portal', href: '/admin' }].map((item) => {
+              const isActive = location === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={`focus-ring rounded-lg px-3 py-2.5 text-sm font-bold transition ${
+                    isActive
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                  data-testid={`link-mobile-${item.label.toLowerCase().replaceAll(' ', '-')}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             {isAuthenticated ? (
-              <>
-                <Link href="/profile" onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]">प्रोफ़ाइल ({displayName})</Link>
-                <button type="button" onClick={() => { logout(); setOpen(false); }} className="focus-ring text-left rounded-md px-3 py-3 text-sm font-semibold text-[#a34f46] hover:bg-[#f8e9e5]">लॉगआउट</button>
-              </>
+              <div className="mt-2 border-t border-[hsl(var(--border))] pt-2">
+                <Link
+                  href="/profile"
+                  onClick={() => setOpen(false)}
+                  className="focus-ring block rounded-lg px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  प्रोफ़ाइल ({displayName})
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => { logout(); setOpen(false); }}
+                  className="focus-ring w-full text-left rounded-lg px-3 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-50"
+                >
+                  लॉगआउट
+                </button>
+              </div>
             ) : (
-              <Link href="/login" onClick={() => setOpen(false)} className="focus-ring rounded-md px-3 py-3 text-sm font-semibold text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]">Login / Sign Up</Link>
+              <div className="mt-2 border-t border-[hsl(var(--border))] pt-2">
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="focus-ring block rounded-xl bg-blue-700 py-2.5 text-center text-sm font-bold text-white hover:bg-blue-800"
+                >
+                  Login / Sign Up
+                </Link>
+              </div>
             )}
           </div>
         </nav>
@@ -147,38 +251,206 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer id="footer" className="mt-20 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
+    <footer id="footer" className="mt-20 border-t border-blue-900 bg-[#0c1e3d] text-white">
       <Container className="grid gap-10 py-12 sm:grid-cols-[1.4fr_1fr_1fr] sm:py-16">
         <div>
-          <Link href="/" className="focus-ring inline-flex items-center gap-2 rounded-lg" data-testid="link-footer-brand"><span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"><BookOpen size={18} /></span><span className="text-lg font-bold">ExamSetu4U</span></Link>
-          <p className="mt-4 max-w-xs text-sm leading-6 text-[hsl(var(--primary-foreground)/.7)]">Study Smart. Practice Free. Succeed.</p>
+          <Link href="/" className="focus-ring inline-flex items-center gap-2.5 rounded-lg" data-testid="link-footer-brand">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-2xs">
+              <BookOpen size={18} strokeWidth={2.4} />
+            </span>
+            <span className="text-xl font-extrabold tracking-tight">ExamSetu<span className="text-blue-400">4U</span></span>
+          </Link>
+          <p className="mt-4 max-w-xs text-xs sm:text-sm leading-relaxed text-blue-100/75">
+            Free exam preparation platform for Indian students with high-yield study material, previous year questions, MCQ drills, and analytics.
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-blue-700/60 bg-blue-950/60 px-3 py-1 text-[11px] font-bold text-blue-300">
+            <Sparkles size={13} /> 100% Free Educational Platform
+          </div>
         </div>
-        <div><h2 className="text-sm font-bold text-[hsl(var(--accent))]">Quick Links</h2><nav className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3" aria-label="Footer quick links">{footerLinks.map((item) => <Link key={item.label} href={item.href} className="focus-ring w-fit rounded text-sm text-[hsl(var(--primary-foreground)/.72)] hover:text-[hsl(var(--primary-foreground))]" data-testid={`link-footer-${item.label.toLowerCase().replaceAll(' ', '-')}`}>{item.label}</Link>)}</nav></div>
-        <div><h2 className="text-sm font-bold text-[hsl(var(--accent))]">Information</h2><nav className="mt-4 grid gap-3" aria-label="Footer information links">{['About Us', 'Contact', 'Privacy Policy', 'Terms & Conditions'].map((label) => <a key={label} href="#footer" className="focus-ring w-fit rounded text-sm text-[hsl(var(--primary-foreground)/.72)] hover:text-[hsl(var(--primary-foreground))]" data-testid={`link-footer-${label.toLowerCase().replaceAll(' ', '-')}`}>{label}</a>)}</nav></div>
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-blue-300">Quick Links</h2>
+          <nav className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs sm:text-sm" aria-label="Footer quick links">
+            {footerLinks.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="focus-ring w-fit rounded text-blue-100/75 hover:text-white transition"
+                data-testid={`link-footer-${item.label.toLowerCase().replaceAll(' ', '-')}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-blue-300">Information</h2>
+          <nav className="mt-4 grid gap-2.5 text-xs sm:text-sm" aria-label="Footer information links">
+            {['About Us', 'Contact', 'Privacy Policy', 'Terms & Conditions'].map((label) => (
+              <a
+                key={label}
+                href="#footer"
+                className="focus-ring w-fit rounded text-blue-100/75 hover:text-white transition"
+                data-testid={`link-footer-${label.toLowerCase().replaceAll(' ', '-')}`}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </Container>
-      <div className="border-t border-[hsl(var(--primary-foreground)/.14)]"><Container className="py-5 text-xs text-[hsl(var(--primary-foreground)/.56)]">© 2026 ExamSetu4U</Container></div>
+      <div className="border-t border-blue-900/80 bg-[#08152c]">
+        <Container className="flex flex-wrap items-center justify-between py-4 text-xs text-blue-200/60">
+          <span>© 2026 ExamSetu4U · Made for Indian Aspirants</span>
+          <span>Ad-Free · Non-Profit Education Mission</span>
+        </Container>
+      </div>
     </footer>
   );
 }
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <article className={`rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-[var(--shadow)] ${className}`}>{children}</article>;
+export function Card({
+  children,
+  className = '',
+  id,
+  variant = 'default',
+  'data-testid': testId,
+}: {
+  children: ReactNode;
+  className?: string;
+  id?: string;
+  variant?: 'default' | 'subtle' | 'highlight' | 'feature';
+  'data-testid'?: string;
+}) {
+  const variantStyles = {
+    default: 'bg-white border-[hsl(var(--border))] text-[hsl(var(--card-foreground))] shadow-xs',
+    subtle: 'bg-blue-50/40 border-blue-100/80 text-[hsl(var(--card-foreground))] shadow-2xs',
+    highlight: 'bg-gradient-to-br from-blue-50/70 to-white border-blue-200 text-blue-950 shadow-xs',
+    feature: 'bg-gradient-to-br from-blue-900 via-blue-950 to-slate-900 border-blue-800/60 text-white shadow-md',
+  }[variant];
+
+  return (
+    <article
+      id={id}
+      data-testid={testId}
+      className={`rounded-xl border transition-all duration-200 ${variantStyles} ${className}`}
+    >
+      {children}
+    </article>
+  );
 }
 
-export function SectionTitle({ eyebrow, title, description, as = 'h2' }: { eyebrow?: string; title: string; description?: string; as?: 'h1' | 'h2' }) {
+export function SectionTitle({
+  eyebrow,
+  title,
+  description,
+  as = 'h2',
+  className = '',
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  as?: 'h1' | 'h2' | 'h3';
+  className?: string;
+}) {
   const Heading = as;
-  return <div className="max-w-2xl"><>{eyebrow && <p className="eyebrow">{eyebrow}</p>}</><Heading className="font-display mt-2 text-3xl leading-tight tracking-[-.035em] text-[hsl(var(--primary))] sm:text-4xl">{title}</Heading>{description && <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))] sm:text-base">{description}</p>}</div>;
+  return (
+    <div className={`max-w-2xl ${className}`}>
+      {eyebrow && (
+        <p className="eyebrow inline-flex items-center gap-1.5 font-bold tracking-wider text-blue-700">
+          {eyebrow}
+        </p>
+      )}
+      <Heading className="font-display mt-2 text-2xl font-bold tracking-tight text-[hsl(var(--foreground))] sm:text-3xl lg:text-4xl">
+        {title}
+      </Heading>
+      {description && (
+        <p className="mt-2.5 text-xs leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-sm sm:leading-6">
+          {description}
+        </p>
+      )}
+    </div>
+  );
 }
 
-export function SearchBar({ value, onChange, placeholder = 'Search exams' }: { value: string; onChange: (value: string) => void; placeholder?: string }) {
-  return <label className="flex min-h-12 items-center gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-4 shadow-[var(--shadow)]"><Search size={17} className="shrink-0 text-[hsl(var(--muted-foreground))]" /><span className="sr-only">Search</span><input type="search" value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} className="focus-ring min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[hsl(var(--muted-foreground))]" data-testid="input-search-exams" /></label>;
+export function SectionHeading(props: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  as?: 'h1' | 'h2' | 'h3';
+  className?: string;
+}) {
+  return <SectionTitle {...props} />;
+}
+
+export function SearchBar({
+  value,
+  onChange,
+  placeholder = 'Search exams',
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <label className="flex min-h-11 items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-white px-3.5 shadow-xs transition hover:border-blue-300 focus-within:border-blue-500">
+      <Search size={17} className="shrink-0 text-slate-400" />
+      <span className="sr-only">Search</span>
+      <input
+        type="search"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        className="focus-ring min-w-0 flex-1 bg-transparent text-xs sm:text-sm outline-none placeholder:text-slate-400 text-slate-900"
+        data-testid="input-search-exams"
+      />
+    </label>
+  );
 }
 
 export function ExamCard({ exam }: { exam: Exam }) {
-  const tone = { saffron: 'bg-[#f7e3bb] text-[#825413]', teal: 'bg-[#d6ebe5] text-[#246556]', blue: 'bg-[#dce4f2] text-[#34547f]', coral: 'bg-[#f3dcd5] text-[#9a493e]' }[exam.tone];
-  return <Card className="flex h-full flex-col p-5 transition hover:-translate-y-0.5 hover:border-[hsl(var(--accent))] hover:shadow-[var(--shadow-md)]"><div className="flex items-start justify-between gap-4"><span className={`rounded-md px-2 py-1 text-[11px] font-bold ${tone}`}>{exam.name}</span><Check size={17} className="text-[hsl(var(--accent-foreground)/.45)]" /></div><p className="mt-5 flex-1 text-sm leading-6 text-[hsl(var(--muted-foreground))]">{exam.shortDescription}</p><p className="mt-5 text-xs font-semibold text-[hsl(var(--primary))]">{exam.subjects}</p><Button href={`/exams/${exam.id}`} variant="secondary" className="mt-5 w-full" data-testid={`button-view-exam-${exam.id}`}>View exam <ArrowRight size={15} /></Button></Card>;
+  return (
+    <Card
+      id={`exam-card-${exam.id}`}
+      data-testid={`card-exam-${exam.id}`}
+      className="flex h-full flex-col justify-between p-5 sm:p-6 transition hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5"
+    >
+      <div>
+        <div className="flex items-start justify-between gap-3">
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50/80 px-2.5 py-1 text-xs font-bold text-blue-700">
+            {exam.name}
+          </span>
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+            <Check size={13} strokeWidth={2.5} />
+          </span>
+        </div>
+        <p className="mt-4 text-xs font-bold uppercase tracking-wider text-blue-600/90">
+          {exam.subjects}
+        </p>
+        <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[hsl(var(--muted-foreground))] line-clamp-3">
+          {exam.shortDescription}
+        </p>
+      </div>
+
+      <div className="mt-5 pt-4 border-t border-[hsl(var(--border))]">
+        <Button
+          href={`/exams/${exam.id}`}
+          variant="secondary"
+          className="w-full text-xs font-bold"
+          data-testid={`button-view-exam-${exam.id}`}
+        >
+          View Exam Path <ArrowRight size={14} />
+        </Button>
+      </div>
+    </Card>
+  );
 }
 
 export function Layout({ children }: { children: ReactNode }) {
-  return <div className="site-shell"><Header /><main>{children}</main><Footer /></div>;
+  return (
+    <div className="site-shell min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </div>
+  );
 }

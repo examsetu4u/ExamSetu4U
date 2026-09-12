@@ -676,6 +676,39 @@ function getIndexedQuestions(): Map<string, MCQQuestion> {
   } catch (err) {
     console.warn('[QuizQuestions] Failed to index Google Sheet questions:', err);
   }
+  try {
+    if (typeof window !== 'undefined') {
+      const adminRaw = localStorage.getItem('examsetu4u_admin_content');
+      if (adminRaw) {
+        const parsed = JSON.parse(adminRaw);
+        if (Array.isArray(parsed?.questions)) {
+          parsed.questions.forEach((q: any) => {
+            if (q && q.id && (q.status === 'PUBLISHED' || !q.status)) {
+              map.set(q.id, {
+                id: q.id,
+                examId: q.examId,
+                examName: q.examName,
+                subjectId: q.subjectId,
+                topicId: q.topicId,
+                question: q.question,
+                options: q.options,
+                correctAnswer: q.correctAnswer,
+                explanation: q.explanation || '',
+                importantPoint: q.importantPoint,
+                additionalFact: q.additionalFact,
+                commonMistake: q.commonMistake,
+                difficulty: q.difficulty || 'Moderate',
+                sourceType: q.sourceType || 'Practice',
+                year: q.year,
+              });
+            }
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[QuizQuestions] Failed to index admin stored questions:', err);
+  }
   return map;
 }
 

@@ -99,16 +99,16 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
   return (
     <div className="flex flex-col gap-8" data-testid="quiz-result-view">
       {/* Top Banner: Score & Motivational Feedback */}
-      <Card className="overflow-hidden border-2 border-[hsl(var(--accent)/.3)] p-6 sm:p-8" data-testid="card-result-score">
+      <Card className="overflow-hidden rounded-2xl border border-blue-200 bg-white p-6 sm:p-8 shadow-2xs" data-testid="card-result-score">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded-md bg-[hsl(var(--secondary))] px-2.5 py-1 text-xs font-bold text-[hsl(var(--primary))]">
+              <span className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
                 {result.examName}
               </span>
-              <span className="text-xs text-[hsl(var(--muted-foreground))]">• {result.topicName}</span>
+              <span className="text-xs text-slate-500">• {result.topicName}</span>
             </div>
-            <h1 className="font-display mt-3 text-3xl sm:text-4xl text-[hsl(var(--primary))] font-bold">
+            <h1 className="font-display mt-3 text-3xl sm:text-4xl text-slate-900 font-extrabold">
               Quiz परिणाम (Result)
             </h1>
 
@@ -122,17 +122,17 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
             </div>
           </div>
 
-          {/* Big Score Circle */}
+          {/* Big Score Box */}
           <div className="flex shrink-0 items-center justify-center">
-            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-md text-center min-w-[180px]">
-              <span className="text-4xl sm:text-5xl font-extrabold text-[hsl(var(--primary))]">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-blue-200 bg-blue-50/50 p-6 text-center min-w-[180px] shadow-2xs">
+              <span className="text-4xl sm:text-5xl font-extrabold text-blue-700">
                 {result.score}
-                <span className="text-xl font-normal text-[hsl(var(--muted-foreground))]">/{result.totalQuestions}</span>
+                <span className="text-xl font-normal text-slate-400">/{result.totalQuestions}</span>
               </span>
-              <div className="mt-2 rounded-full bg-[hsl(var(--accent))] px-3 py-0.5 text-xs font-bold text-[hsl(var(--accent-foreground))]">
+              <div className="mt-2 rounded-full bg-blue-700 px-3 py-0.5 text-xs font-bold text-white shadow-xs">
                 {result.percentage}% प्राप्तांक
               </div>
-              <span className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))]">
+              <span className="mt-1.5 text-[11px] font-semibold text-slate-500">
                 सटीकता (Accuracy): {result.accuracy}%
               </span>
             </div>
@@ -140,28 +140,28 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
         </div>
 
         {/* Detailed Stats Grid */}
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 border-t border-[hsl(var(--border))] pt-6 text-center">
-          <div className="rounded-lg bg-[hsl(var(--secondary)/.6)] p-3">
-            <p className="text-xs text-[hsl(var(--muted-foreground))]">कुल प्रश्न</p>
-            <p className="mt-1 text-lg font-bold text-[hsl(var(--foreground))]">{result.totalQuestions}</p>
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 border-t border-slate-100 pt-6 text-center">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+            <p className="text-xs text-slate-500">कुल प्रश्न</p>
+            <p className="mt-1 text-lg font-bold text-slate-900">{result.totalQuestions}</p>
           </div>
-          <div className="rounded-lg bg-emerald-50 p-3 border border-emerald-100">
+          <div className="rounded-xl bg-emerald-50 p-3 border border-emerald-200">
             <p className="text-xs text-emerald-800">सही उत्तर (Correct)</p>
             <p className="mt-1 text-lg font-bold text-emerald-700">{result.correct}</p>
           </div>
-          <div className="rounded-lg bg-rose-50 p-3 border border-rose-100">
+          <div className="rounded-xl bg-rose-50 p-3 border border-rose-200">
             <p className="text-xs text-rose-800">गलत उत्तर (Incorrect)</p>
             <p className="mt-1 text-lg font-bold text-rose-700">{result.incorrect}</p>
           </div>
-          <div className="rounded-lg bg-[hsl(var(--secondary)/.6)] p-3">
-            <p className="text-xs text-[hsl(var(--muted-foreground))]">प्रयास किए</p>
-            <p className="mt-1 text-lg font-bold text-[hsl(var(--primary))]">{result.attempted}</p>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+            <p className="text-xs text-slate-500">प्रयास किए</p>
+            <p className="mt-1 text-lg font-bold text-blue-700">{result.attempted}</p>
           </div>
-          <div className="rounded-lg bg-[hsl(var(--secondary)/.6)] p-3">
-            <p className="text-xs text-[hsl(var(--muted-foreground))]">अनुत्तरित (Skipped)</p>
-            <p className="mt-1 text-lg font-bold text-[hsl(var(--muted-foreground))]">{result.unanswered}</p>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+            <p className="text-xs text-slate-500">अनुत्तरित (Skipped)</p>
+            <p className="mt-1 text-lg font-bold text-slate-400">{result.unanswered}</p>
           </div>
-          <div className="rounded-lg bg-amber-50 p-3 border border-amber-100">
+          <div className="rounded-xl bg-amber-50 p-3 border border-amber-200">
             <p className="text-xs text-amber-800">सटीकता (Accuracy)</p>
             <p className="mt-1 text-lg font-bold text-amber-700">{result.accuracy}%</p>
           </div>
@@ -169,9 +169,9 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
 
         {/* Mistakes Improved Banner for Revision Practicing */}
         {(result.isRevision || (result.mistakesImproved !== undefined && result.mistakesImproved > 0)) && (
-          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-emerald-300 bg-emerald-50/90 p-4 text-emerald-900 shadow-sm" data-testid="banner-mistakes-improved">
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-emerald-300 bg-emerald-50/90 p-4 text-emerald-900 shadow-2xs" data-testid="banner-mistakes-improved">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
                 <CheckCircle2 size={20} />
               </div>
               <div>
@@ -188,12 +188,12 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
         )}
 
         {/* Action Buttons: Retry, Practice Incorrect, New Quiz */}
-        <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-[hsl(var(--border))] pt-6">
+        <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-6">
           <Button
             type="button"
             variant="primary"
             onClick={onRetry}
-            className="flex-1 sm:flex-initial"
+            className="flex-1 sm:flex-initial bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs"
             data-testid="button-retry-quiz"
           >
             <RotateCcw size={16} />
@@ -205,14 +205,14 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
               type="button"
               variant="secondary"
               onClick={onPracticeIncorrect}
-              className="flex-1 sm:flex-initial border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100"
+              className="flex-1 sm:flex-initial border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100 font-bold"
               data-testid="button-practice-incorrect"
             >
               <AlertTriangle size={16} className="text-amber-600" />
               <span>गलत प्रश्नों का अभ्यास करें ({result.incorrect})</span>
             </Button>
           ) : (
-            <div className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 border border-emerald-200">
+            <div className="rounded-xl bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 border border-emerald-200">
               🎉 कोई गलत प्रश्न नहीं! आपने सभी सही उत्तर दिए।
             </div>
           )}
@@ -221,7 +221,7 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
             type="button"
             variant="secondary"
             onClick={onNewQuiz}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto font-bold"
             data-testid="button-new-quiz"
           >
             <span>नया Quiz चुनें</span>
@@ -231,7 +231,7 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
           <Button
             href="/mistakes"
             variant="secondary"
-            className="w-full sm:w-auto border-[hsl(var(--accent)/.4)]"
+            className="w-full sm:w-auto border-blue-200 hover:bg-blue-50 font-bold text-blue-700"
             data-testid="button-view-mistakes"
           >
             <span>Mistake Book देखें</span>
@@ -241,18 +241,18 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
 
       {/* Question-wise Review Section ("सभी प्रश्न देखें") */}
       <section className="space-y-5" data-testid="section-question-review">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[hsl(var(--border))] pb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
           <div>
-            <h2 className="font-display text-2xl text-[hsl(var(--primary))] font-bold">
+            <h2 className="font-display text-2xl text-slate-900 font-extrabold">
               सभी प्रश्न देखें (Question-wise Review)
             </h2>
-            <p className="text-xs text-[hsl(var(--muted-foreground))]">
+            <p className="text-xs text-slate-500 mt-1">
               प्रत्येक प्रश्न का अपना उत्तर, सही उत्तर एवं विस्तृत व्याख्या देखें।
             </p>
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.5)] p-1">
+          <div className="flex flex-wrap items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 p-1">
             {(['All', 'Correct', 'Incorrect', 'Unanswered'] as const).map((tab) => {
               const isActive = reviewFilter === tab;
               const count =
@@ -269,10 +269,10 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
                   key={tab}
                   type="button"
                   onClick={() => setReviewFilter(tab)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition ${
+                  className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
                     isActive
-                      ? 'bg-[hsl(var(--card))] text-[hsl(var(--primary))] shadow-xs'
-                      : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'
+                      ? 'bg-blue-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                   data-testid={`filter-tab-${tab.toLowerCase()}`}
                 >
@@ -292,7 +292,7 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
 
         {/* List of reviewed questions */}
         {filteredQuestions.length === 0 ? (
-          <Card className="p-8 text-center text-sm text-[hsl(var(--muted-foreground))]">
+          <Card className="p-8 text-center text-sm text-slate-500 rounded-2xl border border-slate-200">
             इस फ़िल्टर में कोई प्रश्न नहीं है।
           </Card>
         ) : (
@@ -306,12 +306,12 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
               return (
                 <Card
                   key={q.id}
-                  className={`p-5 transition border ${
+                  className={`p-5 transition rounded-2xl border shadow-2xs ${
                     isCorrect
-                      ? 'border-emerald-200 bg-emerald-50/20'
+                      ? 'border-emerald-200 bg-emerald-50/30'
                       : isAnswered
-                      ? 'border-rose-200 bg-rose-50/20'
-                      : 'border-[hsl(var(--border))] bg-[hsl(var(--card))]'
+                      ? 'border-rose-200 bg-rose-50/30'
+                      : 'border-slate-200 bg-white'
                   }`}
                   data-testid={`review-card-${q.id}`}
                 >
@@ -323,22 +323,22 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
                             ? 'bg-emerald-600 text-white'
                             : isAnswered
                             ? 'bg-rose-600 text-white'
-                            : 'bg-zinc-200 text-zinc-700'
+                            : 'bg-slate-200 text-slate-600'
                         }`}
                       >
                         {isCorrect ? '✓' : isAnswered ? '✗' : '—'}
                       </span>
                       <div>
                         <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <span className="font-bold text-[hsl(var(--primary))]">Q.{idx + 1}</span>
-                          <span className="rounded bg-[hsl(var(--secondary))] px-2 py-0.5 text-[11px] font-semibold text-[hsl(var(--muted-foreground))]">
+                          <span className="font-bold text-blue-700">Q.{idx + 1}</span>
+                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                             {q.difficulty}
                           </span>
-                          <span className="rounded bg-[hsl(var(--secondary))] px-2 py-0.5 text-[11px] font-semibold text-[hsl(var(--muted-foreground))]">
+                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                             {q.sourceType}
                           </span>
                         </div>
-                        <p className="mt-2 text-sm sm:text-base font-semibold leading-relaxed text-[hsl(var(--foreground))]">
+                        <p className="mt-2 text-sm sm:text-base font-semibold leading-relaxed text-slate-900">
                           {q.question}
                         </p>
                       </div>
@@ -347,7 +347,7 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
                     <button
                       type="button"
                       onClick={() => toggleExpand(q.id)}
-                      className="rounded-lg p-1 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
+                      className="rounded-lg p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                       aria-label="Toggle question details"
                     >
                       {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -356,14 +356,14 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
 
                   {/* Expanded details */}
                   {isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-[hsl(var(--border))] space-y-3">
+                    <div className="mt-4 pt-4 border-t border-slate-100 space-y-3">
                       {/* Options breakdown */}
                       <div className="grid gap-2 sm:grid-cols-2">
                         {(['A', 'B', 'C', 'D'] as const).map((key) => {
                           const isUserChoice = userAns === key;
                           const isCorrectChoice = q.correctAnswer === key;
 
-                          let optionStyle = 'border-[hsl(var(--border))] bg-[hsl(var(--card))]';
+                          let optionStyle = 'border-slate-200 bg-white text-slate-800';
                           if (isCorrectChoice) {
                             optionStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-bold ring-1 ring-emerald-500';
                           } else if (isUserChoice && !isCorrectChoice) {
@@ -373,9 +373,9 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
                           return (
                             <div
                               key={key}
-                              className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-xs sm:text-sm ${optionStyle}`}
+                              className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs sm:text-sm ${optionStyle}`}
                             >
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded font-bold bg-[hsl(var(--secondary))] text-xs">
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded font-bold bg-slate-100 text-xs text-slate-700">
                                 {key}
                               </span>
                               <span className="flex-1">{q.options[key]}</span>
@@ -395,24 +395,24 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
                       </div>
 
                       {/* Explanation box */}
-                      <div className="rounded-lg bg-[hsl(var(--secondary)/.6)] p-3.5 text-xs sm:text-sm">
-                        <h4 className="flex items-center gap-1.5 font-bold text-[hsl(var(--primary))]">
+                      <div className="rounded-xl bg-slate-50 p-3.5 text-xs sm:text-sm border border-slate-200">
+                        <h4 className="flex items-center gap-1.5 font-bold text-slate-900">
                           <Lightbulb size={15} className="text-amber-500" />
                           <span>व्याख्या (Explanation)</span>
                         </h4>
-                        <p className="mt-1 leading-relaxed text-[hsl(var(--foreground))]">{q.explanation}</p>
+                        <p className="mt-1 leading-relaxed text-slate-700">{q.explanation}</p>
                       </div>
 
                       {/* Important Point & Additional Fact */}
                       <div className="grid gap-2 sm:grid-cols-2 text-xs">
                         {q.importantPoint && (
-                          <div className="rounded-lg bg-blue-50/70 p-3 border border-blue-200">
+                          <div className="rounded-xl bg-blue-50/80 p-3 border border-blue-200">
                             <span className="font-bold text-blue-900 block mb-0.5">★ महत्वपूर्ण बिंदु:</span>
                             <span className="text-blue-950 leading-relaxed">{q.importantPoint}</span>
                           </div>
                         )}
                         {q.additionalFact && (
-                          <div className="rounded-lg bg-emerald-50/70 p-3 border border-emerald-200">
+                          <div className="rounded-xl bg-emerald-50/80 p-3 border border-emerald-200">
                             <span className="font-bold text-emerald-900 block mb-0.5">✦ अतिरिक्त परीक्षा तथ्य:</span>
                             <span className="text-emerald-950 leading-relaxed">{q.additionalFact}</span>
                           </div>
@@ -420,7 +420,7 @@ export function QuizResult({ result, onRetry, onPracticeIncorrect, onNewQuiz }: 
                       </div>
 
                       {q.commonMistake && (
-                        <div className="rounded-lg bg-amber-50/70 p-3 border border-amber-200 text-xs">
+                        <div className="rounded-xl bg-amber-50/80 p-3 border border-amber-200 text-xs">
                           <span className="font-bold text-amber-900 block mb-0.5">⚠️ सामान्य गलती:</span>
                           <span className="text-amber-950 leading-relaxed">{q.commonMistake}</span>
                         </div>

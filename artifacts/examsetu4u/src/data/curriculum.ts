@@ -498,23 +498,42 @@ export function getExam(examId: string) {
 }
 
 export function getSubject(subjectId: string) {
+  const norm = (subjectId || '').toLowerCase().trim();
   return subjects.find(
     (subject) =>
-      subject.id === subjectId ||
-      (subjectId === 'shikshan-kaushal' && subject.id === 'super-tet-teaching-skills') ||
-      (subjectId === 'teaching-skills' && subject.id === 'super-tet-teaching-skills')
+      subject.id.toLowerCase() === norm ||
+      (subject.examId === 'super-tet' && (
+        (subject.id === 'super-tet-teaching-skills' && (norm === 'teaching-skills' || norm === 'shikshan-kaushal' || norm === 'super-tet-shikshan-kaushal' || norm === 'shikshan-kaushal-pedagogy')) ||
+        (subject.id === 'super-tet-child-development' && (norm === 'child-development' || norm === 'bal-vikas' || norm === 'super-tet-bal-vikas' || norm === 'cdp' || norm === 'bal-manovigyan')) ||
+        (subject.id === 'super-tet-hindi' && norm === 'hindi') ||
+        (subject.id === 'super-tet-english' && norm === 'english') ||
+        (subject.id === 'super-tet-mathematics' && (norm === 'mathematics' || norm === 'maths' || norm === 'math')) ||
+        (subject.id === 'super-tet-evs' && (norm === 'evs' || norm === 'environment')) ||
+        (subject.id === 'super-tet-science' && (norm === 'science' || norm === 'vigyan')) ||
+        (subject.id === 'super-tet-social-studies' && (norm === 'social-studies' || norm === 'sst')) ||
+        (subject.id === 'super-tet-general-knowledge' && (norm === 'general-knowledge' || norm === 'gk')) ||
+        (subject.id === 'super-tet-current-affairs' && (norm === 'current-affairs' || norm === 'ca')) ||
+        (subject.id === 'super-tet-information-technology' && (norm === 'information-technology' || norm === 'it' || norm === 'computer'))
+      ))
   );
 }
 
 export function getTopic(topicId: string) {
+  const norm = (topicId || '').toLowerCase().trim();
   return (
-    topics.find((topic) => topic.id === topicId) ||
+    topics.find((topic) => topic.id.toLowerCase() === norm) ||
     topics.find((topic) => {
       // Handle st-sk-01 / ST-SK-TOP-01 aliases to super-tet-teaching-skills-1
-      const normalized = topicId.toLowerCase().replace('st-sk-top-', '').replace('st-sk-', '');
-      const num = parseInt(normalized, 10);
+      const skNorm = norm.replace('st-sk-top-', '').replace('st-sk-', '');
+      const num = parseInt(skNorm, 10);
       if (!isNaN(num) && num >= 1 && num <= 15) {
         return topic.id === `super-tet-teaching-skills-${num}`;
+      }
+      // Handle st-cd-01 / ST-CD-TOP-01 aliases to super-tet-child-development-1
+      const cdNorm = norm.replace('st-cd-top-', '').replace('st-cd-', '');
+      const cdNum = parseInt(cdNorm, 10);
+      if (!isNaN(cdNum) && cdNum >= 1 && cdNum <= 10) {
+        return topic.id === `super-tet-child-development-${cdNum}`;
       }
       return false;
     })

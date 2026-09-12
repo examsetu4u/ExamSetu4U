@@ -147,10 +147,10 @@ export function QuizSetup({
       {/* Title & History link */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl text-[hsl(var(--primary))] font-bold">
+          <h1 className="font-display text-3xl text-slate-900 font-extrabold">
             MCQ Quiz Engine
           </h1>
-          <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
+          <p className="mt-1 text-sm text-slate-500">
             परीक्षा, विषय और कठिनाई स्तर चुनकर अपनी परीक्षा तैयारी का स्व-मूल्यांकन करें।
           </p>
         </div>
@@ -160,7 +160,7 @@ export function QuizSetup({
             type="button"
             variant="secondary"
             onClick={onOpenHistory}
-            className="self-start sm:self-auto text-xs"
+            className="self-start sm:self-auto text-xs font-bold"
             data-testid="button-view-history"
           >
             <History size={15} />
@@ -170,18 +170,18 @@ export function QuizSetup({
       </div>
 
       {/* Main Setup Form Card */}
-      <Card className="p-6 sm:p-8" data-testid="quiz-setup-card">
+      <Card className="p-6 sm:p-8 rounded-2xl border border-slate-200 bg-white shadow-2xs" data-testid="quiz-setup-card">
         <div className="grid gap-6 sm:grid-cols-2">
           {/* 1. Exam Selector */}
           <div>
-            <label htmlFor={examSelectId} className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+            <label htmlFor={examSelectId} className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
               परीक्षा चुनें (Exam)
             </label>
             <select
               id={examSelectId}
               value={selectedExamId}
               onChange={(e) => handleExamChange(e.target.value)}
-              className="focus-ring w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2.5 text-sm font-medium text-[hsl(var(--foreground))] shadow-xs"
+              className="focus-ring w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-2xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               data-testid="select-exam"
             >
               {exams.map((exam) => (
@@ -194,14 +194,14 @@ export function QuizSetup({
 
           {/* 2. Subject Selector */}
           <div>
-            <label htmlFor={subjectSelectId} className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+            <label htmlFor={subjectSelectId} className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
               विषय चुनें (Subject)
             </label>
             <select
               id={subjectSelectId}
               value={selectedSubjectId}
               onChange={(e) => handleSubjectChange(e.target.value)}
-              className="focus-ring w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2.5 text-sm font-medium text-[hsl(var(--foreground))] shadow-xs"
+              className="focus-ring w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-2xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               data-testid="select-subject"
             >
               {availableSubjects.map((sub) => (
@@ -214,14 +214,14 @@ export function QuizSetup({
 
           {/* 3. Topic Selector */}
           <div>
-            <label htmlFor={topicSelectId} className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+            <label htmlFor={topicSelectId} className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
               टॉपिक चुनें (Topic)
             </label>
             <select
               id={topicSelectId}
               value={selectedTopicId}
               onChange={(e) => setSelectedTopicId(e.target.value)}
-              className="focus-ring w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2.5 text-sm font-medium text-[hsl(var(--foreground))] shadow-xs"
+              className="focus-ring w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-2xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               data-testid="select-topic"
             >
               <option value="">सभी टॉपिक (All Topics)</option>
@@ -235,14 +235,14 @@ export function QuizSetup({
 
           {/* 4. Difficulty Selector */}
           <div>
-            <label htmlFor={difficultySelectId} className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+            <label htmlFor={difficultySelectId} className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
               कठिनाई स्तर (Difficulty)
             </label>
             <select
               id={difficultySelectId}
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value as 'All' | MCQDifficulty)}
-              className="focus-ring w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2.5 text-sm font-medium text-[hsl(var(--foreground))] shadow-xs"
+              className="focus-ring w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-2xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               data-testid="select-difficulty"
             >
               <option value="All">All (सभी कठिनाई स्तर)</option>
@@ -255,10 +255,10 @@ export function QuizSetup({
         </div>
 
         {/* Question Count & Random Selector */}
-        <div className="mt-6 pt-6 border-t border-[hsl(var(--border))] grid gap-6 sm:grid-cols-2">
+        <div className="mt-6 pt-6 border-t border-slate-100 grid gap-6 sm:grid-cols-2">
           {/* Question Count */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
               प्रश्नों की संख्या (Number of Questions)
             </label>
             <div className="grid grid-cols-5 gap-2" role="group" aria-label="Select number of questions">
@@ -269,10 +269,10 @@ export function QuizSetup({
                     key={num}
                     type="button"
                     onClick={() => setQuestionCount(num)}
-                    className={`focus-ring rounded-lg border py-2 text-center text-xs font-bold transition ${
+                    className={`focus-ring rounded-xl border py-2 text-center text-xs font-bold transition ${
                       isSelected
-                        ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-xs'
-                        : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]'
+                        ? 'border-blue-700 bg-blue-700 text-white shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/50'
                     }`}
                     data-testid={`btn-count-${num}`}
                   >
@@ -285,17 +285,17 @@ export function QuizSetup({
 
           {/* Random Toggle */}
           <div>
-            <span className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+            <span className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
               प्रश्नों का यादृच्छिक क्रम (Random Questions)
             </span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsRandom(true)}
-                className={`focus-ring flex-1 rounded-lg border py-2 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                className={`focus-ring flex-1 rounded-xl border py-2 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                   isRandom
-                    ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-xs'
-                    : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'
+                    ? 'border-blue-700 bg-blue-700 text-white shadow-xs'
+                    : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
                 data-testid="btn-random-on"
               >
@@ -305,10 +305,10 @@ export function QuizSetup({
               <button
                 type="button"
                 onClick={() => setIsRandom(false)}
-                className={`focus-ring flex-1 rounded-lg border py-2 text-xs font-bold transition ${
+                className={`focus-ring flex-1 rounded-xl border py-2 text-xs font-bold transition ${
                   !isRandom
-                    ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-xs'
-                    : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'
+                    ? 'border-blue-700 bg-blue-700 text-white shadow-xs'
+                    : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
                 data-testid="btn-random-off"
               >
@@ -319,34 +319,34 @@ export function QuizSetup({
         </div>
 
         {/* Text Search inside questions */}
-        <div className="mt-6 pt-6 border-t border-[hsl(var(--border))]">
-          <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] mb-2">
+        <div className="mt-6 pt-6 border-t border-slate-100">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
             प्रश्नों में खोजें (Search Question Bank)
           </label>
           <div className="relative">
-            <Search className="absolute left-3.5 top-3 text-[hsl(var(--muted-foreground))]" size={16} />
+            <Search className="absolute left-3.5 top-3 text-slate-400" size={16} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="किसी सिद्धांत, मनोवैज्ञानिक, या कीवर्ड द्वारा खोजें..."
-              className="focus-ring w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] pl-10 pr-4 py-2.5 text-sm text-[hsl(var(--foreground))] shadow-xs placeholder:text-[hsl(var(--muted-foreground))]"
+              className="focus-ring w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2.5 text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               data-testid="input-search-questions"
             />
           </div>
         </div>
 
         {/* Availability summary & Launch CTA */}
-        <div className="mt-8 flex flex-col gap-4 rounded-xl bg-[hsl(var(--secondary)/.6)] p-5 sm:flex-row sm:items-center sm:justify-between border border-[hsl(var(--border))]">
+        <div className="mt-8 flex flex-col gap-4 rounded-2xl bg-blue-50/70 p-5 sm:flex-row sm:items-center sm:justify-between border border-blue-200">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-bold text-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-white font-bold text-sm shadow-xs">
               {matchingQuestions.length}
             </div>
             <div>
-              <p className="text-sm font-bold text-[hsl(var(--primary))]">
+              <p className="text-sm font-bold text-slate-900">
                 {matchingQuestions.length} प्रश्न उपलब्ध
               </p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">
+              <p className="text-xs text-slate-500">
                 {matchingQuestions.length > 0
                   ? `आपके चयन अनुसार ${Math.min(matchingQuestions.length, questionCount)} प्रश्न Quiz में शामिल होंगे।`
                   : 'इस चयन के लिए कोई प्रश्न नहीं मिले। कृपया अन्य विषय या फ़िल्टर चुनें।'}
@@ -359,7 +359,7 @@ export function QuizSetup({
             variant="primary"
             disabled={matchingQuestions.length === 0}
             onClick={handleStart}
-            className="w-full sm:w-auto px-6 py-3 text-base font-bold bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="w-full sm:w-auto px-6 py-3 text-base font-bold bg-blue-700 hover:bg-blue-800 text-white shadow-xs"
             data-testid="button-start-quiz"
           >
             <Play size={18} />

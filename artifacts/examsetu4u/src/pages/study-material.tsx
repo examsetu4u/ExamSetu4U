@@ -71,65 +71,325 @@ export default function StudyMaterialPage() {
 
   const materialText = (value: MaterialParagraph | MaterialPoint) => typeof value === 'string' ? value : value.text;
 
-  return <Layout>
-    <section className="paper-grid border-b border-[hsl(var(--border))] py-8 sm:py-12">
-      <Container>
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Exams', href: '/exams' }, { label: exam.name, href: `/exams/${exam.id}` }, { label: subject.name, href: `/exams/${exam.id}/${subject.id}` }, { label: topic.name }]} />
-        <div className="mt-7 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <SectionTitle eyebrow={`${exam.name} · ${subject.name}`} title={topic.name} description={material.intro} as="h1" />
-          <div className="w-full shrink-0 lg:max-w-xs">
-            <ProgressBar value={readingProgress} label="Reading progress" />
-            <div className="mt-3 flex items-center justify-between gap-3"><EstimatedTime minutes={topic.estimatedMinutes} /><span className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">{readingProgress}% read</span></div>
-          </div>
-        </div>
-      </Container>
-    </section>
-
-    <section className="py-9 sm:py-14">
-      <Container>
-        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_250px] lg:items-start lg:gap-12">
-          <article className="min-w-0">
-              <div className="print-hide mb-7 flex flex-col gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 shadow-[var(--shadow)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
-              <div className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><CheckCircle2 size={18} /></span><div><p className="text-sm font-bold text-[hsl(var(--primary))]">{completed ? 'Topic completed' : 'Study at your pace'}</p><p className="text-xs text-[hsl(var(--muted-foreground))]">{completed ? 'Your progress is saved on this device.' : 'Mark this topic complete when your revision is done.'}</p></div></div>
-                <div className="flex w-full gap-2 sm:w-auto">
-                 <Button type="button" variant="secondary" className="flex-1 sm:flex-none" onClick={() => window.print()} aria-label="Print study material"><Printer size={16} /><span className="sr-only sm:not-sr-only">Print</span></Button>
-                <Button type="button" variant="secondary" className="flex-1 sm:flex-none" onClick={() => topic && toggleBookmark(topic.id)} aria-pressed={bookmarked} data-testid="button-bookmark-topic">{bookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}{bookmarked ? 'Bookmarked' : 'Bookmark'}</Button>
-                <Button type="button" variant={completed ? 'secondary' : 'primary'} className="flex-1 sm:flex-none" onClick={() => {
-                  if (completed) {
-                    resetTopicProgress(topic.id);
-                    recordStudyProgress(topic.id, 0);
-                  } else {
-                    setTopicProgress(topic.id, 100);
-                    recordStudyProgress(topic.id, 100);
-                  }
-                }} data-testid="button-complete-topic">{completed ? <><Check size={16} /> Reset</> : <><CheckCircle2 size={16} /> Complete</>}</Button>
+  return (
+    <Layout>
+      <section className="paper-grid border-b border-blue-100 bg-blue-50/40 py-8 sm:py-12">
+        <Container>
+          <Breadcrumbs
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Exams', href: '/exams' },
+              { label: exam.name, href: `/exams/${exam.id}` },
+              { label: subject.name, href: `/exams/${exam.id}/${subject.id}` },
+              { label: topic.name },
+            ]}
+          />
+          <div className="mt-7 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <SectionTitle
+              eyebrow={`${exam.name} · ${subject.name}`}
+              title={topic.name}
+              description={material.intro}
+              as="h1"
+            />
+            <div className="w-full shrink-0 lg:max-w-xs">
+              <ProgressBar value={readingProgress} label="Reading progress" />
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <EstimatedTime minutes={topic.estimatedMinutes} />
+                <span className="text-xs font-bold text-blue-700">{readingProgress}% read</span>
               </div>
             </div>
+          </div>
+        </Container>
+      </section>
 
-            {material.callouts.map((callout) => <aside key={callout.title} className="mb-5 rounded-xl border border-[hsl(var(--accent)/.45)] bg-[hsl(var(--accent)/.12)] p-5 sm:p-6" data-testid={`callout-${callout.label.toLowerCase().replaceAll(' ', '-')}`}><div className="flex items-start gap-3"><Lightbulb className="mt-0.5 shrink-0 text-[hsl(var(--accent-foreground))]" size={19} /><div><p className="eyebrow !text-[hsl(var(--accent-foreground))]">{callout.label}</p><h2 className="mt-1 text-lg font-bold text-[hsl(var(--primary))]">{callout.title}</h2><p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">{callout.body}</p></div></div></aside>)}
+      <section className="py-9 sm:py-14 bg-white">
+        <Container>
+          <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start lg:gap-12">
+            <article className="min-w-0">
+              <div className="print-hide mb-7 flex flex-col gap-3 rounded-2xl border border-blue-200/90 bg-white p-4 shadow-2xs sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                    <CheckCircle2 size={18} />
+                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">
+                      {completed ? 'Topic completed' : 'Study at your pace'}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {completed ? 'Your progress is saved on this device.' : 'Mark this topic complete when your revision is done.'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex w-full gap-2 sm:w-auto">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="flex-1 sm:flex-none text-xs font-bold"
+                    onClick={() => window.print()}
+                    aria-label="Print study material"
+                  >
+                    <Printer size={16} />
+                    <span className="sr-only sm:not-sr-only">Print</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="flex-1 sm:flex-none text-xs font-bold"
+                    onClick={() => topic && toggleBookmark(topic.id)}
+                    aria-pressed={bookmarked}
+                    data-testid="button-bookmark-topic"
+                  >
+                    {bookmarked ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                    {bookmarked ? 'Bookmarked' : 'Bookmark'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={completed ? 'secondary' : 'primary'}
+                    className="flex-1 sm:flex-none text-xs font-bold"
+                    onClick={() => {
+                      if (completed) {
+                        resetTopicProgress(topic.id);
+                        recordStudyProgress(topic.id, 0);
+                      } else {
+                        setTopicProgress(topic.id, 100);
+                        recordStudyProgress(topic.id, 100);
+                      }
+                    }}
+                    data-testid="button-complete-topic"
+                  >
+                    {completed ? (
+                      <>
+                        <Check size={16} /> Reset
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 size={16} /> Complete
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
 
-            <div className="space-y-10 pt-3">
-              {material.sections.map((section, index) => <section key={section.heading} id={`section-${index + 1}`} className="scroll-mt-28" data-testid={`reader-section-${index + 1}`}><p className="eyebrow">Chapter {String(index + 1).padStart(2, '0')}</p><h2 className="font-display mt-2 text-2xl tracking-[-.025em] text-[hsl(var(--primary))] sm:text-3xl">{section.heading}</h2>{section.subheading && <h3 className="mt-4 text-base font-bold text-[hsl(var(--primary))]">{section.subheading}</h3>}<div className="mt-4 space-y-4 text-[15px] leading-7 text-[hsl(var(--foreground))]">{section.paragraphs.map((paragraph, paragraphIndex) => <p key={`${section.heading}-paragraph-${paragraphIndex}`} className={typeof paragraph === 'object' && paragraph.emphasis ? 'font-semibold' : undefined}>{materialText(paragraph)}</p>)}</div>{section.bullets && <ul className="mt-5 grid gap-3 rounded-xl bg-[hsl(var(--secondary)/.62)] p-5 text-sm leading-6 text-[hsl(var(--foreground))] sm:p-6">{section.bullets.map((bullet, bulletIndex) => <li key={`${section.heading}-bullet-${bulletIndex}`} className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[hsl(var(--accent-foreground))]" />{materialText(bullet)}</li>)}</ul>}{section.numberedPoints && <ol className="mt-5 grid list-decimal gap-3 rounded-xl border border-[hsl(var(--border))] p-5 pl-10 text-sm leading-6 text-[hsl(var(--foreground))] sm:p-6 sm:pl-10">{section.numberedPoints.map((point, pointIndex) => <li key={`${section.heading}-number-${pointIndex}`}>{materialText(point)}</li>)}</ol>}{section.tables?.map((table, tableIndex) => <div key={`${section.heading}-table-${tableIndex}`} className="mt-5 overflow-x-auto rounded-xl border border-[hsl(var(--border))]"><table className="min-w-full text-left text-sm"><thead className="bg-[hsl(var(--secondary))]"><tr>{table.headers.map((header) => <th key={header} scope="col" className="px-4 py-3 font-bold text-[hsl(var(--primary))]">{header}</th>)}</tr></thead><tbody>{table.rows.map((row, rowIndex) => <tr key={`${section.heading}-row-${rowIndex}`} className="border-t border-[hsl(var(--border))]">{row.map((cell, cellIndex) => <td key={`${rowIndex}-${cellIndex}`} className="px-4 py-3 align-top text-[hsl(var(--muted-foreground))]">{cell}</td>)}</tr>)}</tbody></table></div>)}{section.images?.map((image) => <figure key={image.src} className="mt-5"><img src={image.src} alt={image.alt} className="max-h-96 w-full rounded-xl object-cover" />{image.caption && <figcaption className="mt-2 text-center text-xs text-[hsl(var(--muted-foreground))]">{image.caption}</figcaption>}</figure>)}{section.questions?.map((question) => <details key={question.prompt} className="mt-5 rounded-xl border border-[hsl(var(--border))] p-4"><summary className="cursor-pointer font-semibold text-[hsl(var(--primary))]">{question.prompt}</summary>{question.answer && <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">{question.answer}</p>}</details>)}</section>)}
-            </div>
+              {material.callouts.map((callout) => (
+                <aside
+                  key={callout.title}
+                  className="mb-6 rounded-2xl border border-blue-200 bg-blue-50/50 p-5 sm:p-6"
+                  data-testid={`callout-${callout.label.toLowerCase().replaceAll(' ', '-')}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <Lightbulb className="mt-0.5 shrink-0 text-blue-700" size={20} />
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-blue-700">{callout.label}</p>
+                      <h2 className="mt-1 text-base sm:text-lg font-bold text-slate-900">{callout.title}</h2>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">{callout.body}</p>
+                    </div>
+                  </div>
+                </aside>
+              ))}
 
-            <div className="mt-12 rounded-xl border border-[hsl(var(--primary)/.18)] bg-[hsl(var(--primary))] p-6 text-[hsl(var(--primary-foreground))] sm:p-8" data-testid="panel-key-takeaways"><p className="eyebrow !text-[hsl(var(--accent))]">Quick revision</p><h2 className="font-display mt-2 text-2xl tracking-[-.025em]">Keep these points close before the exam.</h2><ul className="mt-5 grid gap-3 sm:grid-cols-2">{material.quickRevision.map((point) => <li key={point} className="flex items-start gap-3 text-sm leading-6 text-[hsl(var(--primary-foreground)/.82)]"><Check size={16} className="mt-1 shrink-0 text-[hsl(var(--accent))]" />{point}</li>)}</ul></div>
-            <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6"><div className="flex items-start gap-3"><CheckCircle2 className="mt-0.5 shrink-0 text-[hsl(var(--accent-foreground))]" /><div><h2 className="font-bold text-[hsl(var(--primary))]">Exam-ready recap</h2><ul className="mt-3 space-y-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">{material.keyTakeaways.map((takeaway) => <li key={takeaway} className="flex gap-2"><span className="text-[hsl(var(--accent-foreground))]">•</span>{takeaway}</li>)}</ul></div></div></div>
+              <div className="space-y-12 pt-3">
+                {material.sections.map((section, index) => (
+                  <section
+                    key={section.heading}
+                    id={`section-${index + 1}`}
+                    className="scroll-mt-28"
+                    data-testid={`reader-section-${index + 1}`}
+                  >
+                    <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Chapter {String(index + 1).padStart(2, '0')}</p>
+                    <h2 className="font-display mt-2 text-2xl tracking-tight text-slate-900 sm:text-3xl">
+                      {section.heading}
+                    </h2>
+                    {section.subheading && (
+                      <h3 className="mt-4 text-base font-bold text-slate-800">{section.subheading}</h3>
+                    )}
+                    <div className="mt-4 space-y-4 text-[15px] leading-7 text-slate-700">
+                      {section.paragraphs.map((paragraph, paragraphIndex) => (
+                        <p
+                          key={`${section.heading}-paragraph-${paragraphIndex}`}
+                          className={typeof paragraph === 'object' && paragraph.emphasis ? 'font-semibold text-slate-900' : undefined}
+                        >
+                          {materialText(paragraph)}
+                        </p>
+                      ))}
+                    </div>
+                    {section.bullets && (
+                      <ul className="mt-5 grid gap-3 rounded-2xl border border-blue-100 bg-blue-50/30 p-5 text-sm leading-6 text-slate-700 sm:p-6">
+                        {section.bullets.map((bullet, bulletIndex) => (
+                          <li key={`${section.heading}-bullet-${bulletIndex}`} className="flex gap-3">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
+                            {materialText(bullet)}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {section.numberedPoints && (
+                      <ol className="mt-5 grid list-decimal gap-3 rounded-2xl border border-slate-200 bg-white p-5 pl-10 text-sm leading-6 text-slate-700 sm:p-6 sm:pl-10">
+                        {section.numberedPoints.map((point, pointIndex) => (
+                          <li key={`${section.heading}-number-${pointIndex}`}>
+                            {materialText(point)}
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                    {section.tables?.map((table, tableIndex) => (
+                      <div
+                        key={`${section.heading}-table-${tableIndex}`}
+                        className="mt-5 overflow-x-auto rounded-2xl border border-slate-200"
+                      >
+                        <table className="min-w-full text-left text-sm">
+                          <thead className="bg-blue-50/70 border-b border-slate-200">
+                            <tr>
+                              {table.headers.map((header) => (
+                                <th key={header} scope="col" className="px-4 py-3 font-bold text-slate-900">
+                                  {header}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {table.rows.map((row, rowIndex) => (
+                              <tr
+                                key={`${section.heading}-row-${rowIndex}`}
+                                className="border-t border-slate-100 hover:bg-slate-50/60 transition"
+                              >
+                                {row.map((cell, cellIndex) => (
+                                  <td key={`${rowIndex}-${cellIndex}`} className="px-4 py-3 align-top text-slate-600">
+                                    {cell}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ))}
+                    {section.images?.map((image) => (
+                      <figure key={image.src} className="mt-5">
+                        <img src={image.src} alt={image.alt} className="max-h-96 w-full rounded-2xl object-cover" />
+                        {image.caption && (
+                          <figcaption className="mt-2 text-center text-xs text-slate-500">
+                            {image.caption}
+                          </figcaption>
+                        )}
+                      </figure>
+                    ))}
+                    {section.questions?.map((question) => (
+                      <details
+                        key={question.prompt}
+                        className="mt-5 rounded-2xl border border-slate-200 p-4 transition hover:border-blue-200"
+                      >
+                        <summary className="cursor-pointer font-bold text-slate-900">
+                          {question.prompt}
+                        </summary>
+                        {question.answer && (
+                          <p className="mt-3 text-sm leading-6 text-slate-600">
+                            {question.answer}
+                          </p>
+                        )}
+                      </details>
+                    ))}
+                  </section>
+                ))}
+              </div>
 
-            <div className="mt-10 grid gap-3 sm:grid-cols-2">
-              {previousTopic ? <Button href={topicPath(previousTopic.id)} variant="secondary" className="justify-start text-left"><ArrowLeft size={16} /><span><span className="block text-[11px] font-semibold text-[hsl(var(--muted-foreground))]">Previous topic</span><span className="mt-0.5 block truncate">{previousTopic.name}</span></span></Button> : <span />}
-              {nextTopic ? <Button href={topicPath(nextTopic.id)} variant="secondary" className="justify-end text-right"><span><span className="block text-[11px] font-semibold text-[hsl(var(--muted-foreground))]">Next topic</span><span className="mt-0.5 block truncate">{nextTopic.name}</span></span><ArrowRight size={16} /></Button> : <span />}
-            </div>
-          </article>
+              {/* Special highlight section: Quick revision */}
+              <div
+                className="mt-12 rounded-2xl border border-blue-700 bg-gradient-to-r from-blue-800 to-indigo-900 p-6 text-white sm:p-8 shadow-xs"
+                data-testid="panel-key-takeaways"
+              >
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-200">Quick revision</p>
+                <h2 className="font-display mt-2 text-2xl font-bold tracking-tight text-white">
+                  Keep these points close before the exam.
+                </h2>
+                <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {material.quickRevision.map((point) => (
+                    <li key={point} className="flex items-start gap-3 text-sm leading-6 text-blue-100">
+                      <Check size={16} className="mt-1 shrink-0 text-blue-300" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          <aside className="print-hide lg:sticky lg:top-24">
-            <Card className="p-5">
-              <p className="eyebrow">In this chapter</p>
-              <nav className="mt-4 grid gap-1" aria-label="Study material sections">{material.sections.map((section, index) => <a key={section.heading} href={`#section-${index + 1}`} className="focus-ring rounded-lg px-3 py-2.5 text-sm font-semibold text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--primary))]" data-testid={`link-reader-section-${index + 1}`}>{String(index + 1).padStart(2, '0')} <span className="ml-1">{section.heading}</span></a>)}</nav>
-              <div className="mt-5 border-t border-[hsl(var(--border))] pt-5"><p className="text-xs font-bold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))]">Topic status</p><div className="mt-3 flex items-center justify-between gap-3 text-sm"><span className="text-[hsl(var(--muted-foreground))]">Progress saved</span><span className="font-bold text-[hsl(var(--primary))]">{getTopicProgress(topic.id)}%</span></div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[hsl(var(--secondary))]"><div className="h-full rounded-full bg-[hsl(var(--accent))] transition-[width]" style={{ width: `${getTopicProgress(topic.id)}%` }} /></div></div>
-            </Card>
-          </aside>
-        </div>
-      </Container>
-    </section>
-  </Layout>;
+              {/* Exam-ready recap */}
+              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-2xs">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 shrink-0 text-blue-700" size={20} />
+                  <div>
+                    <h2 className="font-bold text-slate-900">Exam-ready recap</h2>
+                    <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+                      {material.keyTakeaways.map((takeaway) => (
+                        <li key={takeaway} className="flex gap-2">
+                          <span className="text-blue-600 font-bold">•</span>
+                          {takeaway}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10 grid gap-3 sm:grid-cols-2">
+                {previousTopic ? (
+                  <Button href={topicPath(previousTopic.id)} variant="secondary" className="justify-start text-left font-bold">
+                    <ArrowLeft size={16} />
+                    <span>
+                      <span className="block text-[11px] font-semibold text-slate-500">Previous topic</span>
+                      <span className="mt-0.5 block truncate text-slate-900">{previousTopic.name}</span>
+                    </span>
+                  </Button>
+                ) : (
+                  <span />
+                )}
+                {nextTopic ? (
+                  <Button href={topicPath(nextTopic.id)} variant="secondary" className="justify-end text-right font-bold">
+                    <span>
+                      <span className="block text-[11px] font-semibold text-slate-500">Next topic</span>
+                      <span className="mt-0.5 block truncate text-slate-900">{nextTopic.name}</span>
+                    </span>
+                    <ArrowRight size={16} />
+                  </Button>
+                ) : (
+                  <span />
+                )}
+              </div>
+            </article>
+
+            {/* Sidebar navigation */}
+            <aside className="print-hide lg:sticky lg:top-24">
+              <Card className="p-5 border border-slate-200/90 shadow-2xs rounded-2xl">
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-700">In this chapter</p>
+                <nav className="mt-4 grid gap-1" aria-label="Study material sections">
+                  {material.sections.map((section, index) => (
+                    <a
+                      key={section.heading}
+                      href={`#section-${index + 1}`}
+                      className="focus-ring rounded-xl px-3 py-2 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition"
+                      data-testid={`link-reader-section-${index + 1}`}
+                    >
+                      {String(index + 1).padStart(2, '0')}{' '}
+                      <span className="ml-1">{section.heading}</span>
+                    </a>
+                  ))}
+                </nav>
+                <div className="mt-5 border-t border-slate-100 pt-5">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Topic status</p>
+                  <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                    <span className="text-slate-600 text-xs font-medium">Progress saved</span>
+                    <span className="font-bold text-blue-700">{getTopicProgress(topic.id)}%</span>
+                  </div>
+                  <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-blue-600 transition-all duration-300"
+                      style={{ width: `${getTopicProgress(topic.id)}%` }}
+                    />
+                  </div>
+                </div>
+              </Card>
+            </aside>
+          </div>
+        </Container>
+      </section>
+    </Layout>
+  );
 }

@@ -76,8 +76,8 @@ export default function TopicDetailPage() {
 
   return (
     <Layout>
-      {/* 1. Breadcrumbs, Header & Topic Progress (Requirement 9) */}
-      <section className="paper-grid border-b border-[hsl(var(--border))] py-10 sm:py-14">
+      {/* 1. Breadcrumbs, Header & Topic Progress */}
+      <section className="paper-grid border-b border-blue-100 bg-blue-50/40 py-10 sm:py-14">
         <Container>
           <Breadcrumbs
             items={[
@@ -92,19 +92,19 @@ export default function TopicDetailPage() {
           <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-md bg-[hsl(var(--secondary))] px-2.5 py-1 text-xs font-bold text-[hsl(var(--primary))]">
+                <span className="rounded-md border border-blue-200 bg-white px-2.5 py-1 text-xs font-bold text-blue-700 shadow-2xs">
                   {exam.name}
                 </span>
-                <span className="text-xs text-[hsl(var(--muted-foreground))]">/</span>
-                <span className="text-xs font-bold text-[hsl(var(--accent-foreground))]">
+                <span className="text-xs text-slate-400">/</span>
+                <span className="text-xs font-bold text-blue-700">
                   {subject.name}
                 </span>
               </div>
 
-              <h1 className="font-display mt-3 text-3xl font-bold tracking-[-.035em] text-[hsl(var(--primary))] sm:text-4xl">
+              <h1 className="font-display mt-3 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
                 {topic.name}
               </h1>
-              <p className="mt-2 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 {topic.description}
               </p>
 
@@ -112,10 +112,10 @@ export default function TopicDetailPage() {
                 <span
                   className={`rounded-full px-3 py-0.5 text-xs font-bold ${
                     isComplete
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                      ? 'border border-emerald-200 bg-emerald-50 text-emerald-800'
                       : status === 'IN_PROGRESS'
-                      ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                      : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]'
+                      ? 'border border-blue-200 bg-blue-50 text-blue-800'
+                      : 'border border-slate-200 bg-white text-slate-600'
                   }`}
                 >
                   {statusLabelHindi}
@@ -125,16 +125,16 @@ export default function TopicDetailPage() {
             </div>
 
             {/* Topic Progress Card */}
-            <div className="w-full lg:max-w-xs rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-2xs">
+            <div className="w-full lg:max-w-xs rounded-2xl border border-blue-200/90 bg-white p-5 shadow-xs">
               <ProgressBar value={overallProgress} label="अध्याय संपूर्णता (Topic Progress)" />
-              <div className="mt-4 flex items-center justify-between gap-2 border-t border-[hsl(var(--border))] pt-3">
-                <span className="text-[11px] text-[hsl(var(--muted-foreground))]">
+              <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                <span className="text-[11px] font-medium text-slate-500">
                   {isComplete ? 'पूर्ण माना गया' : 'अध्ययन प्रगति पर'}
                 </span>
                 <button
                   type="button"
                   onClick={handleManualToggle}
-                  className="focus-ring text-xs font-bold text-[hsl(var(--primary))] hover:underline"
+                  className="focus-ring text-xs font-bold text-blue-700 hover:text-blue-800 hover:underline"
                 >
                   {isComplete ? 'प्रगति रीसेट करें' : '100% मार्क करें'}
                 </button>
@@ -148,67 +148,67 @@ export default function TopicDetailPage() {
       <section className="py-12 sm:py-16">
         <Container>
           <div className="mb-8">
-            <p className="eyebrow">सीखने के चरण (Learning Steps)</p>
-            <h2 className="font-display mt-2 text-2xl sm:text-3xl font-bold text-[hsl(var(--primary))]">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-700">सीखने के चरण (Learning Steps)</p>
+            <h2 className="font-display mt-2 text-2xl sm:text-3xl font-bold text-slate-900">
               क्रमबद्ध अध्ययन चरण (Study Material → PYQ → Quiz)
             </h2>
-            <p className="mt-2 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
+            <p className="mt-2 text-xs sm:text-sm text-slate-600">
               अवधारणाओं को पढ़ें, पूर्व वर्षों के वास्तविक प्रश्नों का अभ्यास करें और क्विज़ के साथ स्कोर जांचें।
             </p>
           </div>
 
-          {/* Learning Steps Detail Cards (Requirement 9: 1. Study Material, 2. PYQ, 3. Quiz) */}
+          {/* Learning Steps Detail Cards */}
           <div className="grid gap-6 md:grid-cols-3">
             {/* Step 1: Study Material */}
             <Card
-              className={`flex flex-col justify-between p-6 transition ${
+              className={`flex flex-col justify-between p-6 transition hover:border-blue-300 hover:shadow-xs ${
                 studyMaterialStatus === 'completed'
-                  ? 'border-emerald-500/50 bg-emerald-500/5'
+                  ? 'border-emerald-300/80 bg-emerald-50/20'
                   : studyMaterialStatus === 'in_progress'
-                  ? 'border-[hsl(var(--accent))] shadow-xs'
-                  : 'border-[hsl(var(--border))]'
+                  ? 'border-blue-300 shadow-xs'
+                  : 'border-slate-200'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
                     चरण 1 (Step 1)
                   </span>
                   {studyMaterialStatus === 'completed' ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
                       <Check size={12} strokeWidth={3} />
                       Completed
                     </span>
                   ) : (
-                    <span className="rounded-full bg-[hsl(var(--secondary))] px-2.5 py-0.5 text-[10px] font-bold text-[hsl(var(--muted-foreground))]">
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
                       {studyMaterialStatus === 'in_progress' ? 'In Progress' : 'Not Started'}
                     </span>
                   )}
                 </div>
 
                 <div className="mt-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                     <FileText size={20} />
                   </span>
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(var(--primary))]">
+                    <h3 className="text-lg font-bold text-slate-900">
                       Study Material
                     </h3>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                    <p className="text-xs text-slate-500">
                       अवधारणात्मक नोट्स व मुख्य बिंदु
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-1.5">
+                  <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
                     <span>नोट्स अध्ययन प्रगति</span>
-                    <span>{studyMaterialProgress}%</span>
+                    <span className="font-bold text-blue-700">{studyMaterialProgress}%</span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[hsl(var(--secondary))]">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        studyMaterialStatus === 'completed' ? 'bg-emerald-600' : 'bg-[hsl(var(--primary))]'
+                        studyMaterialStatus === 'completed' ? 'bg-emerald-600' : 'bg-blue-600'
                       }`}
                       style={{ width: `${studyMaterialProgress}%` }}
                     />
@@ -216,11 +216,11 @@ export default function TopicDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[hsl(var(--border))]">
+              <div className="mt-6 pt-4 border-t border-slate-100">
                 <Button
                   href={`/study-material/${exam.id}/${subject.id}/${topic.id}`}
                   variant={studyMaterialStatus === 'completed' ? 'secondary' : 'primary'}
-                  className="w-full justify-center gap-1.5 text-xs h-9"
+                  className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
                   onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 25))}
                 >
                   {studyMaterialStatus === 'completed' ? (
@@ -242,58 +242,58 @@ export default function TopicDetailPage() {
 
             {/* Step 2: Previous Year Questions (PYQ) */}
             <Card
-              className={`flex flex-col justify-between p-6 transition ${
+              className={`flex flex-col justify-between p-6 transition hover:border-indigo-300 hover:shadow-xs ${
                 pyqStatus === 'completed'
-                  ? 'border-emerald-500/50 bg-emerald-500/5'
+                  ? 'border-emerald-300/80 bg-emerald-50/20'
                   : pyqPracticed
-                  ? 'border-[hsl(var(--accent))] shadow-xs'
-                  : 'border-[hsl(var(--border))]'
+                  ? 'border-indigo-300 shadow-xs'
+                  : 'border-slate-200'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
                     चरण 2 (Step 2)
                   </span>
                   {pyqStatus === 'completed' ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
                       <Check size={12} strokeWidth={3} />
                       Completed
                     </span>
                   ) : (
-                    <span className="rounded-full bg-[hsl(var(--secondary))] px-2.5 py-0.5 text-[10px] font-bold text-[hsl(var(--muted-foreground))]">
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
                       {pyqPracticed ? 'In Progress' : 'Not Started'}
                     </span>
                   )}
                 </div>
 
                 <div className="mt-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
                     <FileQuestion size={20} />
                   </span>
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(var(--primary))]">
+                    <h3 className="text-lg font-bold text-slate-900">
                       PYQ Practice
                     </h3>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                    <p className="text-xs text-slate-500">
                       परीक्षा में पूछे गए पिछले प्रश्न
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-1.5">
+                  <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
                     <span>
                       {pyqPracticed
                         ? `${pyqAttempted} प्रश्न हल किए (${pyqAccuracy}% सटीकता)`
                         : 'अभी अभ्यास नहीं किया'}
                     </span>
-                    <span>{pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%'}</span>
+                    <span className="font-bold text-indigo-700">{pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%'}</span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[hsl(var(--secondary))]">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        pyqStatus === 'completed' ? 'bg-emerald-600' : 'bg-[hsl(var(--primary))]'
+                        pyqStatus === 'completed' ? 'bg-emerald-600' : 'bg-indigo-600'
                       }`}
                       style={{ width: pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%' }}
                     />
@@ -301,11 +301,11 @@ export default function TopicDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[hsl(var(--border))]">
+              <div className="mt-6 pt-4 border-t border-slate-100">
                 <Button
                   href={`/pyq/${exam.id}/${subject.id}/${topic.id}`}
                   variant={pyqStatus === 'completed' ? 'secondary' : 'primary'}
-                  className="w-full justify-center gap-1.5 text-xs h-9"
+                  className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
                   onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 50))}
                 >
                   {pyqStatus === 'completed' ? (
@@ -327,58 +327,58 @@ export default function TopicDetailPage() {
 
             {/* Step 3: MCQ Quiz */}
             <Card
-              className={`flex flex-col justify-between p-6 transition ${
+              className={`flex flex-col justify-between p-6 transition hover:border-sky-300 hover:shadow-xs ${
                 quizStatus === 'completed'
-                  ? 'border-emerald-500/50 bg-emerald-500/5'
+                  ? 'border-emerald-300/80 bg-emerald-50/20'
                   : quizAttempted
-                  ? 'border-[hsl(var(--accent))] shadow-xs'
-                  : 'border-[hsl(var(--border))]'
+                  ? 'border-sky-300 shadow-xs'
+                  : 'border-slate-200'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
                     चरण 3 (Step 3)
                   </span>
                   {quizStatus === 'completed' ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
                       <Check size={12} strokeWidth={3} />
                       Completed
                     </span>
                   ) : (
-                    <span className="rounded-full bg-[hsl(var(--secondary))] px-2.5 py-0.5 text-[10px] font-bold text-[hsl(var(--muted-foreground))]">
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
                       {quizAttempted ? 'In Progress' : 'Not Started'}
                     </span>
                   )}
                 </div>
 
                 <div className="mt-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
                     <Brain size={20} />
                   </span>
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(var(--primary))]">
+                    <h3 className="text-lg font-bold text-slate-900">
                       MCQ Quiz
                     </h3>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                    <p className="text-xs text-slate-500">
                       समयबद्ध बहुविकल्पीय परीक्षा
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-1.5">
+                  <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
                     <span>
                       {quizAttempted
                         ? `क्विज़ सटीकता: ${quizAccuracy}%`
                         : 'अभी टेस्ट नहीं दिया'}
                     </span>
-                    <span>{quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%'}</span>
+                    <span className="font-bold text-sky-700">{quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%'}</span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[hsl(var(--secondary))]">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        quizStatus === 'completed' ? 'bg-emerald-600' : 'bg-[hsl(var(--primary))]'
+                        quizStatus === 'completed' ? 'bg-emerald-600' : 'bg-sky-600'
                       }`}
                       style={{ width: quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%' }}
                     />
@@ -386,11 +386,11 @@ export default function TopicDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[hsl(var(--border))]">
+              <div className="mt-6 pt-4 border-t border-slate-100">
                 <Button
                   href={`/quiz/${exam.id}/${subject.id}/${topic.id}`}
                   variant={quizStatus === 'completed' ? 'secondary' : 'primary'}
-                  className="w-full justify-center gap-1.5 text-xs h-9"
+                  className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
                   onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 75))}
                 >
                   {quizStatus === 'completed' ? (
@@ -412,20 +412,20 @@ export default function TopicDetailPage() {
           </div>
 
           {/* 3. Next Recommended Action Banner */}
-          <div className="mt-10 rounded-2xl border border-[hsl(var(--accent)/.5)] bg-[hsl(var(--secondary)/.3)] p-5 sm:p-6">
+          <div className="mt-10 rounded-2xl border border-blue-200 bg-blue-50/70 p-5 sm:p-6 shadow-2xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--accent))]">
-                  <Sparkles size={16} />
+                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-white shadow-2xs">
+                  <Sparkles size={18} />
                 </span>
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
                     सिफारिश किया गया अगला कदम (Recommended Action)
                   </span>
-                  <p className="text-base font-bold text-[hsl(var(--primary))] mt-0.5">
+                  <p className="text-base font-bold text-slate-900 mt-0.5">
                     {nextAction.label}
                   </p>
-                  <p className="text-xs text-[hsl(var(--foreground))] mt-0.5">
+                  <p className="text-xs text-slate-600 mt-0.5">
                     {nextAction.reason}
                   </p>
                 </div>
@@ -434,56 +434,56 @@ export default function TopicDetailPage() {
               <Button
                 href={nextAction.url}
                 variant="primary"
-                className="text-xs h-10 px-5 shrink-0 justify-center gap-1.5 shadow-xs"
+                className="text-xs h-10 px-5 shrink-0 justify-center gap-1.5 shadow-xs font-bold"
               >
                 {nextAction.label} <ArrowRight size={14} />
               </Button>
             </div>
           </div>
 
-          {/* 4. Bottom Topic Completion Criteria Banner (Requirement 9: only when defined learning criteria are satisfied) */}
-          <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6" id="topic-completion-criteria-card">
-            <h3 className="text-sm font-bold text-[hsl(var(--primary))]">
+          {/* 4. Bottom Topic Completion Criteria Banner */}
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs" id="topic-completion-criteria-card">
+            <h3 className="text-sm font-bold text-slate-900">
               अध्याय संपूर्णता मानदंड (Topic Completion Criteria)
             </h3>
-            <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+            <p className="mt-1 text-xs text-slate-500">
               किसी अध्याय को 'Completed' दर्जा तभी प्राप्त होता है जब निम्न मानदंड वास्तव में पूर्ण होते हैं:
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3 text-xs">
               <div
-                className={`flex items-center gap-2 rounded-lg border p-3 ${
+                className={`flex items-center gap-2 rounded-xl border p-3 ${
                   studyMaterialStatus === 'completed'
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200'
-                    : 'border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.3)] text-[hsl(var(--muted-foreground))]'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                    : 'border-slate-200 bg-slate-50 text-slate-500'
                 }`}
               >
                 <Check
                   size={15}
                   className={studyMaterialStatus === 'completed' ? 'text-emerald-600' : 'opacity-40'}
                 />
-                <span>1. Study Material पूर्ण (≥80%)</span>
+                <span className="font-semibold">1. Study Material पूर्ण (≥80%)</span>
               </div>
 
               <div
-                className={`flex items-center gap-2 rounded-lg border p-3 ${
+                className={`flex items-center gap-2 rounded-xl border p-3 ${
                   pyqStatus === 'completed' || pyqPracticed
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200'
-                    : 'border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.3)] text-[hsl(var(--muted-foreground))]'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                    : 'border-slate-200 bg-slate-50 text-slate-500'
                 }`}
               >
                 <Check
                   size={15}
                   className={pyqStatus === 'completed' || pyqPracticed ? 'text-emerald-600' : 'opacity-40'}
                 />
-                <span>2. PYQ प्रश्न हल किए</span>
+                <span className="font-semibold">2. PYQ प्रश्न हल किए</span>
               </div>
 
               <div
-                className={`flex items-center gap-2 rounded-lg border p-3 ${
+                className={`flex items-center gap-2 rounded-xl border p-3 ${
                   quizStatus === 'completed' || (quizAttempted && quizAccuracy >= 50)
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200'
-                    : 'border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.3)] text-[hsl(var(--muted-foreground))]'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                    : 'border-slate-200 bg-slate-50 text-slate-500'
                 }`}
               >
                 <Check
@@ -494,21 +494,21 @@ export default function TopicDetailPage() {
                       : 'opacity-40'
                   }
                 />
-                <span>3. Quiz में ≥50% स्कोर</span>
+                <span className="font-semibold">3. Quiz में ≥50% स्कोर</span>
               </div>
             </div>
 
-            <div className="mt-5 border-t border-[hsl(var(--border))] pt-4">
+            <div className="mt-5 border-t border-slate-100 pt-4">
               {isComplete ? (
-                <div className="flex items-center gap-3 text-emerald-700 dark:text-emerald-300">
+                <div className="flex items-center gap-3 text-emerald-700">
                   <CheckCircle2 size={20} className="shrink-0 text-emerald-600" />
                   <span className="text-xs font-bold">
                     ✓ सभी मानदंड पूरे हैं! यह टॉपिक 'पूरा किया गया' (Completed) चिह्नित है।
                   </span>
                 </div>
               ) : (
-                <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                  वर्तमान स्थिति: <span className="font-bold text-[hsl(var(--primary))]">{statusLabelHindi}</span> ({overallProgress}% प्रगति)। ऊपर दिए गए शेष चरणों को पूरा करें।
+                <p className="text-xs text-slate-500">
+                  वर्तमान स्थिति: <span className="font-bold text-slate-800">{statusLabelHindi}</span> ({overallProgress}% प्रगति)। ऊपर दिए गए शेष चरणों को पूरा करें।
                 </p>
               )}
             </div>
@@ -517,7 +517,7 @@ export default function TopicDetailPage() {
           <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
             <Link
               href={`/exams/${exam.id}/${subject.id}`}
-              className="focus-ring inline-flex items-center rounded text-sm font-bold text-[hsl(var(--primary))] hover:text-[hsl(var(--accent-foreground))]"
+              className="focus-ring inline-flex items-center rounded text-sm font-bold text-blue-700 hover:text-blue-800 transition"
             >
               <ArrowRight size={15} className="mr-2 rotate-180" />
               वापस {subject.name} अध्याय सूची पर जाएं
@@ -525,7 +525,7 @@ export default function TopicDetailPage() {
 
             <Link
               href={`/exams/${exam.id}`}
-              className="focus-ring inline-flex items-center rounded text-sm font-bold text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+              className="focus-ring inline-flex items-center rounded text-sm font-bold text-slate-500 hover:text-blue-700 transition"
             >
               {exam.name} पाठ्यक्रम देखें
               <ChevronRight size={15} className="ml-1" />

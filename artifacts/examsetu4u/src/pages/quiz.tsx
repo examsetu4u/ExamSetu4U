@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, ChevronRight, HelpCircle, RotateCcw } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronRight, HelpCircle, RotateCcw, Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { Breadcrumbs } from '@/components/curriculum-ui';
@@ -140,10 +140,36 @@ export default function QuizPage() {
 
   return (
     <Layout>
-      {/* Header section with Breadcrumbs */}
-      <section className="paper-grid border-b border-[hsl(var(--border))] py-6 sm:py-8">
+      {/* Header section with Breadcrumbs - Prepare with purpose theme */}
+      <section className="hero-wash text-white py-10 sm:py-14">
         <Container>
-          <Breadcrumbs items={breadcrumbItems} />
+          <div className="text-blue-200">
+            <Breadcrumbs items={breadcrumbItems} />
+          </div>
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/40 bg-blue-500/20 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-200 backdrop-blur-xs">
+                <Sparkles size={13} className="text-blue-300" /> Interactive Test Engine
+              </span>
+              <h1 className="font-display mt-3 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+                MCQ <span className="text-blue-300">Quiz Engine</span>
+              </h1>
+              <p className="mt-2.5 text-sm sm:text-base text-blue-100/90 max-w-2xl leading-relaxed">
+                परीक्षा, विषय और कठिनाई स्तर चुनकर अपनी परीक्षा तैयारी का स्व-मूल्यांकन करें।
+              </p>
+            </div>
+            {historyList.length > 0 && !session && (
+              <Button
+                type="button"
+                onClick={() => setIsHistoryOpen(true)}
+                className="border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-xs font-bold text-xs self-start sm:self-auto min-h-10"
+                data-testid="button-view-quiz-history"
+              >
+                <History size={15} />
+                <span>पिछला इतिहास ({historyList.length})</span>
+              </Button>
+            )}
+          </div>
         </Container>
       </section>
 

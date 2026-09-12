@@ -137,30 +137,67 @@ function notifySubscribers(report: GoogleSheetBankReport): void {
 export function getEffectiveSheetUrl(): string {
   if (typeof window !== 'undefined') {
     try {
+      const local = localStorage.getItem(SESSION_URL_KEY);
+      if (local && local.trim() !== '') {
+        return local.trim();
+      }
       const override = sessionStorage.getItem(SESSION_URL_KEY);
       if (override && override.trim() !== '') {
         return override.trim();
       }
     } catch {
-      // Ignore sessionStorage issues
+      // Ignore storage issues
     }
   }
   return GOOGLE_SHEET_CSV_URL.trim();
 }
 
 /**
- * Sets a session override URL for live testing in Admin
+ * Intelligently converts any Google Sheet URL (edit link, pubhtml, share link, etc.)
+ * into a direct CSV export/download endpoint.
+ */
+export function normalizeGoogleSheetUrl(rawUrl: string): string {
+  if (!rawUrl) return '';
+  let url = rawUrl.trim();
+
+  // 1. Published HTML: https://docs.google.com/spreadsheets/d/e/2PACX-.../pubhtml...
+  if (url.includes('/pubhtml')) {
+    return url.replace('/pubhtml', '/pub?output=csv');
+  }
+
+  // 2. Published without output=csv: https://docs.google.com/spreadsheets/d/e/2PACX-.../pub
+  if (url.includes('/pub') && !url.includes('output=csv')) {
+    return `${url}${url.includes('?') ? '&' : '?'}output=csv`;
+  }
+
+  // 3. Regular sheet edit/view/sharing link: https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit...
+  const match = url.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && !url.includes('/export?') && !url.includes('/pub?')) {
+    const spreadsheetId = match[1];
+    const gidMatch = url.match(/[?#&]gid=([0-9]+)/);
+    const gid = gidMatch ? gidMatch[1] : '0';
+    return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
+  }
+
+  return url;
+}
+
+/**
+ * Sets an override URL for live testing in Admin and persisting across sessions
  */
 export function setSessionSheetUrlOverride(url: string | null): void {
   if (typeof window === 'undefined') return;
   try {
     if (!url || url.trim() === '') {
       sessionStorage.removeItem(SESSION_URL_KEY);
+      localStorage.removeItem(SESSION_URL_KEY);
     } else {
-      sessionStorage.setItem(SESSION_URL_KEY, url.trim());
+      const normalized = normalizeGoogleSheetUrl(url.trim());
+      sessionStorage.setItem(SESSION_URL_KEY, normalized);
+      localStorage.setItem(SESSION_URL_KEY, normalized);
     }
   } catch (err) {
-    console.warn('[GoogleSheetLoader] Failed to update session override:', err);
+    console.warn('[GoogleSheetLoader] Failed to update storage override:', err);
   }
 }
 
@@ -525,7 +562,8 @@ export function validateAndConvertSheetRows(
 export async function fetchGoogleSheetQuestions(
   options: { forceRefresh?: boolean; targetUrl?: string } = {}
 ): Promise<GoogleSheetBankReport> {
-  const url = (options.targetUrl || getEffectiveSheetUrl()).trim();
+  const rawUrl = (options.targetUrl || getEffectiveSheetUrl()).trim();
+  const url = normalizeGoogleSheetUrl(rawUrl);
 
   // If URL is not configured or is the default placeholder:
   if (!isSheetConfigured(url)) {

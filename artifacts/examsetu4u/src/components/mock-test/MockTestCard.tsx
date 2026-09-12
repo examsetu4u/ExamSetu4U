@@ -38,14 +38,14 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
 
   return (
     <Card
-      className={`flex flex-col justify-between p-5 sm:p-6 transition hover:border-[hsl(var(--accent)/.7)] shadow-sm ${className}`}
+      className={`flex flex-col justify-between p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs hover:border-blue-200 hover:shadow-xs transition ${className}`}
       data-testid={`card-mock-test-${test.id}`}
     >
       <div>
         {/* Top Header Badges */}
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="rounded-md bg-[hsl(var(--secondary))] px-2.5 py-1 font-bold text-[hsl(var(--primary))]">
+            <span className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 font-bold text-blue-700">
               {exam?.name || test.examId}
             </span>
             <span
@@ -55,7 +55,7 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
             >
               {test.difficulty}
             </span>
-            <span className="rounded-md bg-[hsl(var(--muted)/.3)] px-2 py-0.5 font-medium text-[hsl(var(--muted-foreground))]">
+            <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 font-medium text-slate-600">
               {test.testType === 'full'
                 ? 'Full Length'
                 : test.testType === 'subject'
@@ -69,16 +69,16 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
           {/* Attempt Status Badge */}
           <div>
             {hasActive ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300 text-[11px] animate-pulse">
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 font-bold text-amber-800 text-[11px] animate-pulse">
                 <span>In Progress</span>
               </span>
             ) : isAttempted ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[11px]">
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 font-bold text-emerald-800 text-[11px]">
                 <CheckCircle2 size={12} />
                 <span>Attempted ({summary.attemptCount})</span>
               </span>
             ) : (
-              <span className="rounded-full bg-[hsl(var(--secondary))] px-2.5 py-0.5 font-semibold text-[hsl(var(--muted-foreground))] text-[11px]">
+              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 font-semibold text-slate-500 text-[11px]">
                 Not Attempted
               </span>
             )}
@@ -86,30 +86,30 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
         </div>
 
         {/* Test Title & Description */}
-        <h3 className="font-display mt-3 text-lg font-bold text-[hsl(var(--foreground))] line-clamp-2">
+        <h3 className="font-display mt-3 text-lg font-bold text-slate-900 line-clamp-2">
           {test.title}
         </h3>
-        <p className="mt-1.5 text-xs sm:text-sm text-[hsl(var(--muted-foreground))] line-clamp-2 leading-relaxed">
+        <p className="mt-1.5 text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
           {test.description}
         </p>
 
         {/* Specifications Grid */}
-        <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-[hsl(var(--secondary)/.35)] p-3 text-xs sm:grid-cols-4 border border-[hsl(var(--border))]">
+        <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-slate-50/70 p-3 text-xs sm:grid-cols-4 border border-slate-200">
           <div>
-            <span className="text-[hsl(var(--muted-foreground))]">Questions:</span>
-            <p className="font-bold text-[hsl(var(--foreground))]">{test.questionCount} प्रश्न</p>
+            <span className="text-slate-500">Questions:</span>
+            <p className="font-bold text-slate-900">{test.questionCount} प्रश्न</p>
           </div>
           <div>
-            <span className="text-[hsl(var(--muted-foreground))]">Duration:</span>
-            <p className="font-bold text-[hsl(var(--foreground))]">{test.durationMinutes} मिनट</p>
+            <span className="text-slate-500">Duration:</span>
+            <p className="font-bold text-slate-900">{test.durationMinutes} मिनट</p>
           </div>
           <div>
-            <span className="text-[hsl(var(--muted-foreground))]">Max Marks:</span>
-            <p className="font-bold text-[hsl(var(--foreground))]">{maxMarks} अंक</p>
+            <span className="text-slate-500">Max Marks:</span>
+            <p className="font-bold text-slate-900">{maxMarks} अंक</p>
           </div>
           <div>
-            <span className="text-[hsl(var(--muted-foreground))]">Negative:</span>
-            <p className="font-bold text-[hsl(var(--foreground))]">
+            <span className="text-slate-500">Negative:</span>
+            <p className="font-bold text-slate-900">
               {test.negativeMarking ? `-${test.negativeMarks}` : 'नहीं (None)'}
             </p>
           </div>
@@ -117,16 +117,16 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
 
         {/* Best Score Banner if Attempted */}
         {isAttempted && (
-          <div className="mt-3 flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50/50 p-2.5 text-xs dark:border-amber-900/40 dark:bg-amber-950/20">
-            <div className="flex items-center gap-1.5 text-amber-800 dark:text-amber-300 font-medium">
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50/50 p-2.5 text-xs">
+            <div className="flex items-center gap-1.5 text-amber-800 font-medium">
               <Trophy size={14} className="text-amber-600" />
               <span>Best Score:</span>
             </div>
-            <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-200">
+            <div className="flex items-center gap-2 font-bold text-amber-900">
               <span>
                 {summary.bestScore} / {maxMarks}
               </span>
-              <span className="rounded bg-amber-200/60 px-1.5 py-0.5 text-[10px] text-amber-900 dark:bg-amber-900 dark:text-amber-100">
+              <span className="rounded bg-amber-200/60 px-1.5 py-0.5 text-[10px] text-amber-900">
                 {summary.bestAccuracy}% Acc
               </span>
             </div>
@@ -135,12 +135,12 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[hsl(var(--border))] pt-4">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-4">
         {isAttempted && summary.lastAttemptId ? (
           <Button
             href={`/mock-tests/result/${summary.lastAttemptId}`}
             variant="ghost"
-            className="text-xs px-2.5 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            className="text-xs px-2.5 text-slate-500 hover:text-blue-700"
             data-testid={`button-view-result-${test.id}`}
           >
             <span>पिछला परिणाम</span>
@@ -154,7 +154,7 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
             <Button
               href={`/mock-tests/live/${test.id}`}
               variant="primary"
-              className="text-xs min-h-9 bg-amber-600 hover:bg-amber-700 text-white"
+              className="text-xs min-h-9 bg-amber-600 hover:bg-amber-700 text-white font-bold"
               data-testid={`button-resume-${test.id}`}
             >
               <RotateCcw size={14} />
@@ -164,7 +164,7 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
             <Button
               href={`/mock-tests/start/${test.id}`}
               variant="secondary"
-              className="text-xs min-h-9"
+              className="text-xs min-h-9 font-bold"
               data-testid={`button-retake-${test.id}`}
             >
               <RotateCcw size={14} />
@@ -174,7 +174,7 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
             <Button
               href={`/mock-tests/start/${test.id}`}
               variant="primary"
-              className="text-xs min-h-9"
+              className="text-xs min-h-9 font-bold shadow-xs"
               data-testid={`button-start-${test.id}`}
             >
               <Play size={14} />

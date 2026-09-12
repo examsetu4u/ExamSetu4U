@@ -47,21 +47,21 @@ export function ContinueLearningCard({
   return (
     <Card
       id={`continue-card-${item.topicId}`}
-      className={`overflow-hidden border border-[hsl(var(--accent)/.4)] bg-[hsl(var(--card))] shadow-2xs transition hover:border-[hsl(var(--accent))] ${className}`}
+      className={`overflow-hidden border border-blue-200/90 bg-white shadow-xs transition hover:border-blue-300 hover:shadow-sm ${className}`}
     >
-      <div className="border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.35)] px-5 py-3">
+      <div className="border-b border-blue-100 bg-blue-50/60 px-5 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-md bg-[hsl(var(--primary))] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--accent))]">
+            <span className="inline-flex items-center gap-1.5 rounded-lg bg-blue-700 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-2xs">
               <Sparkles size={12} />
               {title}
             </span>
-            <span className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
-              {item.examName} → <span className="font-bold text-[hsl(var(--primary))]">{item.subjectName}</span>
+            <span className="text-xs font-semibold text-slate-500">
+              {item.examName} → <span className="font-bold text-slate-800">{item.subjectName}</span>
             </span>
           </div>
 
-          <span className="rounded-full bg-[hsl(var(--secondary))] px-2.5 py-0.5 text-[11px] font-bold text-[hsl(var(--foreground))]">
+          <span className="rounded-full border border-blue-200 bg-white px-3 py-0.5 text-[11px] font-bold text-blue-700">
             प्रगति: {item.progress}%
           </span>
         </div>
@@ -70,22 +70,22 @@ export function ContinueLearningCard({
       <div className="p-5 sm:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
               अध्याय / Topic:
             </p>
-            <h3 className="mt-1 text-lg font-bold text-[hsl(var(--primary))] sm:text-xl">
+            <h3 className="mt-1 text-lg font-bold text-slate-900 sm:text-xl">
               {item.topicName}
             </h3>
 
             {/* Deterministic Explanation Reason */}
-            <div className="mt-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.4)] p-3">
+            <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3.5">
               <div className="flex items-start gap-2.5">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--accent))]">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
                   {actionIcon}
                 </span>
                 <div className="text-xs leading-relaxed">
-                  <span className="font-bold text-[hsl(var(--primary))]">सुझाव: </span>
-                  <span className="text-[hsl(var(--foreground))]">{item.actionReason}</span>
+                  <span className="font-bold text-blue-900">सुझाव: </span>
+                  <span className="text-slate-700">{item.actionReason}</span>
                 </div>
               </div>
             </div>
@@ -108,7 +108,7 @@ export function ContinueLearningCard({
               {item.recommendedAction}
               <ArrowRight size={15} />
             </Button>
-            <p className="mt-2 text-center text-[11px] text-[hsl(var(--muted-foreground))]">
+            <p className="mt-2 text-center text-[11px] text-slate-500">
               {item.actionType === 'study'
                 ? 'नोट्स पढ़ें और अवधारणाएं समझें'
                 : item.actionType === 'pyq'

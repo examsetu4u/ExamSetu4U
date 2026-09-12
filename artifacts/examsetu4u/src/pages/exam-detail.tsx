@@ -93,11 +93,11 @@ export default function ExamDetailPage() {
 
   if (!exam || !examProgressData) return <NotFoundPage />;
 
-  const tones = {
-    saffron: 'bg-[#f7e3bb] text-[#825413]',
-    teal: 'bg-[#d6ebe5] text-[#246556]',
-    blue: 'bg-[#dce4f2] text-[#34547f]',
-    coral: 'bg-[#f3dcd5] text-[#9a493e]',
+  const tones: Record<string, string> = {
+    saffron: 'border border-blue-200 bg-blue-50 text-blue-700',
+    teal: 'border border-blue-200 bg-blue-50 text-blue-700',
+    blue: 'border border-blue-200 bg-blue-50 text-blue-700',
+    coral: 'border border-blue-200 bg-blue-50 text-blue-700',
   };
 
   const { intelligentScore, dailyGoal } = examProgressData;
@@ -105,9 +105,9 @@ export default function ExamDetailPage() {
   return (
     <Layout>
       {/* 1. Exam Header with Breadcrumbs */}
-      <section className="hero-wash text-[hsl(var(--primary-foreground))]">
+      <section className="hero-wash text-white">
         <Container className="py-10 sm:py-14">
-          <div className="text-white/80">
+          <div className="text-blue-200">
             <Breadcrumbs
               items={[
                 { label: 'Home', href: '/' },
@@ -119,32 +119,32 @@ export default function ExamDetailPage() {
 
           <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <span className={`inline-flex rounded-md px-2.5 py-1 text-xs font-bold ${tones[exam.tone]}`}>
+              <span className="inline-flex rounded-md border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-blue-200 backdrop-blur-xs">
                 {exam.name}
               </span>
-              <h1 className="font-display mt-4 text-4xl leading-tight tracking-[-.04em] sm:text-5xl">
+              <h1 className="font-display mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-white">
                 {exam.name} Structured Learning Path
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[hsl(var(--primary-foreground)/.75)] sm:text-base">
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-blue-100/80 sm:text-base sm:leading-7">
                 {exam.description}
               </p>
             </div>
 
             {/* Quick Readiness Card */}
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm sm:min-w-[260px]">
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-md sm:min-w-[260px]">
               <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="font-medium text-white/80">Overall Preparation</span>
-                <span className="font-bold text-[hsl(var(--accent))]">
+                <span className="font-semibold text-blue-100">Overall Preparation</span>
+                <span className="font-extrabold text-blue-300">
                   {examProgressData.overallPercentage}%
                 </span>
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-black/20">
+              <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-blue-950/60">
                 <div
-                  className="h-full rounded-full bg-[hsl(var(--accent))] transition-all"
+                  className="h-full rounded-full bg-blue-400 transition-all duration-300"
                   style={{ width: `${examProgressData.overallPercentage}%` }}
                 />
               </div>
-              <div className="mt-3 flex items-center justify-between text-[11px] text-white/70">
+              <div className="mt-3 flex items-center justify-between text-[11px] font-medium text-blue-200/80">
                 <span>
                   {examProgressData.completedTopics} / {examProgressData.totalTopics} Topics Completed
                 </span>
@@ -155,68 +155,68 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 2. Preparation Summary (Requirement 4 & 7: Total subjects, started, completed, total topic progress, overall %, Intelligent Score, Daily Goal) */}
-      <section className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card)/.6)] py-6">
+      {/* 2. Preparation Summary */}
+      <section className="border-b border-slate-200 bg-white py-6">
         <Container>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Subjects Progress Metric */}
-            <div className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-white p-4 shadow-2xs">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                 <Layers3 size={20} />
               </span>
               <div>
-                <p className="text-xl font-bold text-[hsl(var(--primary))]">
+                <p className="text-xl font-bold text-slate-900">
                   {examProgressData.subjectsStarted} / {examProgressData.totalSubjects}
                 </p>
-                <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
+                <p className="text-xs font-semibold text-slate-500">
                   Subjects Started ({examProgressData.subjectsCompleted} Completed)
                 </p>
               </div>
             </div>
 
             {/* Topics Progress Metric */}
-            <div className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-white p-4 shadow-2xs">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                 <BookOpen size={20} />
               </span>
               <div>
-                <p className="text-xl font-bold text-[hsl(var(--primary))]">
+                <p className="text-xl font-bold text-slate-900">
                   {examProgressData.completedTopics} / {examProgressData.totalTopics}
                 </p>
-                <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
-                  Topics Done ({examProgressData.totalTopicProgress}% avg progress)
+                <p className="text-xs font-semibold text-slate-500">
+                  Topics Done ({examProgressData.totalTopicProgress}% avg)
                 </p>
               </div>
             </div>
 
-            {/* Intelligent Score Metric from Module 6 */}
-            <div className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            {/* Intelligent Score Metric */}
+            <div className="flex items-center gap-3 rounded-xl border border-amber-200/70 bg-amber-50/40 p-4 shadow-2xs">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
                 <Award size={20} />
               </span>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <p className="text-xl font-bold text-[hsl(var(--primary))]">
+                  <p className="text-xl font-bold text-slate-900">
                     {intelligentScore.score}
                   </p>
-                  <span className="text-[10px] font-bold text-[hsl(var(--muted-foreground))]">/100</span>
+                  <span className="text-[10px] font-bold text-slate-500">/100</span>
                 </div>
-                <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
+                <p className="text-xs font-semibold text-amber-800">
                   Intelligent Score ({intelligentScore.tier})
                 </p>
               </div>
             </div>
 
-            {/* Daily Goal Metric from Module 7 */}
-            <div className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            {/* Daily Goal Metric */}
+            <div className="flex items-center gap-3 rounded-xl border border-emerald-200/70 bg-emerald-50/40 p-4 shadow-2xs">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                 <Target size={20} />
               </span>
               <div>
-                <p className="text-xl font-bold text-[hsl(var(--primary))]">
+                <p className="text-xl font-bold text-slate-900">
                   {dailyGoal.todayQuestionsAttempted} / {dailyGoal.targetQuestions} Qs
                 </p>
-                <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
+                <p className="text-xs font-semibold text-emerald-800">
                   Daily Goal ({dailyGoal.percentage}%) {dailyGoal.isCompleted ? '✓ Done' : ''}
                 </p>
               </div>
@@ -225,17 +225,17 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 3. Continue Learning (Requirement 6 & 7: Reusable ContinueLearningCard) */}
-      <section className="py-8 border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.2)]">
+      {/* 3. Continue Learning (Secondary Blue Section) */}
+      <section className="py-8 border-b border-blue-100 bg-blue-50/40">
         <Container>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles size={16} className="text-[hsl(var(--accent-foreground))]" />
-              <h2 className="text-base font-bold text-[hsl(var(--primary))]">
+              <Sparkles size={16} className="text-blue-700" />
+              <h2 className="text-base font-bold text-slate-900">
                 अध्ययन जारी रखें (Continue Learning)
               </h2>
             </div>
-            <span className="text-xs text-[hsl(var(--muted-foreground))]">
+            <span className="text-xs font-medium text-slate-500">
               प्राथमिकता आधारित अनुशंसित कदम
             </span>
           </div>
@@ -244,7 +244,7 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 4. Subjects List (Requirement 7: Subject Name, Topic Count, Completed Topics, Progress Bar, Quiz Accuracy if available, Continue button) */}
+      {/* 4. Subjects List */}
       <section className="py-12 sm:py-16">
         <Container>
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -270,37 +270,37 @@ export default function ExamDetailPage() {
                   <Card
                     key={subject.id}
                     id={`subject-card-${subject.id}`}
-                    className="flex h-full flex-col p-5 sm:p-6 transition hover:border-[hsl(var(--accent))] hover:shadow-xs"
+                    className="flex h-full flex-col p-5 sm:p-6 transition hover:border-blue-300 hover:shadow-sm"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                        <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
                           Subject
                         </p>
-                        <h3 className="mt-1 text-xl font-bold text-[hsl(var(--primary))]">
+                        <h3 className="mt-1 text-xl font-bold text-slate-900">
                           {subject.name}
                         </h3>
                       </div>
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                         <BookOpen size={18} />
                       </span>
                     </div>
 
-                    <p className="mt-3 flex-1 text-xs sm:text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">
+                    <p className="mt-3 flex-1 text-xs sm:text-sm leading-relaxed text-slate-600">
                       {subject.description}
                     </p>
 
                     {/* Topic count, completed count & quiz accuracy */}
-                    <div className="mt-5 grid grid-cols-2 gap-2 text-xs border-y border-[hsl(var(--border))] py-3">
+                    <div className="mt-5 grid grid-cols-2 gap-2 text-xs border-y border-slate-100 py-3">
                       <div>
-                        <span className="text-[11px] text-[hsl(var(--muted-foreground))]">अध्याय प्रगति:</span>
-                        <p className="font-bold text-[hsl(var(--primary))]">
-                          {completedTopicCount} / {totalTopicCount} Topics Completed
+                        <span className="text-[11px] text-slate-500">अध्याय प्रगति:</span>
+                        <p className="font-bold text-slate-900">
+                          {completedTopicCount} / {totalTopicCount} Topics Done
                         </p>
                       </div>
                       <div>
-                        <span className="text-[11px] text-[hsl(var(--muted-foreground))]">Quiz Accuracy:</span>
-                        <p className="font-bold text-[hsl(var(--primary))]">
+                        <span className="text-[11px] text-slate-500">Quiz Accuracy:</span>
+                        <p className="font-bold text-slate-900">
                           {quizAcc !== null && quizAcc !== undefined ? `${quizAcc}%` : 'अभी कोई टेस्ट नहीं'}
                         </p>
                       </div>
@@ -330,7 +330,7 @@ export default function ExamDetailPage() {
                           const el = document.getElementById('topic-discovery-section');
                           if (el) el.scrollIntoView({ behavior: 'smooth' });
                         }}
-                        className="focus-ring rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-xs font-semibold text-[hsl(var(--primary))] hover:bg-[hsl(var(--secondary))]"
+                        className="focus-ring rounded-xl border border-blue-200 bg-blue-50/60 px-3 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100 transition"
                         title="Explore Topics below"
                       >
                         चैप्टर सूची ({totalTopicCount})
@@ -341,10 +341,10 @@ export default function ExamDetailPage() {
               })}
             </div>
           ) : (
-            <div className="mt-8 rounded-xl border border-dashed border-[hsl(var(--border))] p-10 text-center">
-              <CheckCircle2 className="mx-auto text-[hsl(var(--accent-foreground))]" />
-              <p className="mt-3 font-semibold text-[hsl(var(--primary))]">कोई विषय नहीं मिला</p>
-              <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
+            <div className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/30 p-10 text-center">
+              <CheckCircle2 className="mx-auto text-blue-700" size={28} />
+              <p className="mt-3 font-bold text-slate-900">कोई विषय नहीं मिला</p>
+              <p className="mt-1 text-sm text-slate-600">
                 सर्च शब्द बदलकर पुनः प्रयास करें।
               </p>
             </div>
@@ -352,36 +352,36 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 5. Overall Progress Section (Requirement 7) */}
-      <section className="paper-grid border-y border-[hsl(var(--border))] py-12 sm:py-16">
+      {/* 5. Overall Progress Section */}
+      <section className="paper-grid border-y border-slate-200 bg-slate-50/40 py-12 sm:py-16">
         <Container>
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-8">
+          <div className="rounded-2xl border border-blue-200/90 bg-white p-6 sm:p-8 shadow-xs">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="max-w-xl">
-                <span className="eyebrow">सम्पूर्ण परीक्षा प्रगति (Overall Progress)</span>
-                <h2 className="font-display mt-2 text-2xl font-bold text-[hsl(var(--primary))] sm:text-3xl">
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-700">सम्पूर्ण परीक्षा प्रगति (Overall Progress)</span>
+                <h2 className="font-display mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
                   {exam.name} में आपकी तैयारी का स्तर
                 </h2>
-                <p className="mt-2 text-xs sm:text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">
+                <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
                   यह प्रगति आपके नोट्स अध्ययन, PYQ अभ्यास और दैनिक क्विज़ के प्रदर्शन को मिलाकर परिकलित की जाती है।
                 </p>
               </div>
 
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <p className="text-3xl sm:text-4xl font-black text-[hsl(var(--primary))]">
+                  <p className="text-3xl sm:text-4xl font-extrabold text-blue-700">
                     {examProgressData.overallPercentage}%
                   </p>
-                  <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))] mt-0.5">
+                  <p className="text-xs font-semibold text-slate-500 mt-0.5">
                     तैयारी पूर्णता
                   </p>
                 </div>
-                <div className="h-12 w-px bg-[hsl(var(--border))]" />
+                <div className="h-12 w-px bg-slate-200" />
                 <div className="text-center">
-                  <p className="text-3xl sm:text-4xl font-black text-amber-600 dark:text-amber-400">
+                  <p className="text-3xl sm:text-4xl font-extrabold text-amber-600">
                     {intelligentScore.score}
                   </p>
-                  <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))] mt-0.5">
+                  <p className="text-xs font-semibold text-slate-500 mt-0.5">
                     इंटेलिजेंट स्कोर
                   </p>
                 </div>
@@ -389,13 +389,13 @@ export default function ExamDetailPage() {
             </div>
 
             <div className="mt-6">
-              <div className="flex justify-between text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-1.5">
+              <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
                 <span>पाठ्यक्रम कवरेज ({examProgressData.completedTopics} of {examProgressData.totalTopics} टॉपिक्स पूर्ण)</span>
-                <span>{examProgressData.overallPercentage}%</span>
+                <span className="font-bold text-blue-700">{examProgressData.overallPercentage}%</span>
               </div>
-              <div className="h-3 w-full overflow-hidden rounded-full bg-[hsl(var(--secondary))]">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-blue-100/70">
                 <div
-                  className="h-full rounded-full bg-[hsl(var(--primary))] transition-all"
+                  className="h-full rounded-full bg-blue-600 transition-all duration-300"
                   style={{ width: `${examProgressData.overallPercentage}%` }}
                 />
               </div>
@@ -404,8 +404,8 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 6. Quick Practice Section (Requirement 7 & 11) */}
-      <section className="py-10 border-b border-[hsl(var(--border))]">
+      {/* 6. Quick Practice Section */}
+      <section className="py-10 border-b border-slate-200 bg-white">
         <Container>
           <QuickPractice
             examId={exam.id}
@@ -414,8 +414,8 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 7. Recently Studied Topics (Requirement 7 & 10) */}
-      <section className="py-10 border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.2)]">
+      {/* 7. Recently Studied Topics */}
+      <section className="py-10 border-b border-blue-100 bg-blue-50/30">
         <Container>
           <RecentlyStudied
             items={recentActivities}
@@ -424,19 +424,19 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 8. Topic Discovery Explorer (Preserving Module 8 capability) */}
+      {/* 8. Topic Discovery Explorer */}
       <section
         id="topic-discovery-section"
-        className="py-12 sm:py-16 bg-[hsl(var(--card))]"
+        className="py-12 sm:py-16 bg-white"
       >
         <Container>
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <p className="eyebrow">Topic Discovery Explorer</p>
-              <h2 className="font-display mt-2 text-2xl sm:text-3xl font-bold tracking-[-.035em] text-[hsl(var(--primary))]">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Topic Discovery Explorer</p>
+              <h2 className="font-display mt-2 text-2xl sm:text-3xl font-bold text-slate-900">
                 {exam.name} के सभी टॉपिक एक्सप्लोर करें
               </h2>
-              <p className="mt-2 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="mt-2 text-xs sm:text-sm text-slate-600">
                 नोट्स, PYQ और क्विज़ उपलब्धता के आधार पर फ़िल्टर करें और सीधा अध्ययन करें।
               </p>
             </div>
@@ -446,7 +446,7 @@ export default function ExamDetailPage() {
               <select
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                className="focus-ring rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-xs font-semibold text-[hsl(var(--foreground))]"
+                className="focus-ring rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800"
                 aria-label="Filter by subject"
               >
                 <option value="all">सभी विषय ({subjects.length})</option>
@@ -463,10 +463,10 @@ export default function ExamDetailPage() {
                     key={filter}
                     type="button"
                     onClick={() => setTopicFilter(filter)}
-                    className={`focus-ring rounded-lg px-2.5 py-1.5 text-xs font-bold transition ${
+                    className={`focus-ring rounded-xl px-3 py-1.5 text-xs font-bold transition ${
                       topicFilter === filter
-                        ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-xs'
-                        : 'border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'
+                        ? 'bg-blue-700 text-white shadow-2xs'
+                        : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                     }`}
                   >
                     {filter === 'all' && 'All'}
@@ -487,51 +487,51 @@ export default function ExamDetailPage() {
               return (
                 <Card
                   key={topic.id}
-                  className="flex flex-col justify-between p-5 transition hover:border-[hsl(var(--accent))] hover:shadow-xs"
+                  className="flex flex-col justify-between p-5 transition hover:border-blue-300 hover:shadow-xs"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--accent-foreground))]">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600">
                         {subject?.name || 'Subject'}
                       </span>
                       <EstimatedTime minutes={topic.estimatedMinutes} />
                     </div>
 
-                    <h3 className="mt-2 text-base font-bold text-[hsl(var(--primary))]">
+                    <h3 className="mt-2 text-base font-bold text-slate-900">
                       {topic.name}
                     </h3>
 
-                    <p className="mt-1.5 text-xs leading-relaxed text-[hsl(var(--muted-foreground))] line-clamp-2">
+                    <p className="mt-1.5 text-xs leading-relaxed text-slate-600 line-clamp-2">
                       {topic.description}
                     </p>
 
                     {/* Content Availability Badges */}
                     <div className="mt-4 flex flex-wrap items-center gap-1.5">
                       <span
-                        className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-bold ${
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold ${
                           topic.availability.studyMaterial
-                            ? 'bg-[#f7e3bb] text-[#825413]'
-                            : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] opacity-60'
+                            ? 'border border-blue-200 bg-blue-50 text-blue-700'
+                            : 'border border-slate-200 bg-slate-50 text-slate-400 opacity-60'
                         }`}
                       >
                         <FileText size={10} />
                         Study Notes
                       </span>
                       <span
-                        className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-bold ${
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold ${
                           topic.availability.pyq
-                            ? 'bg-[#d6ebe5] text-[#246556]'
-                            : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] opacity-60'
+                            ? 'border border-indigo-200 bg-indigo-50 text-indigo-700'
+                            : 'border border-slate-200 bg-slate-50 text-slate-400 opacity-60'
                         }`}
                       >
                         <FileQuestion size={10} />
                         PYQ
                       </span>
                       <span
-                        className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-bold ${
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold ${
                           topic.availability.quiz
-                            ? 'bg-[#dce4f2] text-[#34547f]'
-                            : 'bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] opacity-60'
+                            ? 'border border-sky-200 bg-sky-50 text-sky-700'
+                            : 'border border-slate-200 bg-slate-50 text-slate-400 opacity-60'
                         }`}
                       >
                         <Brain size={10} />
@@ -540,11 +540,11 @@ export default function ExamDetailPage() {
                     </div>
                   </div>
 
-                  <div className="mt-5 pt-3 border-t border-[hsl(var(--border))]">
+                  <div className="mt-5 pt-3 border-t border-slate-100">
                     <Button
                       href={`/exams/${exam.id}/${topic.subjectId}/${topic.id}`}
                       variant="secondary"
-                      className="w-full text-xs h-9 justify-center gap-1.5"
+                      className="w-full text-xs h-9 justify-center gap-1.5 font-bold"
                     >
                       लर्निंग पाथ खोलें <ArrowRight size={13} />
                     </Button>

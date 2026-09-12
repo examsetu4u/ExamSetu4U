@@ -1,4 +1,5 @@
 import { exams, subjects, topics } from '@/data/curriculum';
+import { getPublishedGoogleSheetQuestions } from '@/services/google-sheet-loader';
 
 export type PYQDifficulty = 'Easy' | 'Moderate' | 'Challenging';
 
@@ -150,20 +151,149 @@ export const pyqQuestions: PYQQuestion[] = [
   }),
 ];
 
+export function getAllPYQQuestions(): PYQQuestion[] {
+  const result: PYQQuestion[] = [...pyqQuestions];
+  const seenIds = new Set(result.map((q) => q.id));
+
+  // 1. Merge Google Sheet published questions
+  try {
+    const sheetQuestions = getPublishedGoogleSheetQuestions();
+    for (const sq of sheetQuestions) {
+      if (sq && sq.id && !seenIds.has(sq.id)) {
+        seenIds.add(sq.id);
+        const options: PYQOption[] = (sq.options || []).map((opt, i) => ({
+          id: String.fromCharCode(97 + i),
+          label: String.fromCharCode(65 + i),
+          text: opt,
+        }));
+
+        let correctId = (sq.correctAnswer || 'a').toLowerCase().trim();
+        if (!['a', 'b', 'c', 'd'].includes(correctId)) {
+          const matchedIdx = (sq.options || []).findIndex(
+            (o) => o.trim().toLowerCase() === sq.correctAnswer.trim().toLowerCase()
+          );
+          correctId = matchedIdx !== -1 ? String.fromCharCode(97 + matchedIdx) : 'a';
+        }
+
+        result.push({
+          id: sq.id,
+          prompt: sq.question,
+          options,
+          correctOptionId: correctId,
+          metadata: {
+            examId: sq.examId || 'super-tet',
+            subjectId: sq.subjectId || 'super-tet-teaching-skills',
+            topicId: sq.topicId || 'super-tet-teaching-skills-1',
+            year: sq.year ? parseInt(String(sq.year), 10) || 2024 : 2024,
+            difficulty: (sq.difficulty as any) || 'Moderate',
+            sourceLabel: sq.sourceType === 'PYQ' ? `${sq.examName || 'Super TET'} PYQ` : 'Question Bank',
+            isSample: false,
+          },
+          explanation: {
+            answerReason: sq.explanation || 'विवरण उपलब्ध नहीं है।',
+            importantPoint: sq.importantPoint || '',
+            additionalFact: sq.additionalFact || '',
+            commonMistake: sq.commonMistake || '',
+          },
+        });
+      }
+    }
+  } catch (err) {
+    console.warn('[PYQ] Failed to merge sheet questions:', err);
+  }
+
+  // 2. Merge Admin questions from localStorage
+  try {
+    if (typeof window !== 'undefined') {
+      const adminRaw = localStorage.getItem('examsetu4u_admin_content');
+      if (adminRaw) {
+        const parsed = JSON.parse(adminRaw);
+        if (Array.isArray(parsed?.questions)) {
+          parsed.questions.forEach((q: any) => {
+            if (q && q.id && (q.status === 'PUBLISHED' || !q.status) && !seenIds.has(q.id)) {
+              seenIds.add(q.id);
+              const options: PYQOption[] = (q.options || []).map((opt: string, i: number) => ({
+                id: String.fromCharCode(97 + i),
+                label: String.fromCharCode(65 + i),
+                text: opt,
+              }));
+
+              let correctId = (q.correctAnswer || 'a').toLowerCase().trim();
+              if (!['a', 'b', 'c', 'd'].includes(correctId)) {
+                const matchedIdx = (q.options || []).findIndex(
+                  (o: string) => o.trim().toLowerCase() === (q.correctAnswer || '').trim().toLowerCase()
+                );
+                correctId = matchedIdx !== -1 ? String.fromCharCode(97 + matchedIdx) : 'a';
+              }
+
+              result.push({
+                id: q.id,
+                prompt: q.question,
+                options,
+                correctOptionId: correctId,
+                metadata: {
+                  examId: q.examId || 'super-tet',
+                  subjectId: q.subjectId || 'super-tet-teaching-skills',
+                  topicId: q.topicId || 'super-tet-teaching-skills-1',
+                  year: q.year ? parseInt(String(q.year), 10) || 2024 : 2024,
+                  difficulty: q.difficulty || 'Moderate',
+                  sourceLabel: q.sourceType === 'PYQ' ? `${q.examName || 'Super TET'} PYQ` : 'Admin Practice',
+                  isSample: false,
+                },
+                explanation: {
+                  answerReason: q.explanation || '',
+                  importantPoint: q.importantPoint || '',
+                  additionalFact: q.additionalFact || '',
+                  commonMistake: q.commonMistake || '',
+                },
+              });
+            }
+          });
+        }
+      }
+    }
+  } catch {
+    // Ignore
+  }
+
+  return result;
+}
+
+function normalizeMatch(target: string, query: string): boolean {
+  if (!query) return true;
+  const t = target.toLowerCase().trim();
+  const q = query.toLowerCase().trim();
+  if (t === q) return true;
+  if (t.replace('super-tet-', '') === q.replace('super-tet-', '')) return true;
+  if (q === 'teaching-skills' && (t === 'super-tet-teaching-skills' || t === 'shikshan-kaushal')) return true;
+  if (q === 'shikshan-kaushal' && (t === 'super-tet-teaching-skills' || t === 'teaching-skills')) return true;
+  if (q === 'child-development' && (t === 'super-tet-child-development' || t === 'bal-vikas')) return true;
+  if (q === 'bal-vikas' && (t === 'super-tet-child-development' || t === 'child-development')) return true;
+  return false;
+}
+
 export function getPYQQuestion(id: string) {
-  return pyqQuestions.find((question) => question.id === id);
+  return getAllPYQQuestions().find((question) => question.id === id);
 }
 
 export function getPYQsForExam(examId: string) {
-  return pyqQuestions.filter((question) => question.metadata.examId === examId);
+  const norm = examId.toLowerCase().trim();
+  return getAllPYQQuestions().filter((question) => {
+    const qExam = question.metadata.examId.toLowerCase().trim();
+    return qExam === norm || (norm === 'super-tet' && (qExam === 'supertet' || qExam === 'super-tet-exam'));
+  });
 }
 
 export function getPYQsForSubject(subjectId: string) {
-  return pyqQuestions.filter((question) => question.metadata.subjectId === subjectId);
+  return getAllPYQQuestions().filter((question) =>
+    normalizeMatch(question.metadata.subjectId, subjectId)
+  );
 }
 
 export function getPYQsForTopic(topicId: string) {
-  return pyqQuestions.filter((question) => question.metadata.topicId === topicId);
+  return getAllPYQQuestions().filter((question) =>
+    normalizeMatch(question.metadata.topicId, topicId)
+  );
 }
 
 export function getPYQExam(examId: string) {
