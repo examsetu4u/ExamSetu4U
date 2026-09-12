@@ -166,7 +166,32 @@ export default function Home() {
         </section>
       )}
 
-      {/* 3. Practice Now (Quick Actions) */}
+      {/* 3. Popular Exams */}
+      <section className="py-16 sm:py-20">
+        <Container>
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <SectionTitle
+              eyebrow="Choose your path"
+              title="Popular exams"
+              description="A simple place to begin. Pick an exam and see what to study next."
+            />
+            <Link
+              href="/exams"
+              className="focus-ring flex w-fit items-center gap-2 rounded px-1 py-2 text-sm font-bold text-[hsl(var(--primary))]"
+              data-testid="link-home-all-exams"
+            >
+              View all exams <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {exams.map((exam) => (
+              <ExamCard key={exam.id} exam={exam} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* 4. Practice Now (Quick Actions) */}
       <section className="py-12 sm:py-16">
         <Container>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -188,7 +213,7 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* 4. Recommended Topics (Deterministic from local progress/performance) */}
+      {/* 5. Recommended Topics (Deterministic from local progress/performance) */}
       <section className="paper-grid border-y border-[hsl(var(--border))] py-12 sm:py-16" id="home-recommended-topics-section">
         <Container>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -242,31 +267,6 @@ export default function Home() {
                   </Button>
                 </div>
               </Card>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* 5. Popular Exams */}
-      <section className="py-16 sm:py-20">
-        <Container>
-          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-            <SectionTitle
-              eyebrow="Choose your path"
-              title="Popular exams"
-              description="A simple place to begin. Pick an exam and see what to study next."
-            />
-            <Link
-              href="/exams"
-              className="focus-ring flex w-fit items-center gap-2 rounded px-1 py-2 text-sm font-bold text-[hsl(var(--primary))]"
-              data-testid="link-home-all-exams"
-            >
-              View all exams <ArrowRight size={16} />
-            </Link>
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {exams.map((exam) => (
-              <ExamCard key={exam.id} exam={exam} />
             ))}
           </div>
         </Container>
