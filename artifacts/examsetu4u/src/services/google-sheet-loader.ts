@@ -1,4 +1,4 @@
-import { GOOGLE_SHEET_CSV_URL } from '@/config/google-sheet-config';
+import { GOOGLE_SHEET_CSV_URL, GOOGLE_SHEET_QUESTION_SOURCES } from '@/config/google-sheet-config';
 import type { MCQDifficulty, MCQQuestion, MCQSourceType } from '@/data/quiz/types';
 import type {
   GoogleSheetBankReport,
@@ -336,7 +336,8 @@ function formatExamNameFallback(examId: string): string {
  */
 export function validateAndConvertSheetRows(
   rawRows: string[][],
-  existingLocalIds: Set<string> = new Set()
+  existingLocalIds: Set<string> = new Set(),
+  seenSheetIds: Set<string> = new Set()
 ): {
   validations: GoogleSheetRowValidation[];
   publishedQuestions: MCQQuestion[];
@@ -384,7 +385,7 @@ export function validateAndConvertSheetRows(
 
   const validations: GoogleSheetRowValidation[] = [];
   const publishedQuestions: MCQQuestion[] = [];
-  const seenSheetIds = new Set<string>();
+  const seenIds = seenSheetIds;
 
   let draftCount = 0;
   let reviewCount = 0;
@@ -562,16 +563,34 @@ export function validateAndConvertSheetRows(
 export async function fetchGoogleSheetQuestions(
   options: { forceRefresh?: boolean; targetUrl?: string } = {}
 ): Promise<GoogleSheetBankReport> {
-  const rawUrl = (options.targetUrl || getEffectiveSheetUrl()).trim();
-  const url = normalizeGoogleSheetUrl(rawUrl);
+  const targetUrl = options.targetUrl?.trim();
 
-  // If URL is not configured or is the default placeholder:
-  if (!isSheetConfigured(url)) {
+  // Determine all source URLs to fetch
+  let urlsToFetch: string[] = [];
+  if (targetUrl) {
+    urlsToFetch = [normalizeGoogleSheetUrl(targetUrl)];
+  } else {
+    // 1. All configured sources (Class 10 Science, Shikshan Kaushal, Bal Vikas)
+    const configuredSources = (GOOGLE_SHEET_QUESTION_SOURCES || []).map((s) =>
+      normalizeGoogleSheetUrl(s.url)
+    );
+    // 2. The effective sheet URL (which might include session overrides)
+    const effective = normalizeGoogleSheetUrl(getEffectiveSheetUrl());
+    urlsToFetch = Array.from(new Set([...configuredSources, effective])).filter((u) =>
+      isSheetConfigured(u)
+    );
+  }
+
+  const primaryUrl = urlsToFetch[0] || normalizeGoogleSheetUrl(targetUrl || getEffectiveSheetUrl());
+
+  // If no valid URLs are configured:
+  if (urlsToFetch.length === 0) {
     const unconfiguredReport: GoogleSheetBankReport = {
-      url,
+      url: primaryUrl,
       isConfigured: false,
       status: 'unconfigured',
-      statusMessage: 'Google Sheet CSV URL is not configured yet. Set GOOGLE_SHEET_CSV_URL in src/config/google-sheet-config.ts or enter a URL in Admin.',
+      statusMessage:
+        'Google Sheet CSV URL is not configured yet. Set GOOGLE_SHEET_CSV_URL in src/config/google-sheet-config.ts or enter a URL in Admin.',
       lastFetchedAt: null,
       totalRows: 0,
       publishedCount: 0,
@@ -590,7 +609,7 @@ export async function fetchGoogleSheetQuestions(
   }
 
   // Prevent multiple concurrent fetches unless forced
-  if (isCurrentlyFetching && !options.forceRefresh && cachedReport) {
+  if (isCurrentlyFetching && !options.forceRefresh && cachedReport && cachedPublishedQuestions.length > 0) {
     return cachedReport;
   }
 
@@ -598,7 +617,7 @@ export async function fetchGoogleSheetQuestions(
 
   // Emit loading state
   const loadingReport: GoogleSheetBankReport = {
-    url,
+    url: primaryUrl,
     isConfigured: true,
     status: 'loading',
     statusMessage: 'Loading questions from Google Sheet...',
@@ -616,90 +635,93 @@ export async function fetchGoogleSheetQuestions(
   notifySubscribers(loadingReport);
 
   try {
-    // Add cache buster when force refreshing
-    const fetchUrl = options.forceRefresh
-      ? `${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`
-      : url;
+    const localIds = localQuestionIdsSupplier ? localQuestionIdsSupplier() : new Set<string>();
+    const seenIds = new Set<string>();
+    const allValidations: GoogleSheetRowValidation[] = [];
+    const allPublishedQuestions: MCQQuestion[] = [];
+    let totalDraft = 0;
+    let totalReview = 0;
+    let totalArchived = 0;
+    let totalMalformed = 0;
+    let totalDuplicate = 0;
+    let successfulFetches = 0;
 
-    const response = await fetch(fetchUrl, {
-      method: 'GET',
-      headers: {
-        Accept: 'text/csv, text/plain, */*',
-      },
+    // Fetch all URLs in parallel
+    const fetchPromises = urlsToFetch.map(async (u) => {
+      const fetchUrl = options.forceRefresh
+        ? `${u}${u.includes('?') ? '&' : '?'}_t=${Date.now()}`
+        : u;
+      const response = await fetch(fetchUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'text/csv, text/plain, */*',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      }
+      const text = await response.text();
+      return { url: u, text };
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+    const results = await Promise.allSettled(fetchPromises);
+
+    for (const res of results) {
+      if (res.status === 'fulfilled' && res.value.text && res.value.text.trim().length > 0) {
+        successfulFetches++;
+        const parsedRows = parseCSV(res.value.text);
+        const { validations, publishedQuestions, counts } = validateAndConvertSheetRows(
+          parsedRows,
+          localIds,
+          seenIds
+        );
+        allValidations.push(...validations);
+        allPublishedQuestions.push(...publishedQuestions);
+        totalDraft += counts.draftCount;
+        totalReview += counts.reviewCount;
+        totalArchived += counts.archivedCount;
+        totalMalformed += counts.malformedCount;
+        totalDuplicate += counts.duplicateCount;
+      } else if (res.status === 'rejected') {
+        console.warn('[GoogleSheetLoader] Failed to fetch a sheet URL:', res.reason);
+      }
     }
 
-    const csvText = await response.text();
-
-    if (!csvText || csvText.trim().length === 0) {
-      const emptyReport: GoogleSheetBankReport = {
-        url,
-        isConfigured: true,
-        status: 'empty',
-        statusMessage: 'The published Google Sheet CSV is empty.',
-        lastFetchedAt: new Date().toISOString(),
-        totalRows: 0,
-        publishedCount: 0,
-        draftCount: 0,
-        reviewCount: 0,
-        archivedCount: 0,
-        malformedRowsCount: 0,
-        duplicateIdsCount: 0,
-        validations: [],
-        publishedQuestions: [],
-      };
-      cachedReport = emptyReport;
-      cachedPublishedQuestions = [];
-      notifySubscribers(emptyReport);
-      return emptyReport;
+    if (successfulFetches === 0) {
+      throw new Error('All configured Google Sheet URLs failed to return valid data.');
     }
-
-    // Parse CSV
-    const parsedRows = parseCSV(csvText);
-
-    // Get current local question IDs to enforce no overwriting rule
-    const localIds = localQuestionIdsSupplier ? localQuestionIdsSupplier() : new Set<string>();
-
-    const { validations, publishedQuestions, counts } = validateAndConvertSheetRows(
-      parsedRows,
-      localIds
-    );
 
     let status: GoogleSheetStatus = 'success';
-    let statusMessage = 'Questions loaded successfully';
+    let statusMessage = `Loaded ${allPublishedQuestions.length} published questions across ${successfulFetches} sheet(s).`;
 
-    if (counts.publishedCount === 0) {
+    if (allPublishedQuestions.length === 0) {
       status = 'empty';
-      statusMessage = counts.totalRows > 0
-        ? `No published questions found. (${counts.totalRows} rows in Sheet, but none marked as PUBLISHED)`
+      statusMessage = allValidations.length > 0
+        ? `No published questions found (${allValidations.length} rows in Sheet, but none marked as PUBLISHED).`
         : 'No questions found in Google Sheet.';
-    } else if (counts.malformedCount > 0) {
-      status = 'success';
-      statusMessage = `Loaded ${counts.publishedCount} published questions (${counts.malformedCount} malformed rows skipped).`;
+    } else if (totalMalformed > 0) {
+      statusMessage = `Loaded ${allPublishedQuestions.length} published questions (${totalMalformed} malformed rows skipped).`;
     }
 
     const successReport: GoogleSheetBankReport = {
-      url,
+      url: primaryUrl,
       isConfigured: true,
       status,
       statusMessage,
       lastFetchedAt: new Date().toISOString(),
-      totalRows: counts.totalRows,
-      publishedCount: counts.publishedCount,
-      draftCount: counts.draftCount,
-      reviewCount: counts.reviewCount,
-      archivedCount: counts.archivedCount,
-      malformedRowsCount: counts.malformedCount,
-      duplicateIdsCount: counts.duplicateCount,
-      validations,
-      publishedQuestions,
+      totalRows: allValidations.length,
+      publishedCount: allPublishedQuestions.length,
+      draftCount: totalDraft,
+      reviewCount: totalReview,
+      archivedCount: totalArchived,
+      malformedRowsCount: totalMalformed,
+      duplicateIdsCount: totalDuplicate,
+      validations: allValidations,
+      publishedQuestions: allPublishedQuestions,
     };
 
     cachedReport = successReport;
-    cachedPublishedQuestions = publishedQuestions;
+    cachedPublishedQuestions = allPublishedQuestions;
 
     // Invalidate mock test pool & other consumers
     if (onCacheInvalidateCallback) {
@@ -717,7 +739,7 @@ export async function fetchGoogleSheetQuestions(
     console.warn('[GoogleSheetLoader] Failed to fetch Google Sheet CSV:', errorMsg);
 
     const errorReport: GoogleSheetBankReport = {
-      url,
+      url: primaryUrl,
       isConfigured: true,
       status: 'error',
       statusMessage: `Unable to load Google Sheet. Please check the published CSV link. (${errorMsg})`,

@@ -21,6 +21,7 @@ import {
   getScienceChapter,
   type ScienceChapter,
 } from '@/data/cbse-class-10-science';
+import { useQuestionBank } from '@/hooks/useQuestionBank';
 
 interface ScienceChapterDetailProps {
   chapter: ScienceChapter;
@@ -34,9 +35,10 @@ export function ScienceChapterDetail({
   subjectId = 'cbse-class-10-science',
 }: ScienceChapterDetailProps) {
   const [, setLocation] = useLocation();
+  const { publishedSheetCount } = useQuestionBank();
   const progress = useMemo(
     () => calculateScienceChapterProgress(chapter.id),
-    [chapter.id]
+    [chapter.id, publishedSheetCount]
   );
 
   return (
@@ -185,6 +187,9 @@ export function ScienceChapterDetail({
               } else if (section.key === 'mcq') {
                 if (progress.mcqProgress > 0) {
                   statusBadge = `${progress.mcqProgress}% Accuracy`;
+                  isAvailable = true;
+                } else if (progress.totalMCQs && progress.totalMCQs > 0) {
+                  statusBadge = `${progress.totalMCQs} Questions Available`;
                   isAvailable = true;
                 } else {
                   statusBadge = '0 questions available';

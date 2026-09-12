@@ -97,7 +97,11 @@ export function ScienceChapterCard({
             <div>
               <span className="text-[11px] text-slate-500">📝 MCQ</span>
               <p className="font-bold text-slate-800">
-                {progress.mcqProgress > 0 ? `${progress.mcqProgress}%` : '0 questions'}
+                {progress.mcqProgress > 0
+                  ? `${progress.mcqProgress}%`
+                  : progress.totalMCQs && progress.totalMCQs > 0
+                    ? `${progress.totalMCQs} Qs`
+                    : '0 questions'}
               </p>
             </div>
 

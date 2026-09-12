@@ -18,6 +18,7 @@ import {
   CBSE_CLASS_10_SCIENCE_CHAPTERS,
   calculateScienceChapterProgress,
 } from '@/data/cbse-class-10-science';
+import { useQuestionBank } from '@/hooks/useQuestionBank';
 import { ScienceChapterCard } from './ScienceChapterCard';
 
 interface ScienceDashboardProps {
@@ -27,6 +28,7 @@ interface ScienceDashboardProps {
 export function ScienceDashboard({ examId = 'cbse-class-10' }: ScienceDashboardProps) {
   const [selectedUnit, setSelectedUnit] = useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { publishedSheetCount } = useQuestionBank();
 
   // Calculate real progress for each chapter
   const chaptersWithProgress = useMemo(() => {
@@ -34,7 +36,7 @@ export function ScienceDashboard({ examId = 'cbse-class-10' }: ScienceDashboardP
       chapter,
       progress: calculateScienceChapterProgress(chapter.id),
     }));
-  }, []);
+  }, [publishedSheetCount]);
 
   // Filter chapters by Unit and Search Query
   const filteredChapters = useMemo(() => {

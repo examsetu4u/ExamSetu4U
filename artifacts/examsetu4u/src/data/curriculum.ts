@@ -134,7 +134,7 @@ function createCurriculum(definitions: ExamDefinition[]) {
               subjectId === 'super-tet-teaching-skills' ||
               subjectId === 'uppcs-pre-current-affairs',
             pyq: subjectId === 'cbse-class-10-science' ? index === 0 : index % 3 !== 1,
-            quiz: subjectId === 'cbse-class-10-science' ? false : true,
+            quiz: true,
             theory: index % 2 === 0,
           },
         });
@@ -618,7 +618,27 @@ export function getTopic(topicId: string) {
   const direct = topics.find((topic) => topic.id.toLowerCase() === norm);
   if (direct) return direct;
 
-  // 2. CBSE Class 10 Science chapter aliases
+  // 2. CBSE Class 10 Science chapter aliases & slugs
+  const scienceSlugToId: Record<string, string> = {
+    'chemical-reactions-and-equations': 'cbse-class-10-science-1',
+    'acids-bases-and-salts': 'cbse-class-10-science-2',
+    'metals-and-non-metals': 'cbse-class-10-science-3',
+    'carbon-and-its-compounds': 'cbse-class-10-science-4',
+    'life-processes': 'cbse-class-10-science-5',
+    'control-and-coordination': 'cbse-class-10-science-6',
+    'how-do-organisms-reproduce': 'cbse-class-10-science-7',
+    'heredity': 'cbse-class-10-science-8',
+    'light-reflection-and-refraction': 'cbse-class-10-science-9',
+    'human-eye-and-colourful-world': 'cbse-class-10-science-10',
+    'electricity': 'cbse-class-10-science-11',
+    'magnetic-effects-of-electric-current': 'cbse-class-10-science-12',
+    'our-environment': 'cbse-class-10-science-13',
+  };
+  if (scienceSlugToId[norm]) {
+    const match = topics.find((t) => t.id === scienceSlugToId[norm]);
+    if (match) return match;
+  }
+
   if (
     norm.startsWith('cbse-class-10-science-') ||
     norm.startsWith('cbse-10-science-') ||

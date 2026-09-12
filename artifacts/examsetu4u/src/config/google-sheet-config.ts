@@ -28,7 +28,47 @@
  * ============================================================================
  */
 
-export const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?output=csv";
+export const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=436392882&single=true&output=csv";
+
+/**
+ * MULTI-TAB GOOGLE SHEETS QUESTION SOURCES
+ * All published question bank tabs from the ExamSetu4U Google Spreadsheet
+ */
+export interface GoogleSheetSourceConfig {
+  id: string;
+  name: string;
+  examId: string;
+  subjectId: string;
+  gid: string;
+  url: string;
+}
+
+export const GOOGLE_SHEET_QUESTION_SOURCES: GoogleSheetSourceConfig[] = [
+  {
+    id: 'cbse-10-science',
+    name: 'CBSE Class 10 Science',
+    examId: 'cbse-class-10',
+    subjectId: 'science',
+    gid: '436392882',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=436392882&single=true&output=csv',
+  },
+  {
+    id: 'shikshan-kaushal',
+    name: 'Super TET Shikshan Kaushal',
+    examId: 'super-tet',
+    subjectId: 'shikshan-kaushal',
+    gid: '0',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=0&single=true&output=csv',
+  },
+  {
+    id: 'bal-vikas',
+    name: 'Super TET Bal Vikas Vidhiyan',
+    examId: 'super-tet',
+    subjectId: 'child-development',
+    gid: '2052787385',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=2052787385&single=true&output=csv',
+  },
+];
 
 /**
  * GOOGLE SHEETS STUDY NOTES / THEORY CONFIGURATION

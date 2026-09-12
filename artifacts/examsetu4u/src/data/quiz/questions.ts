@@ -958,6 +958,31 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
       if (areSubjectsEquivalent(baseQ, baseFilter)) return true;
     }
 
+    // CBSE Class 10 Science chapters & slugs mapping
+    const cbse10ScienceChapterMap: Record<string, string> = {
+      'cbse-class-10-science-1': 'chemical-reactions-and-equations',
+      'cbse-class-10-science-2': 'acids-bases-and-salts',
+      'cbse-class-10-science-3': 'metals-and-non-metals',
+      'cbse-class-10-science-4': 'carbon-and-its-compounds',
+      'cbse-class-10-science-5': 'life-processes',
+      'cbse-class-10-science-6': 'control-and-coordination',
+      'cbse-class-10-science-7': 'how-do-organisms-reproduce',
+      'cbse-class-10-science-8': 'heredity',
+      'cbse-class-10-science-9': 'light-reflection-and-refraction',
+      'cbse-class-10-science-10': 'human-eye-and-colourful-world',
+      'cbse-class-10-science-11': 'electricity',
+      'cbse-class-10-science-12': 'magnetic-effects-of-electric-current',
+      'cbse-class-10-science-13': 'our-environment',
+    };
+
+    const cleanFilter = normFilter.replace(/-(mcq|chapter-test|pyq|test|practice)$/, '');
+    const cleanQ = normQ.replace(/-(mcq|chapter-test|pyq|test|practice)$/, '');
+
+    if (cbse10ScienceChapterMap[cleanFilter] && cbse10ScienceChapterMap[cleanFilter] === cleanQ) return true;
+    if (cbse10ScienceChapterMap[cleanQ] && cbse10ScienceChapterMap[cleanQ] === cleanFilter) return true;
+    if (cbse10ScienceChapterMap[cleanFilter] && cbse10ScienceChapterMap[cleanFilter] === normQ) return true;
+    if (cbse10ScienceChapterMap[cleanQ] && cbse10ScienceChapterMap[cleanQ] === normFilter) return true;
+
     // Child Development curriculum topics mapping:
     // super-tet-child-development-1 = 'बाल विकास के सिद्धांत'
     if (

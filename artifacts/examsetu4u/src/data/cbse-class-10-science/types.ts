@@ -109,6 +109,7 @@ export interface ScienceChapterProgress {
   chapterId: string;
   studyMaterialProgress: number;
   mcqProgress: number;
+  totalMCQs?: number;
   assertionReasonProgress: number;
   shortAnswerProgress: number;
   caseBasedProgress: number;

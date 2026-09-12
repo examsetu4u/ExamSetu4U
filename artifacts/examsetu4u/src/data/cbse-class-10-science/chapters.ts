@@ -587,6 +587,7 @@ export function calculateScienceChapterProgress(chapterId: string): ScienceChapt
     chapterId: targetId,
     studyMaterialProgress: studyProgress,
     mcqProgress,
+    totalMCQs,
     assertionReasonProgress,
     shortAnswerProgress,
     caseBasedProgress,
