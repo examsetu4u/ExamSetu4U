@@ -16,7 +16,9 @@ import {
   Menu,
   RotateCcw,
   Shield,
+  Sparkles,
   X,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 import { resetAdminStoreToDefaults } from '../services/admin-service';
@@ -30,6 +32,7 @@ import { StudyMaterialManager } from './study-material-manager';
 import { SubjectManager } from './subject-manager';
 import { TopicManager } from './topic-manager';
 import { ValidationReport } from './validation-report';
+import { CurrentAffairsPipelineManager } from './current-affairs-pipeline-manager';
 
 interface AdminLayoutProps {
   onReturnToStudentApp: () => void;
@@ -37,6 +40,7 @@ interface AdminLayoutProps {
 
 export type AdminTabId =
   | 'overview'
+  | 'current-affairs'
   | 'exams'
   | 'subjects'
   | 'topics'
@@ -56,6 +60,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'current-affairs', label: 'UPPCS CA Pipeline', icon: Zap, badge: '6AM IST' },
   { id: 'exams', label: 'Exams', icon: GraduationCap },
   { id: 'subjects', label: 'Subjects', icon: BookOpen },
   { id: 'topics', label: 'Topics', icon: FolderTree },
@@ -268,6 +273,7 @@ export function AdminLayout({ onReturnToStudentApp }: AdminLayoutProps) {
             {activeTab === 'overview' && (
               <AdminDashboard onNavigateTab={(tab) => handleTabClick(tab as AdminTabId)} />
             )}
+            {activeTab === 'current-affairs' && <CurrentAffairsPipelineManager />}
             {activeTab === 'exams' && <ExamManager />}
             {activeTab === 'subjects' && <SubjectManager />}
             {activeTab === 'topics' && <TopicManager />}

@@ -1,14 +1,24 @@
+import automatedDaysJson from './automated-uppcs.json';
+
 export interface CurrentAffairItem {
   id: string;
   title: string;
-  titleEn: string;
-  category: 'UP_SPECIAL' | 'NATIONAL' | 'INTERNATIONAL' | 'ECONOMY' | 'ENVIRONMENT' | 'SCIENCE_DEFENSE' | 'AWARDS_SPORTS';
-  categoryLabel: string;
+  titleEn?: string;
+  category: 'UP_SPECIAL' | 'NATIONAL' | 'INTERNATIONAL' | 'ECONOMY' | 'ENVIRONMENT' | 'SCIENCE_DEFENSE' | 'AWARDS_SPORTS' | string;
+  categoryLabel?: string;
   date: string;
-  summary: string[];
-  uppcsPreFocus: string[]; // परीक्षा दृष्टि (Prelims Key Pointers)
-  staticLinkage: string; // स्टेटिक विषय से संबंध (Polity/Geo/Economy)
-  tags: string[];
+  summary: string[] | string;
+  why_important_for_uppcs?: string;
+  key_facts?: string[];
+  uttar_pradesh_relevance?: string;
+  prelims_facts?: string[];
+  mains_points?: string[];
+  source?: string;
+  source_url?: string;
+  uppcsPreFocus?: string[]; // परीक्षा दृष्टि (Prelims Key Pointers)
+  staticLinkage?: string; // स्टेटिक विषय से संबंध (Polity/Geo/Economy)
+  tags?: string[];
+  mcqs?: any[];
 }
 
 export interface CurrentAffairsQuizQuestion {
@@ -20,10 +30,11 @@ export interface CurrentAffairsQuizQuestion {
     B: string;
     C: string;
     D: string;
-  };
+  } | string[];
   correctAnswer: 'A' | 'B' | 'C' | 'D';
   explanation: string;
-  prelimsTip: string;
+  prelimsTip?: string;
+  difficulty?: 'Easy' | 'Moderate' | 'Hard';
   category: string;
 }
 
@@ -67,8 +78,8 @@ export interface YearlyModule {
   megaQuiz: CurrentAffairsQuizQuestion[];
 }
 
-// 1. Daily Current Affairs (दैनिक समसामयिकी)
-export const UPPCS_DAILY_CURRENT_AFFAIRS: {
+// 1. Base Historical Daily Current Affairs (दैनिक समसामयिकी - आधार डेटा)
+const BASE_DAILY_CURRENT_AFFAIRS: {
   date: string;
   formattedDate: string;
   items: CurrentAffairItem[];
@@ -293,7 +304,368 @@ export const UPPCS_DAILY_CURRENT_AFFAIRS: {
       },
     ],
   },
+  {
+    date: '2025-02-13',
+    formattedDate: '13 फरवरी 2025 (दैनिक समसामयिकी)',
+    items: [
+      {
+        id: 'dca-06',
+        title: 'अयोध्या देश की पहली मॉडल सोलर सिटी: 40 मेगावाट सौर ऊर्जा संयंत्र पूर्णतः ग्रिड से संबद्ध',
+        titleEn: 'Ayodhya Emerges as India’s First Model Solar City: 40MW Plant Synchronized',
+        category: 'ENVIRONMENT',
+        categoryLabel: 'पर्यावरण एवं ऊर्जा',
+        date: '13 Feb 2025',
+        summary: [
+          'उत्तर प्रदेश नवीन एवं नवीकरणीय ऊर्जा विकास अभिकरण (UPNEDA) और एनटीपीसी ग्रीन एनर्जी लिमिटेड के संयुक्त प्रयास से सरयू नदी के तट पर 40 मेगावाट का सौर संयंत्र पूरी तरह सक्रिय हो गया है।',
+          'अयोध्या में सभी सरकारी कार्यालय, स्ट्रीट लाइटें, सोलर बोट्स और ई-रिक्शा चार्जिंग स्टेशन सौर ऊर्जा से संचालित किए जा रहे हैं।',
+          'उत्तर प्रदेश सौर ऊर्जा नीति 2022 के तहत 16 अन्य नगर निगमों और नोएडा को भी सोलर सिटी के रूप में विकसित किया जाएगा।',
+        ],
+        uppcsPreFocus: [
+          'देश की पहली मॉडल सोलर सिटी: अयोध्या (सरयू नदी तट)।',
+          'संयंत्र क्षमता: 40 मेगावाट (NTPC Green Energy Limited द्वारा क्रियान्वित)।',
+          'उत्तर प्रदेश सौर ऊर्जा नीति 2022 का लक्ष्य: वर्ष 2026-27 तक 22,000 मेगावाट (22 GW) सौर उत्पादन।',
+          'नोडल एजेंसी: UPNEDA (उत्तर प्रदेश नवीन एवं नवीकरणीय ऊर्जा विकास अभिकरण)।',
+        ],
+        staticLinkage: 'नवीकरणीय ऊर्जा संसाधन एवं उत्तर प्रदेश की पर्यावरण नीतियां (Renewable Energy & COP Goals)',
+        tags: ['Solar City', 'Ayodhya', 'UPNEDA', 'NTPC', 'Renewable Energy'],
+      },
+      {
+        id: 'dca-07',
+        title: 'राष्ट्रीय जल पुरस्कार (National Water Awards): उत्तर प्रदेश जल संरक्षण में शीर्ष राज्यों में शामिल',
+        titleEn: 'National Water Awards: Uttar Pradesh Recognized in Best State Category',
+        category: 'NATIONAL',
+        categoryLabel: 'राष्ट्रीय / जल संसाधन',
+        date: '13 Feb 2025',
+        summary: [
+          'केंद्रीय जल शक्ति मंत्रालय द्वारा आयोजित राष्ट्रीय जल पुरस्कारों में उत्तर प्रदेश ने जल संरक्षण, अमृत सरोवरों के निर्माण और भूजल संवर्धन में उत्कृष्ट प्रदर्शन किया।',
+          'राज्य में ‘मिशन अमृत सरोवर’ के तहत 15,000 से अधिक तालाबों का जीर्णोद्धार कर देश में प्रथम स्थान हासिल किया गया।',
+          'वाराणसी नगर निगम को सीवेज उपचार और पुनर्चक्रित जल के पुन: उपयोग हेतु सर्वश्रेष्ठ शहरी स्थानीय निकाय के रूप में सराहा गया।',
+        ],
+        uppcsPreFocus: [
+          'आयोजक: जल शक्ति मंत्रालय, भारत सरकार (2018 से प्रारंभ)।',
+          'मिशन अमृत सरोवर में देश में नंबर 1 राज्य: उत्तर प्रदेश (सर्वाधिक सरोवरों का निर्माण)।',
+          'संविधान में जल विषय: राज्य सूची की प्रविष्टि 17 (अंतर्राज्यीय नदियां संघ सूची की प्रविष्टि 56)।',
+        ],
+        staticLinkage: 'भारतीय संविधान में संघ-राज्य संबंध एवं जल विवाद (Water Resource Federalism)',
+        tags: ['National Water Awards', 'Amrit Sarovar', 'Jal Shakti', 'UP Rank 1'],
+      },
+    ],
+    dailyQuiz: [
+      {
+        id: 'dq-08',
+        question: 'उत्तर प्रदेश सरकार द्वारा राज्य की पहली पूर्ण ‘मॉडल सोलर सिटी (Model Solar City)’ के रूप में किस धार्मिक/ऐतिहासिक नगर को विकसित किया गया है?',
+        options: {
+          A: 'मथुरा-वृंदावन',
+          B: 'अयोध्या',
+          C: 'वाराणसी',
+          D: 'प्रयागराज',
+        },
+        correctAnswer: 'B',
+        explanation: 'उत्तर प्रदेश सरकार और यूपीनेडा (UPNEDA) द्वारा अयोध्या को देश की पहली मॉडल सोलर सिटी के रूप में विकसित किया गया है। यहां सरयू तट पर 40 मेगावाट का सौर संयंत्र स्थापित किया गया है।',
+        prelimsTip: 'मॉडल सोलर सिटी और सौर ऊर्जा नीति 2022 का लक्ष्य (22 GW) अनिवार्य रूप से याद रखें।',
+        category: 'पर्यावरण एवं ऊर्जा',
+      },
+      {
+        id: 'dq-09',
+        question: '‘मिशन अमृत सरोवर’ के अंतर्गत सर्वाधिक अमृत सरोवरों के निर्माण एवं पुनरुद्धार में देश में प्रथम स्थान किस राज्य ने प्राप्त किया है?',
+        options: {
+          A: 'मध्य प्रदेश',
+          B: 'राजस्थान',
+          C: 'उत्तर प्रदेश',
+          D: 'गुजरात',
+        },
+        correctAnswer: 'C',
+        explanation: 'उत्तर प्रदेश ने 15,000 से अधिक अमृत सरोवरों का निर्माण व कायाकल्प कर पूरे देश में पहला स्थान प्राप्त किया है। लखीमपुर खीरी जिले में सर्वाधिक अमृत सरोवर बनाए गए।',
+        prelimsTip: 'अमृत सरोवर रैंकिंग और सर्वाधिक निर्माण वाला जिला (लखीमपुर खीरी) यूपीपीसीएस की मुख्य परीक्षा दृष्टि है।',
+        category: 'सरकारी योजनाएं',
+      },
+    ],
+  },
+  {
+    date: '2025-02-12',
+    formattedDate: '12 फरवरी 2025 (दैनिक समसामयिकी)',
+    items: [
+      {
+        id: 'dca-08',
+        title: 'गोरखपुर लिंक एक्सप्रेसवे: 91.35 किमी लंबा एक्सप्रेसवे पूर्वांचल एक्सप्रेसवे से जुड़ा',
+        titleEn: 'Gorakhpur Link Expressway: 91.35 km Greenfield Corridor Connects with Purvanchal',
+        category: 'UP_SPECIAL',
+        categoryLabel: 'उत्तर प्रदेश विशेष / एक्सप्रेसवे',
+        date: '12 Feb 2025',
+        summary: [
+          'उत्तर प्रदेश एक्सप्रेसवेज औद्योगिक विकास प्राधिकरण (UPEIDA) द्वारा निर्मित 91.35 किमी लंबा गोरखपुर लिंक एक्सप्रेसवे पूर्ण रूप से यातायात हेतु तैयार हो गया है।',
+          'यह एक्सप्रेसवे गोरखपुर के जैतपुर से प्रारंभ होकर आजमगढ़ के सालारपुर में पूर्वांचल एक्सप्रेसवे से मिलता है।',
+          'इसके दोनों ओर गोरखपुर औद्योगिक विकास प्राधिकरण (GIDA) द्वारा नए लॉजिस्टिक्स हब और विनिर्माण क्लस्टर स्थापित किए जा रहे हैं।',
+        ],
+        uppcsPreFocus: [
+          'कुल लंबाई: 91.35 किमी (4-लेन, 6-लेन तक विस्तार योग्य)।',
+          'लाभान्वित 4 जिले: गोरखपुर, संत कबीर नगर, अंबेडकर नगर और आजमगढ़।',
+          'प्रारंभिक बिंदु: जैतपुर (गोरखपुर बाईपास)।',
+          'समापन बिंदु: सालारपुर (आजमगढ़ - पूर्वांचल एक्सप्रेसवे)।',
+        ],
+        staticLinkage: 'उत्तर प्रदेश का परिवहन तंत्र एवं औद्योगिक गलियारे (Infrastructure Geography of UP)',
+        tags: ['Gorakhpur Link Expressway', 'UPEIDA', 'Purvanchal Expressway', 'Infrastructure'],
+      },
+      {
+        id: 'dca-09',
+        title: 'पीएम सूर्य घर मुफ्त बिजली योजना: उत्तर प्रदेश 25 लाख सोलर रूफटॉप आवेदनों के साथ शीर्ष पर',
+        titleEn: 'PM Surya Ghar Muft Bijli Yojana: UP Leads with 25 Lakh Rooftop Applications',
+        category: 'NATIONAL',
+        categoryLabel: 'राष्ट्रीय / योजनाएं',
+        date: '12 Feb 2025',
+        summary: [
+          'प्रधानमंत्री नरेंद्र मोदी द्वारा प्रारंभ की गई ‘पीएम सूर्य घर: मुफ्त बिजली योजना’ के क्रियान्वयन में उत्तर प्रदेश ने देश में सर्वाधिक पंजीकरण दर्ज किए हैं।',
+          'योजना का उद्देश्य 1 करोड़ परिवारों को प्रतिमाह 300 यूनिट तक मुफ्त बिजली प्रदान करना है।',
+          'उत्तर प्रदेश सरकार राज्य की ओर से केंद्रीय सब्सिडी के अतिरिक्त ₹30,000 तक की टॉप-अप सब्सिडी प्रदान कर रही है।',
+        ],
+        uppcsPreFocus: [
+          'योजना का नाम: PM Surya Ghar: Muft Bijli Yojana (फरवरी 2024 में प्रारंभ)।',
+          'लाभ: प्रतिमाह 300 यूनिट तक मुफ्त बिजली।',
+          'सब्सिडी स्लैब: 2 किलोवाट तक ₹60,000 तथा 3 किलोवाट पर ₹78,000 की केंद्रीय सहायता।',
+          'यूपी का लक्ष्य: 25 लाख घरों पर रूफटॉप सोलर संयंत्र स्थापित करना।',
+        ],
+        staticLinkage: 'सतत ऊर्जा संक्रमण एवं सामाजिक कल्याण नीतियां (Energy Transition & Welfare Schemes)',
+        tags: ['PM Surya Ghar', 'Solar Rooftop', 'UP Subsidy', 'Green Energy'],
+      },
+    ],
+    dailyQuiz: [
+      {
+        id: 'dq-10',
+        question: '‘गोरखपुर लिंक एक्सप्रेसवे’ उत्तर प्रदेश के निम्नलिखित में से किस जिले से होकर नहीं गुजरता है?',
+        options: {
+          A: 'संत कबीर नगर',
+          B: 'अंबेडकर नगर',
+          C: 'आजमगढ़',
+          D: 'बलिया',
+        },
+        correctAnswer: 'D',
+        explanation: 'गोरखपुर लिंक एक्सप्रेसवे कुल 4 जिलों से होकर गुजरता है: गोरखपुर, संत कबीर नगर, अंबेडकर नगर और आजमगढ़। यह बलिया से नहीं गुजरता (पूर्वांचल एक्सप्रेसवे गाजीपुर तक जाता है)।',
+        prelimsTip: 'यूपीपीसीएस एक्सप्रेसवे के लाभान्वित जिलों के नाम अक्सर 4 विकल्पों में पूछता है।',
+        category: 'उत्तर प्रदेश विशेष',
+      },
+      {
+        id: 'dq-11',
+        question: '‘पीएम सूर्य घर: मुफ्त बिजली योजना’ के तहत प्रति परिवार अधिकतम कितनी यूनिट तक मुफ्त बिजली की व्यवस्था का प्रावधान है?',
+        options: {
+          A: '150 यूनिट/माह',
+          B: '200 यूनिट/माह',
+          C: '300 यूनिट/माह',
+          D: '500 यूनिट/माह',
+        },
+        correctAnswer: 'C',
+        explanation: 'इस योजना के अंतर्गत 1 करोड़ पात्र परिवारों को प्रतिमाह 300 यूनिट तक मुफ्त बिजली उपलब्ध कराने और ग्रिड को अतिरिक्त बिजली बेचकर आय अर्जित करने का प्रावधान है।',
+        prelimsTip: 'योजना के प्रमुख तकनीकी आंकड़े (यूनिट सीमा और सब्सिडी) सीधे पूछे जाते हैं।',
+        category: 'राष्ट्रीय योजनाएं',
+      },
+    ],
+  },
+  {
+    date: '2025-02-11',
+    formattedDate: '11 फरवरी 2025 (दैनिक समसामयिकी)',
+    items: [
+      {
+        id: 'dca-10',
+        title: 'उत्तर प्रदेश सेमीकंडक्टर नीति 2024: जेवर (नोएडा) में सेमीकंडक्टर हब हेतु विशेष रियायतें',
+        titleEn: 'UP Semiconductor Policy 2024: Capital Subsidies & Mega Fab Park in Jewar',
+        category: 'SCIENCE_DEFENSE',
+        categoryLabel: 'विज्ञान एवं इलेक्ट्रॉनिक्स नीति',
+        date: '11 Feb 2025',
+        summary: [
+          'उत्तर प्रदेश सरकार द्वारा अनुमोदित सेमीकंडक्टर नीति 2024 के तहत भारत सेमीकंडक्टर मिशन (ISM) के अनुमोदित प्रोजेक्ट्स को केंद्र की 50% पूंजीगत सहायता के अलावा राज्य द्वारा 25% अतिरिक्त सब्सिडी प्रदान की जाएगी।',
+          'जेवर इंटरनेशनल एयरपोर्ट के निकट 500 एकड़ में ‘सेमीकंडक्टर पार्क’ और फैब/ओएसएटी (OSAT) इकाइयां स्थापित की जा रही हैं।',
+          'उत्तर प्रदेश ऐसी नीति लागू करने वाला देश का तीसरा राज्य (गुजरात और ओडिशा के बाद) बना।',
+        ],
+        uppcsPreFocus: [
+          'नीति: उत्तर प्रदेश सेमीकंडक्टर नीति 2024।',
+          'वित्तीय प्रोत्साहन: केंद्र सरकार (50%) + राज्य सरकार (25% अतिरिक्त पूंजीगत सब्सिडी)।',
+          'सेमीकंडक्टर नीति लागू करने वाला राज्य: गुजरात, ओडिशा के बाद यूपी तीसरा राज्य।',
+          'प्रस्तावित स्थल: यमुना एक्सप्रेसवे औद्योगिक विकास प्राधिकरण (YEIDA) क्षेत्र, जेवर।',
+        ],
+        staticLinkage: 'भारत में उच्च-तकनीकी विनिर्माण एवं सिलिकॉन कूटनीति (High-Tech Manufacturing in India)',
+        tags: ['Semiconductor Policy', 'YEIDA', 'Jewar', 'Electronics Hub', 'Make in India'],
+      },
+      {
+        id: 'dca-11',
+        title: 'गंगा डॉल्फिन (Gangetic Dolphin) संरक्षण: उत्तर प्रदेश में डॉल्फिन अभयारण्य का विस्तार',
+        titleEn: 'Gangetic Dolphin Conservation: UP Expands Riverine Protected Habitats',
+        category: 'ENVIRONMENT',
+        categoryLabel: 'पर्यावरण एवं जैव विविधता',
+        date: '11 Feb 2025',
+        summary: [
+          'उत्तर प्रदेश सरकार ने गंगा नदी में डॉल्फिन (Platanista gangetica) की बढ़ती आबादी को देखते हुए हापुड़-बुलंदशहर और मिर्जापुर-वाराणसी स्ट्रेच को विशेष संरक्षित जल क्षेत्र घोषित किया है।',
+          'गंगा डॉल्फिन भारत का राष्ट्रीय जलीय जीव (2009) तथा उत्तर प्रदेश का राज्य जलीय जीव भी है।',
+          'यह स्तनपायी जीव केवल स्वच्छ मीठे पानी में रहता है और इकोसिस्टम के स्वास्थ्य का विश्वसनीय बायो-इंडिकेटर है।',
+        ],
+        uppcsPreFocus: [
+          'वैज्ञानिक नाम: Platanista gangetica (नेत्रहीन स्तनपायी, इकोलोकेशन से नेविगेट करती है)।',
+          'आईयूसीएन (IUCN) स्थिति: संकटग्रस्त (Endangered)।',
+          'भारतीय वन्यजीव संरक्षण अधिनियम 1972: अनुसूची-1 (Schedule I - सर्वोच्च संरक्षण)।',
+          'राष्ट्रीय जलीय जीव घोषित: 2009 में; यूपी का राज्य जलीय जीव: 2023 में घोषित।',
+        ],
+        staticLinkage: 'पर्यावरण, वन्यजीव संरक्षण अधिनियम 1972 एवं जैव विविधता (Ecology & Biodiversity Conservation)',
+        tags: ['Gangetic Dolphin', 'IUCN Endangered', 'UP State Aquatic Animal', 'Ganga Conservation'],
+      },
+    ],
+    dailyQuiz: [
+      {
+        id: 'dq-12',
+        question: 'गंगा डॉल्फिन (Platanista gangetica) के संदर्भ में निम्नलिखित कथनों में से कौन-सा असत्य है?',
+        options: {
+          A: 'यह भारत का राष्ट्रीय जलीय जीव है',
+          B: 'आईयूसीएन (IUCN) की लाल सूची में इसे ‘संकटग्रस्त (Endangered)’ श्रेणी में रखा गया है',
+          C: 'उत्तर प्रदेश सरकार ने इसे अपना राज्य जलीय जीव घोषित किया है',
+          D: 'यह खारे पानी (समुद्र) में अंडे देने वाली एक मछली प्रजाति है',
+        },
+        correctAnswer: 'D',
+        explanation: 'विकल्प D असत्य है: गंगा डॉल्फिन मछली नहीं, बल्कि एक स्तनपायी (Mammal) जीव है जो बच्चों को जन्म देती है, और यह केवल ताजे मीठे पानी (Freshwater) में जीवित रह सकती है।',
+        prelimsTip: 'डॉल्फिन स्तनपायी (Mammal) है और दृष्टिहीन होती है, यह तथ्य आयोग का मुख्य जाल है।',
+        category: 'पर्यावरण एवं जैव विविधता',
+      },
+      {
+        id: 'dq-13',
+        question: 'उत्तर प्रदेश सेमीकंडक्टर नीति 2024 के तहत भारत सेमीकंडक्टर मिशन (ISM) अनुमोदित इकाइयों को राज्य सरकार द्वारा कितने प्रतिशत अतिरिक्त पूंजीगत उपादान (Capital Subsidy) दिया जाता है?',
+        options: {
+          A: '15%',
+          B: '20%',
+          C: '25%',
+          D: '35%',
+        },
+        correctAnswer: 'C',
+        explanation: 'उत्तर प्रदेश सेमीकंडक्टर नीति 2024 के तहत केंद्र सरकार की 50% पूंजीगत सहायता के अतिरिक्त उत्तर प्रदेश सरकार 25% अतिरिक्त कैपिटल सब्सिडी प्रदान करती है।',
+        prelimsTip: 'सब्सिडी प्रतिशत राज्य की नई औद्योगिक नीतियों में सर्वाधिक पूछे जाने वाले तथ्य हैं।',
+        category: 'विज्ञान एवं प्रौद्योगिकी',
+      },
+    ],
+  },
+  {
+    date: '2025-02-10',
+    formattedDate: '10 फरवरी 2025 (दैनिक समसामयिकी)',
+    items: [
+      {
+        id: 'dca-12',
+        title: 'विश्व दलहन दिवस (10 फरवरी) और बुंदेलखंड: उत्तर प्रदेश का दलहन कटोरा',
+        titleEn: 'World Pulses Day 2025: Bundelkhand Emerges as UP’s Pulse Powerhouse',
+        category: 'ECONOMY',
+        categoryLabel: 'कृषि एवं आर्थिकी',
+        date: '10 Feb 2025',
+        summary: [
+          'प्रतिवर्ष 10 फरवरी को संयुक्त राष्ट्र खाद्य एवं कृषि संगठन (FAO) के तत्वावधान में ‘विश्व दलहन दिवस’ मनाया जाता है।',
+          'उत्तर प्रदेश में बुंदेलखंड के 7 जिलों (झांसी, बांदा, ललितपुर, हमीरपुर, जालौन, महोबा, चित्रकूट) को विशेष दलहन क्लस्टर के रूप में विकसित किया जा रहा है।',
+          'दलहनी फसलें मिट्टी में वायुमंडलीय नाइट्रोजन को स्थिर कर भूमि की उर्वरता बढ़ाती हैं।',
+        ],
+        uppcsPreFocus: [
+          'विश्व दलहन दिवस: 10 फरवरी (संयुक्त राष्ट्र महासभा द्वारा 2019 से अधिकृत)।',
+          'बुंदेलखंड के 7 जिले: झांसी, ललितपुर, जालौन, हमीरपुर, महोबा, बांदा, चित्रकूट।',
+          'नाइट्रोजन स्थिरीकरण: दलहनी पौधों की जड़ों में उपस्थित ‘राइजोबियम (Rhizobium)’ जीवाणु द्वारा।',
+          'अरहर (तूर) में राजमा एकमात्र अपवाद है जो वायुमंडलीय नाइट्रोजन का स्थिरीकरण नहीं करता।',
+        ],
+        staticLinkage: 'भारतीय कृषि, मृदा उर्वरता एवं दलहन उत्पादन (Agronomy & Soil Nitrogen Cycle)',
+        tags: ['World Pulses Day', 'Bundelkhand', 'Agriculture', 'Rhizobium', 'Soil Fertility'],
+      },
+      {
+        id: 'dca-13',
+        title: 'उत्तर प्रदेश रक्षा औद्योगिक गलियारा (UPDIC): 6 नोड्स में ₹25,000 करोड़ का निवेश पार',
+        titleEn: 'UP Defence Industrial Corridor: 6 Nodes Attract Over ₹25,000 Cr Investments',
+        category: 'SCIENCE_DEFENSE',
+        categoryLabel: 'रक्षा एवं विनिर्माण',
+        date: '10 Feb 2025',
+        summary: [
+          'उत्तर प्रदेश डिफेंस इंडस्ट्रियल कॉरिडोर (UPDIC) के 6 नोड्स में रक्षा विनिर्माण कंपनियों द्वारा निवेश ₹25,000 करोड़ के पार पहुंच चुका है।',
+          'लखनऊ नोड में ब्रह्मोस एयरोस्पेस द्वारा नेक्स्ट-जेनरेशन ब्रह्मोस क्रूज मिसाइल निर्माण इकाई का कार्य अंतिम चरण में है।',
+          'झांसी नोड में भारत डायनेमिक्स लिमिटेड (BDL) द्वारा एंटी-टैंक गाइडेड मिसाइल प्रोपल्शन इकाई स्थापित की जा रही है।',
+        ],
+        uppcsPreFocus: [
+          'डिफेंस कॉरिडोर के 6 नोड्स: 1. अलीगढ़, 2. आगरा, 3. कानपुर, 4. लखनऊ, 5. झांसी, 6. चित्रकूट।',
+          'ब्रह्मोस मिसाइल निर्माण इकाई: लखनऊ नोड (सरोजिनी नगर)।',
+          'भारत डायनेमिक्स लिमिटेड (BDL) इकाई: झांसी नोड।',
+          'भारत में कुल 2 डिफेंस कॉरिडोर स्वीकृत हैं: उत्तर प्रदेश और तमिलनाडु।',
+        ],
+        staticLinkage: 'भारत की रक्षा विनिर्माण आत्मनिर्भरता एवं मेक इन इंडिया (Defence Indigenisation in India)',
+        tags: ['UPDIC', 'Defence Corridor', 'BrahMos', 'Lucknow', 'Jhansi Nodes'],
+      },
+    ],
+    dailyQuiz: [
+      {
+        id: 'dq-14',
+        question: 'उत्तर प्रदेश रक्षा औद्योगिक गलियारे (UP Defence Industrial Corridor) में निम्नलिखित में से कौन-सा शहर 6 घोषित नोड्स में सम्मिलित नहीं है?',
+        options: {
+          A: 'अलीगढ़',
+          B: 'चित्रकूट',
+          C: 'बरेली',
+          D: 'झांसी',
+        },
+        correctAnswer: 'C',
+        explanation: 'उत्तर प्रदेश रक्षा औद्योगिक गलियारे में कुल 6 नोड्स हैं: अलीगढ़, आगरा, कानपुर, लखनऊ, झांसी और चित्रकूट। बरेली इसमें शामिल नहीं है।',
+        prelimsTip: 'डिफेंस कॉरिडोर के सभी 6 नोड्स के नाम यूपीपीसीएस के सामान्य अध्ययन पेपर-1 का पेटेंट प्रश्न हैं।',
+        category: 'रक्षा एवं विनिर्माण',
+      },
+      {
+        id: 'dq-15',
+        question: 'निम्नलिखित में से कौन-सी दलहनी फसल मृदा में वायुमंडलीय नाइट्रोजन का स्थिरीकरण नहीं करती है?',
+        options: {
+          A: 'चना (Gram)',
+          B: 'मटर (Pea)',
+          C: 'मूंग (Green Gram)',
+          D: 'राजमा (French Bean)',
+        },
+        correctAnswer: 'D',
+        explanation: 'राजमा (French Bean / Phaseolus vulgaris) एक ऐसी दलहनी फसल है जो वायुमंडलीय नाइट्रोजन का स्थिरीकरण नहीं करती है, क्योंकि इसके पौधों में राइजोबियम जीवाणु के साथ प्रभावी सहजीविता नहीं होती। अतः इसे अधिक नाइट्रोजन उर्वरक की आवश्यकता होती है।',
+        prelimsTip: 'यह प्रश्न यूपीपीसीएस और संघ लोक सेवा आयोग (UPSC) दोनों में कई बार पूछा जा चुका है।',
+        category: 'सामान्य विज्ञान एवं कृषि',
+      },
+    ],
+  },
 ];
+
+/**
+ * Merges newly automated daily batches with base historical data.
+ * Guarantees append-only behavior, duplicate protection, and reverse chronological ordering.
+ */
+function mergeAutomatedDays(
+  automated: any[],
+  base: typeof BASE_DAILY_CURRENT_AFFAIRS
+): typeof BASE_DAILY_CURRENT_AFFAIRS {
+  if (!Array.isArray(automated) || automated.length === 0) {
+    return base;
+  }
+
+  const map = new Map<string, (typeof BASE_DAILY_CURRENT_AFFAIRS)[0]>();
+
+  // 1. Load immutable historical base records
+  for (const b of base) {
+    map.set(b.date, { ...b });
+  }
+
+  // 2. Safely merge automated daily records
+  for (const a of automated) {
+    if (!a || !a.date) continue;
+    if (map.has(a.date)) {
+      const existing = map.get(a.date)!;
+      const existingIds = new Set(existing.items.map((it) => it.id));
+      const newItems = (a.items || []).filter((it: any) => !existingIds.has(it.id));
+      const existingQIds = new Set(existing.dailyQuiz.map((q) => q.id));
+      const newQuizzes = (a.dailyQuiz || []).filter((q: any) => !existingQIds.has(q.id));
+
+      map.set(a.date, {
+        ...existing,
+        items: [...existing.items, ...newItems],
+        dailyQuiz: [...existing.dailyQuiz, ...newQuizzes],
+      });
+    } else {
+      map.set(a.date, a);
+    }
+  }
+
+  const merged = Array.from(map.values());
+  // Sort descending: most recent date first
+  merged.sort((x, y) => y.date.localeCompare(x.date));
+  return merged;
+}
+
+export const UPPCS_DAILY_CURRENT_AFFAIRS = mergeAutomatedDays(
+  automatedDaysJson as any[],
+  BASE_DAILY_CURRENT_AFFAIRS
+);
 
 // 2. Weekly Current Affairs (साप्ताहिक राउंडअप)
 export const UPPCS_WEEKLY_ROUNDUPS: WeeklyRoundup[] = [

@@ -207,7 +207,32 @@ function TopicCoverageCard({ examId, subjectId, topicId }: { examId: string; sub
   const questions = getPYQsForTopic(topicId);
   if (!topic) return null;
   const years = uniquePYQYears(questions);
-  return <Card className="flex flex-col p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs" data-testid={`card-pyq-topic-${topicId}`}><div className="flex items-start justify-between gap-4"><div><p className="eyebrow text-blue-700">Topic</p><h2 className="mt-1 text-lg font-bold text-slate-900">{topic.name}</h2></div><span className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{questions.length}</span></div><p className="mt-3 flex-1 text-sm leading-6 text-slate-500">{topic.description}</p><div className="mt-5 flex flex-wrap gap-2 text-xs text-slate-600">{years.length ? years.map((year) => <span key={year} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 font-semibold">{year}</span>) : <span>No local samples yet</span>}</div>{questions.length ? <Button href={`/pyq/${examId}/${subjectId}/${topicId}`} className="mt-5 w-full bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs">Start practice <ArrowRight size={15} /></Button> : <span className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-400">Coming soon</span>}</Card>;
+  return (
+    <Card className="flex flex-col p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs" data-testid={`card-pyq-topic-${topicId}`}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="eyebrow text-blue-700">Topic</p>
+          <h2 className="mt-1 text-lg font-bold text-slate-900">{topic.name}</h2>
+        </div>
+        <span className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{questions.length}</span>
+      </div>
+      <p className="mt-3 flex-1 text-sm leading-6 text-slate-500">{topic.description}</p>
+      <div className="mt-5 flex flex-wrap gap-2 text-xs text-slate-600">
+        {years.length ? years.map((year) => <span key={year} className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 font-semibold">{year}</span>) : <span>No local samples yet</span>}
+      </div>
+      {questions.length ? (
+        <Button href={`/pyq/${examId}/${subjectId}/${topicId}`} className="mt-5 w-full bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs">
+          Start practice <ArrowRight size={15} />
+        </Button>
+      ) : subjectId.includes('current-affairs') || topicId.includes('current-affairs') ? (
+        <Button href="/current-affairs" className="mt-5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs">
+          समसामयिकी केंद्र खोलें <ArrowRight size={15} />
+        </Button>
+      ) : (
+        <span className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-400">Coming soon</span>
+      )}
+    </Card>
+  );
 }
 
 export function PYQPracticePage() {

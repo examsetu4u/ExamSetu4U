@@ -1,0 +1,69 @@
+name: UPPCS Daily Current Affairs Automation
+
+on:
+  schedule:
+    # 6:00 AM IST daily (IST = UTC + 5:30 -> 00:30 UTC)
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Specific date to fetch/process (YYYY-MM-DD, defaults to today in IST)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Simulate without committing changes'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  uppcs-pipeline:
+    name: Fetch, Process & Publish UPPCS Current Affairs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run UPPCS Current Affairs Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.target_date }}" ]; then
+            ARGS="--date=${{ github.event.inputs.target_date }}"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          npx tsx scripts/current-affairs/index.ts $ARGS
+
+      - name: Safe Commit & Push Data
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add artifacts/examsetu4u/src/data/current-affairs/
+          git add data/current-affairs/uppcs/ 2>/dev/null || true
+
+          if git diff --staged --quiet; then
+            echo "Pipeline ran successfully. No new items required commit."
+          else
+            TODAY=$(date -u +'%Y-%m-%d')
+            git commit -m "chore(automation): UPPCS Daily Current Affairs update [$TODAY] [skip ci]"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

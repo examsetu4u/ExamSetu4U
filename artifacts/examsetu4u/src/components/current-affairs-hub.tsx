@@ -16,6 +16,8 @@ import {
   Share2,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
+  CalendarDays,
   TrendingUp,
   MapPin,
   Layers,
@@ -41,8 +43,9 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Daily State
+  // Daily State & Date-wise Navigation
   const [selectedDailyDate, setSelectedDailyDate] = useState<string>(UPPCS_DAILY_CURRENT_AFFAIRS[0].date);
+  const [showDateArchive, setShowDateArchive] = useState<boolean>(false);
 
   // Weekly State
   const [selectedWeeklyId, setSelectedWeeklyId] = useState<string>(UPPCS_WEEKLY_ROUNDUPS[0].id);
@@ -56,6 +59,40 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
   // Quiz Interaction State
   const [userAnswers, setUserAnswers] = useState<Record<string, 'A' | 'B' | 'C' | 'D'>>({});
   const [submittedQuizIds, setSubmittedQuizIds] = useState<Set<string>>(new Set());
+
+  // Date-wise navigation calculations
+  const currentDailyIndex = useMemo(() => {
+    return UPPCS_DAILY_CURRENT_AFFAIRS.findIndex((d) => d.date === selectedDailyDate);
+  }, [selectedDailyDate]);
+
+  const hasNewerDay = currentDailyIndex > 0;
+  const hasOlderDay = currentDailyIndex < UPPCS_DAILY_CURRENT_AFFAIRS.length - 1;
+
+  const handlePrevDay = () => {
+    if (hasOlderDay) {
+      setSelectedDailyDate(UPPCS_DAILY_CURRENT_AFFAIRS[currentDailyIndex + 1].date);
+      setUserAnswers({});
+    }
+  };
+
+  const handleNextDay = () => {
+    if (hasNewerDay) {
+      setSelectedDailyDate(UPPCS_DAILY_CURRENT_AFFAIRS[currentDailyIndex - 1].date);
+      setUserAnswers({});
+    }
+  };
+
+  const formatShortDate = (dateStr: string, idx: number) => {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const day = parseInt(parts[2], 10);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = months[parseInt(parts[1], 10) - 1] || 'Feb';
+      if (idx === 0) return `${day} ${month} (आज)`;
+      return `${day} ${month}`;
+    }
+    return dateStr;
+  };
 
   // Current active daily data
   const currentDaily = useMemo(() => {
@@ -258,10 +295,25 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
       {/* 3. Sub-Navigation (Dates / Weeks / Months) */}
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-indigo-100 bg-[#f8f7ff] dark:bg-[#120f30] dark:border-indigo-950 p-3">
         {activeTab === 'daily' && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">दिनांक चुनें:</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-1">
+              <Calendar size={13} /> दिनांक चुनें:
+            </span>
+
+            {/* Stepper: Previous Day */}
+            <button
+              onClick={handlePrevDay}
+              disabled={!hasOlderDay}
+              className="flex items-center gap-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-800 px-2 py-1 text-xs font-bold text-indigo-900 dark:text-indigo-200 hover:bg-indigo-50 disabled:opacity-30 disabled:pointer-events-none transition"
+              title="पिछली तारीख (पुराना दिन)"
+            >
+              <ChevronLeft size={14} />
+              <span className="hidden sm:inline">पिछला</span>
+            </button>
+
+            {/* Date Pills */}
             <div className="flex flex-wrap gap-1.5">
-              {UPPCS_DAILY_CURRENT_AFFAIRS.map((d) => (
+              {UPPCS_DAILY_CURRENT_AFFAIRS.map((d, idx) => (
                 <button
                   key={d.date}
                   onClick={() => {
@@ -270,14 +322,54 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
                   }}
                   className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
                     selectedDailyDate === d.date
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-white text-indigo-900 dark:bg-slate-800 dark:text-indigo-200 border border-indigo-200/80 hover:bg-indigo-50'
                   }`}
                 >
-                  {d.date === '2025-02-15' ? 'आज (15 Feb)' : '14 Feb'}
+                  {formatShortDate(d.date, idx)}
                 </button>
               ))}
             </div>
+
+            {/* Stepper: Next Day */}
+            <button
+              onClick={handleNextDay}
+              disabled={!hasNewerDay}
+              className="flex items-center gap-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-800 px-2 py-1 text-xs font-bold text-indigo-900 dark:text-indigo-200 hover:bg-indigo-50 disabled:opacity-30 disabled:pointer-events-none transition"
+              title="अगली तारीख (नया दिन)"
+            >
+              <span className="hidden sm:inline">अगला</span>
+              <ChevronRight size={14} />
+            </button>
+
+            {/* Date Dropdown Select */}
+            <select
+              value={selectedDailyDate}
+              onChange={(e) => {
+                setSelectedDailyDate(e.target.value);
+                setUserAnswers({});
+              }}
+              className="rounded-lg border border-indigo-200 bg-white dark:bg-slate-800 dark:border-indigo-800 px-2.5 py-1 text-xs font-bold text-indigo-950 dark:text-indigo-100 shadow-2xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            >
+              {UPPCS_DAILY_CURRENT_AFFAIRS.map((d, idx) => (
+                <option key={d.date} value={d.date}>
+                  {idx === 0 ? `आज - ${d.formattedDate.split('(')[0].trim()}` : d.formattedDate.split('(')[0].trim()}
+                </option>
+              ))}
+            </select>
+
+            {/* Toggle Full Date Archive Grid */}
+            <button
+              onClick={() => setShowDateArchive(!showDateArchive)}
+              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition ${
+                showDateArchive
+                  ? 'bg-indigo-900 text-white shadow-2xs'
+                  : 'border border-indigo-300 bg-indigo-50 dark:bg-slate-800 text-indigo-900 dark:text-indigo-200 hover:bg-indigo-100'
+              }`}
+            >
+              <CalendarDays size={14} />
+              <span>{showDateArchive ? 'पुरालेख बंद करें' : 'तिथि पुरालेख'}</span>
+            </button>
           </div>
         )}
 
@@ -368,6 +460,101 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
         )}
       </div>
 
+      {/* Date Archive Drawer / Calendar View for Daily Affairs */}
+      {activeTab === 'daily' && showDateArchive && (
+        <div className="mt-4 rounded-2xl border-2 border-indigo-200 bg-[#f6f5ff] dark:bg-[#15123d] dark:border-indigo-900 p-5 sm:p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-indigo-200/80 pb-3">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <h4 className="text-sm sm:text-base font-extrabold text-indigo-950 dark:text-indigo-100">
+                दैनिक समसामयिकी पुरालेख (Date-wise Current Affairs Archive)
+              </h4>
+            </div>
+            <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
+              कुल {UPPCS_DAILY_CURRENT_AFFAIRS.length} तिथियां उपलब्ध
+            </span>
+          </div>
+
+          <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+            प्रत्येक दिन के महत्वपूर्ण राष्ट्रीय, अंतर्राष्ट्रीय और उत्तर प्रदेश विशेष घटनाक्रमों के विस्तृत नोट्स पढ़ने या उस विशिष्ट तारीख की 5-प्रश्नों की डेली ड्रिल क्विज़ हल करने हेतु नीचे दी गई तिथि चुनें:
+          </p>
+
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {UPPCS_DAILY_CURRENT_AFFAIRS.map((dayData, idx) => {
+              const isSelected = selectedDailyDate === dayData.date;
+              return (
+                <div
+                  key={dayData.date}
+                  className={`rounded-xl border p-4 transition ${
+                    isSelected
+                      ? 'border-indigo-600 bg-white dark:bg-slate-900 shadow-sm ring-2 ring-indigo-500/20'
+                      : 'border-indigo-200/80 bg-white/80 dark:bg-slate-900/80 hover:border-indigo-300 hover:bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-sm text-indigo-950 dark:text-white">
+                      {dayData.formattedDate.split('(')[0].trim()}
+                    </span>
+                    {idx === 0 ? (
+                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                        नवीनतम (Today)
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-slate-500">
+                        {dayData.date}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Headlines Preview */}
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                    {dayData.items.slice(0, 2).map((it) => (
+                      <li key={it.id} className="flex items-start gap-1.5 text-[11px] leading-tight">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
+                        <span className="line-clamp-2">{it.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Quick Actions */}
+                  <div className="mt-3.5 flex items-center gap-2 pt-2.5 border-t border-indigo-100 dark:border-indigo-950">
+                    <button
+                      onClick={() => {
+                        setSelectedDailyDate(dayData.date);
+                        setActiveMode('notes');
+                        setShowDateArchive(false);
+                      }}
+                      className={`flex-1 rounded-lg py-1.5 text-xs font-bold text-center transition ${
+                        isSelected && activeMode === 'notes'
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-indigo-50 text-indigo-900 hover:bg-indigo-100 dark:bg-slate-800 dark:text-indigo-200'
+                      }`}
+                    >
+                      नोट्स ({dayData.items.length})
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedDailyDate(dayData.date);
+                        setActiveMode('quiz');
+                        setShowDateArchive(false);
+                        setUserAnswers({});
+                      }}
+                      className={`flex-1 rounded-lg py-1.5 text-xs font-bold text-center transition ${
+                        isSelected && activeMode === 'quiz'
+                          ? 'bg-violet-600 text-white'
+                          : 'bg-violet-50 text-violet-900 hover:bg-violet-100 dark:bg-slate-800 dark:text-violet-200'
+                      }`}
+                    >
+                      क्विज़ ({dayData.dailyQuiz.length} Qs)
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* 4. MAIN CONTENT AREA */}
       <div className="mt-6">
         {/* ========================================================= */}
@@ -378,13 +565,43 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
             {/* 1. DAILY NOTES */}
             {activeTab === 'daily' && (
               <div className="space-y-5">
-                <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
-                  <h3 className="text-base font-extrabold text-indigo-950 dark:text-indigo-100">
-                    {currentDaily.formattedDate} — प्रमुख समसामयिक घटनाएं
-                  </h3>
-                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                    {filteredDailyItems.length} महत्वपूर्ण विषय
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-indigo-100 pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200">
+                        <Calendar size={13} /> दिनांक: {currentDaily.date}
+                      </span>
+                      <h3 className="text-base sm:text-lg font-extrabold text-indigo-950 dark:text-indigo-100">
+                        {currentDaily.formattedDate}
+                      </h3>
+                    </div>
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                      UPPCS प्री-ओरिएंटेड तथ्य, 'परीक्षा दृष्टि' प्वाइंटर्स व स्टेटिक जीएस लिंकेज
+                    </p>
+                  </div>
+
+                  {/* Day-by-Day Stepper Navigation in Header */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handlePrevDay}
+                      disabled={!hasOlderDay}
+                      className="flex items-center gap-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-bold text-indigo-900 dark:text-indigo-200 hover:bg-indigo-50 disabled:opacity-30 disabled:pointer-events-none transition"
+                      title="पिछली तारीख"
+                    >
+                      <ChevronLeft size={14} /> पिछला दिन
+                    </button>
+                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                      {filteredDailyItems.length} विषय
+                    </span>
+                    <button
+                      onClick={handleNextDay}
+                      disabled={!hasNewerDay}
+                      className="flex items-center gap-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-bold text-indigo-900 dark:text-indigo-200 hover:bg-indigo-50 disabled:opacity-30 disabled:pointer-events-none transition"
+                      title="अगली तारीख"
+                    >
+                      अगला दिन <ChevronRight size={14} />
+                    </button>
+                  </div>
                 </div>
 
                 {filteredDailyItems.map((item, idx) => (
@@ -407,7 +624,7 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
 
                     {/* Summary Bullet Points */}
                     <div className="mt-3 space-y-2">
-                      {item.summary.map((point, pIdx) => (
+                      {(Array.isArray(item.summary) ? item.summary : [item.summary]).map((point, pIdx) => (
                         <p key={pIdx} className="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-200 flex items-start gap-2">
                           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600" />
                           <span>{point}</span>
@@ -415,24 +632,74 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
                       ))}
                     </div>
 
-                    {/* UPPCS Pre Focus (परीक्षा दृष्टि) Box */}
-                    <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/70 p-4 dark:bg-amber-950/30 dark:border-amber-800/60">
-                      <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-900 dark:text-amber-200">
-                        <Sparkles size={14} className="text-amber-600" />
-                        परीक्षा दृष्टि (UPPCS Pre Focus Pointers):
+                    {/* Why Important for UPPCS (Exam Relevance) */}
+                    {item.why_important_for_uppcs && (
+                      <div className="mt-3.5 rounded-xl border border-indigo-200/90 bg-indigo-50/70 p-3.5 dark:bg-indigo-950/40 dark:border-indigo-800/60 text-xs">
+                        <div className="font-bold text-indigo-950 dark:text-indigo-200 flex items-center gap-1.5">
+                          <Sparkles size={13} className="text-indigo-600 dark:text-indigo-400" />
+                          <span>UPPCS परीक्षा दृष्टिकोण (Exam Significance):</span>
+                        </div>
+                        <p className="mt-1 text-slate-700 dark:text-slate-300 leading-relaxed text-xs sm:text-sm">
+                          {item.why_important_for_uppcs}
+                        </p>
                       </div>
-                      <ul className="mt-2 space-y-1.5 text-xs sm:text-sm text-amber-950 dark:text-amber-100">
-                        {item.uppcsPreFocus.map((focus, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2">
-                            <span className="font-bold text-amber-700">▸</span>
-                            <span>{focus}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <p className="mt-2.5 text-[11px] font-semibold text-amber-800/90 dark:text-amber-300/80 border-t border-amber-200 dark:border-amber-800/40 pt-1.5">
-                        <span className="font-bold">विषय जुड़ाव:</span> {item.staticLinkage}
-                      </p>
-                    </div>
+                    )}
+
+                    {/* Uttar Pradesh Specific Relevance */}
+                    {item.uttar_pradesh_relevance && (
+                      <div className="mt-2.5 rounded-xl border border-emerald-200/90 bg-emerald-50/70 p-3.5 dark:bg-emerald-950/40 dark:border-emerald-800/60 text-xs">
+                        <div className="font-bold text-emerald-950 dark:text-emerald-200 flex items-center gap-1.5">
+                          <MapPin size={13} className="text-emerald-600 dark:text-emerald-400" />
+                          <span>उत्तर प्रदेश विशेष प्रासंगिकता (UP State Impact):</span>
+                        </div>
+                        <p className="mt-1 text-emerald-900/90 dark:text-emerald-200/90 leading-relaxed text-xs sm:text-sm">
+                          {item.uttar_pradesh_relevance}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* UPPCS Pre Focus (परीक्षा दृष्टि) Box */}
+                    {((item.uppcsPreFocus && item.uppcsPreFocus.length > 0) || (item.prelims_facts && item.prelims_facts.length > 0)) && (
+                      <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/70 p-4 dark:bg-amber-950/30 dark:border-amber-800/60">
+                        <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-900 dark:text-amber-200">
+                          <Sparkles size={14} className="text-amber-600" />
+                          परीक्षा दृष्टि (UPPCS Pre Focus Pointers):
+                        </div>
+                        <ul className="mt-2 space-y-1.5 text-xs sm:text-sm text-amber-950 dark:text-amber-100">
+                          {(item.uppcsPreFocus || item.prelims_facts || []).map((focus, fIdx) => (
+                            <li key={fIdx} className="flex items-start gap-2">
+                              <span className="font-bold text-amber-700">▸</span>
+                              <span>{focus}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {item.staticLinkage && (
+                          <p className="mt-2.5 text-[11px] font-semibold text-amber-800/90 dark:text-amber-300/80 border-t border-amber-200 dark:border-amber-800/40 pt-1.5">
+                            <span className="font-bold">विषय जुड़ाव:</span> {item.staticLinkage}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Authoritative Source Badge & Link */}
+                    {item.source && (
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-indigo-100 dark:border-indigo-950/80 pt-2.5 text-[11px] text-slate-500">
+                        <span className="font-medium flex items-center gap-1">
+                          आधिकारिक स्रोत: <strong className="text-slate-700 dark:text-slate-300">{item.source}</strong>
+                        </span>
+                        {item.source_url && (
+                          <a
+                            href={item.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline font-bold"
+                          >
+                            <span>विज्ञप्ति / स्रोत लिंक</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        )}
+                      </div>
+                    )}
 
                     {/* Tags */}
                     <div className="mt-3 flex flex-wrap gap-1.5">
@@ -602,13 +869,20 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
             <div className="rounded-2xl border-2 border-indigo-200/90 bg-[#f4f2ff] dark:bg-[#16133b] p-6 shadow-sm">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
-                    {activeTab === 'daily' && 'दैनिक समसामयिकी क्विज़'}
-                    {activeTab === 'weekly' && 'साप्ताहिक रिवीजन टेस्ट'}
-                    {activeTab === 'monthly' && 'मासिक करेंट अफेयर्स मॉक'}
-                    {activeTab === 'yearly' && 'वार्षिकी मेगा टेस्ट'}
-                  </span>
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+                      {activeTab === 'daily' && `दैनिक समसामयिकी क्विज़ — ${currentDaily.formattedDate.split('(')[0].trim()}`}
+                      {activeTab === 'weekly' && 'साप्ताहिक रिवीजन टेस्ट'}
+                      {activeTab === 'monthly' && 'मासिक करेंट अफेयर्स मॉक'}
+                      {activeTab === 'yearly' && 'वार्षिकी मेगा टेस्ट'}
+                    </span>
+                    {activeTab === 'daily' && (
+                      <span className="rounded-md bg-indigo-100 dark:bg-indigo-950 px-2 py-0.5 text-[10px] font-bold text-indigo-800 dark:text-indigo-300">
+                        {currentDaily.date}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-1 text-xl font-black text-slate-900 dark:text-white">
                     UPPCS Pre पैटर्न बहुविकल्पीय प्रश्नोत्तरी (MCQ Drill)
                   </h3>
                   <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
@@ -671,7 +945,9 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
                     {/* Options (A, B, C, D) */}
                     <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
                       {(['A', 'B', 'C', 'D'] as const).map((optKey) => {
-                        const optText = q.options[optKey];
+                        const optText = Array.isArray(q.options)
+                          ? q.options[['A', 'B', 'C', 'D'].indexOf(optKey)]
+                          : q.options[optKey];
                         const isThisSelected = selectedOpt === optKey;
                         const isThisCorrect = q.correctAnswer === optKey;
 

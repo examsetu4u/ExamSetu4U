@@ -12,10 +12,15 @@
     "dev": "npm run dev --workspace=@workspace/examsetu4u",
     "build": "npm run build --workspace=@workspace/examsetu4u",
     "lint": "tsc --build",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "uppcs:pipeline": "tsx scripts/current-affairs/index.ts",
+    "uppcs:pipeline:dry": "tsx scripts/current-affairs/index.ts --dry-run"
   },
   "devDependencies": {
     "prettier": "^3.9.6",
     "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "@google/genai": "^2.22.0"
   }
 }

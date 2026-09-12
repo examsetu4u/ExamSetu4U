@@ -1,5 +1,6 @@
 import { exams, subjects, topics } from '@/data/curriculum';
 import { getPublishedGoogleSheetQuestions } from '@/services/google-sheet-loader';
+import { uppcsCurrentAffairsQuestions } from '@/data/quiz/uppcs-current-affairs-questions';
 
 export type PYQDifficulty = 'Easy' | 'Moderate' | 'Challenging';
 
@@ -250,6 +251,47 @@ export function getAllPYQQuestions(): PYQQuestion[] {
             }
           });
         }
+      }
+    }
+  } catch {
+    // Ignore
+  }
+
+  // 3. Merge UPPCS Current Affairs questions
+  try {
+    for (const caQ of uppcsCurrentAffairsQuestions) {
+      if (caQ && caQ.id && !seenIds.has(caQ.id)) {
+        seenIds.add(caQ.id);
+        const opts = Array.isArray(caQ.options)
+          ? caQ.options
+          : [caQ.options.A, caQ.options.B, caQ.options.C, caQ.options.D];
+        const options: PYQOption[] = opts.map((opt, i) => ({
+          id: String.fromCharCode(97 + i),
+          label: String.fromCharCode(65 + i),
+          text: opt,
+        }));
+        const correctId = (caQ.correctAnswer || 'a').toLowerCase().trim();
+        result.push({
+          id: caQ.id,
+          prompt: caQ.question,
+          options,
+          correctOptionId: correctId,
+          metadata: {
+            examId: caQ.examId || 'uppcs-pre',
+            subjectId: caQ.subjectId || 'uppcs-pre-current-affairs',
+            topicId: caQ.topicId || 'uppcs-pre-current-affairs-1',
+            year: 2025,
+            difficulty: (caQ.difficulty as any) || 'Moderate',
+            sourceLabel: 'UPPCS Samiksha / Current Affairs Practice',
+            isSample: false,
+          },
+          explanation: {
+            answerReason: caQ.explanation || '',
+            importantPoint: caQ.importantPoint || '',
+            additionalFact: caQ.additionalFact || '',
+            commonMistake: caQ.commonMistake || '',
+          },
+        });
       }
     }
   } catch {
