@@ -1,4 +1,7 @@
 import automatedDaysJson from './automated-uppcs.json';
+import { YEAR_2026_DAILY_CURRENT_AFFAIRS } from './year-2026-daily';
+import { YEAR_2026_MONTHLY_DOSSIERS } from './year-2026-monthly';
+import { YEAR_2026_WEEKLY_ROUNDUPS, YEAR_2026_YEARLY_COMPILATIONS } from './year-2026-weekly-yearly';
 
 export interface CurrentAffairItem {
   id: string;
@@ -663,12 +666,13 @@ function mergeAutomatedDays(
 }
 
 export const UPPCS_DAILY_CURRENT_AFFAIRS = mergeAutomatedDays(
-  automatedDaysJson as any[],
+  [...(automatedDaysJson as any[]), ...YEAR_2026_DAILY_CURRENT_AFFAIRS],
   BASE_DAILY_CURRENT_AFFAIRS
 );
 
 // 2. Weekly Current Affairs (साप्ताहिक राउंडअप)
 export const UPPCS_WEEKLY_ROUNDUPS: WeeklyRoundup[] = [
+  ...YEAR_2026_WEEKLY_ROUNDUPS,
   {
     id: 'wcr-01',
     weekLabel: 'फरवरी 2025 - सप्ताह 2',
@@ -797,6 +801,7 @@ export const UPPCS_WEEKLY_ROUNDUPS: WeeklyRoundup[] = [
 
 // 3. Monthly Current Affairs (मासिक करेंट अफेयर्स)
 export const UPPCS_MONTHLY_DOSSIERS: MonthlyDossier[] = [
+  ...YEAR_2026_MONTHLY_DOSSIERS,
   {
     id: 'mcd-jan-2025',
     month: 'जनवरी',
@@ -910,6 +915,7 @@ export const UPPCS_MONTHLY_DOSSIERS: MonthlyDossier[] = [
 
 // 4. Yearly Current Affairs & UP Special (वार्षिकी एवं उत्तर प्रदेश विशेषांक)
 export const UPPCS_YEARLY_COMPILATIONS: YearlyModule[] = [
+  ...YEAR_2026_YEARLY_COMPILATIONS,
   {
     id: 'yearly-up-budget-economic',
     title: 'उत्तर प्रदेश बजट 2025-26 एवं आर्थिक समीक्षा (Complete Annual Overview)',

@@ -49,9 +49,14 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
 
   // Weekly State
   const [selectedWeeklyId, setSelectedWeeklyId] = useState<string>(UPPCS_WEEKLY_ROUNDUPS[0].id);
+  const [weeklyYearFilter, setWeeklyYearFilter] = useState<number>(2026);
 
   // Monthly State
   const [selectedMonthlyId, setSelectedMonthlyId] = useState<string>(UPPCS_MONTHLY_DOSSIERS[0].id);
+  const [monthlyYearFilter, setMonthlyYearFilter] = useState<number>(2026);
+
+  // Daily Archive Filter State
+  const [dailyMonthFilter, setDailyMonthFilter] = useState<string>('ALL');
 
   // Yearly State
   const [selectedYearlyId, setSelectedYearlyId] = useState<string>(UPPCS_YEARLY_COMPILATIONS[0].id);
@@ -374,49 +379,105 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
         )}
 
         {activeTab === 'weekly' && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">सप्ताह चुनें:</span>
-            <div className="flex flex-wrap gap-1.5">
-              {UPPCS_WEEKLY_ROUNDUPS.map((w) => (
-                <button
-                  key={w.id}
-                  onClick={() => {
-                    setSelectedWeeklyId(w.id);
-                    setUserAnswers({});
-                  }}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
-                    selectedWeeklyId === w.id
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white text-indigo-900 dark:bg-slate-800 dark:text-indigo-200 border border-indigo-200/80 hover:bg-indigo-50'
-                  }`}
-                >
-                  {w.weekLabel}
-                </button>
-              ))}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">वर्ष:</span>
+              <div className="flex rounded-lg bg-indigo-100/70 dark:bg-slate-800 p-0.5">
+                {[2026, 2025].map((yr) => (
+                  <button
+                    key={yr}
+                    onClick={() => {
+                      setWeeklyYearFilter(yr);
+                      const first = UPPCS_WEEKLY_ROUNDUPS.find((w) => w.weekLabel.includes(String(yr)));
+                      if (first) {
+                        setSelectedWeeklyId(first.id);
+                        setUserAnswers({});
+                      }
+                    }}
+                    className={`rounded-md px-2.5 py-1 text-xs font-bold transition ${
+                      weeklyYearFilter === yr
+                        ? 'bg-indigo-600 text-white shadow-2xs'
+                        : 'text-indigo-900 dark:text-indigo-200 hover:text-indigo-600'
+                    }`}
+                  >
+                    {yr}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200 shrink-0">सप्ताह चुनें:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {UPPCS_WEEKLY_ROUNDUPS.filter((w) => w.weekLabel.includes(String(weeklyYearFilter))).map((w) => (
+                  <button
+                    key={w.id}
+                    onClick={() => {
+                      setSelectedWeeklyId(w.id);
+                      setUserAnswers({});
+                    }}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
+                      selectedWeeklyId === w.id
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-white text-indigo-900 dark:bg-slate-800 dark:text-indigo-200 border border-indigo-200/80 hover:bg-indigo-50'
+                    }`}
+                  >
+                    {w.weekLabel}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'monthly' && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">माह चुनें:</span>
-            <div className="flex flex-wrap gap-1.5">
-              {UPPCS_MONTHLY_DOSSIERS.map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => {
-                    setSelectedMonthlyId(m.id);
-                    setUserAnswers({});
-                  }}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
-                    selectedMonthlyId === m.id
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white text-indigo-900 dark:bg-slate-800 dark:text-indigo-200 border border-indigo-200/80 hover:bg-indigo-50'
-                  }`}
-                >
-                  {m.month} {m.year} विशेषांक
-                </button>
-              ))}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200">वर्ष:</span>
+              <div className="flex rounded-lg bg-indigo-100/70 dark:bg-slate-800 p-0.5">
+                {[2026, 2025].map((yr) => (
+                  <button
+                    key={yr}
+                    onClick={() => {
+                      setMonthlyYearFilter(yr);
+                      const first = UPPCS_MONTHLY_DOSSIERS.find((m) => m.year === yr);
+                      if (first) {
+                        setSelectedMonthlyId(first.id);
+                        setUserAnswers({});
+                      }
+                    }}
+                    className={`rounded-md px-2.5 py-1 text-xs font-bold transition ${
+                      monthlyYearFilter === yr
+                        ? 'bg-indigo-600 text-white shadow-2xs'
+                        : 'text-indigo-900 dark:text-indigo-200 hover:text-indigo-600'
+                    }`}
+                  >
+                    {yr}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              <span className="text-xs font-bold text-indigo-900 dark:text-indigo-200 shrink-0">माह चुनें:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {UPPCS_MONTHLY_DOSSIERS.filter((m) => m.year === monthlyYearFilter).map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => {
+                      setSelectedMonthlyId(m.id);
+                      setUserAnswers({});
+                    }}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
+                      selectedMonthlyId === m.id
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-white text-indigo-900 dark:bg-slate-800 dark:text-indigo-200 border border-indigo-200/80 hover:bg-indigo-50'
+                    }`}
+                  >
+                    {m.month} {m.year} विशेषांक
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -479,8 +540,38 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
             प्रत्येक दिन के महत्वपूर्ण राष्ट्रीय, अंतर्राष्ट्रीय और उत्तर प्रदेश विशेष घटनाक्रमों के विस्तृत नोट्स पढ़ने या उस विशिष्ट तारीख की 5-प्रश्नों की डेली ड्रिल क्विज़ हल करने हेतु नीचे दी गई तिथि चुनें:
           </p>
 
+          {/* Quick Month Filter Pills */}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5 pt-2 border-t border-indigo-200/60 dark:border-indigo-900/60">
+            <span className="text-xs font-bold text-indigo-950 dark:text-indigo-200 mr-1">माह चुनें:</span>
+            {[
+              { label: 'सभी (2026 व 2025)', val: 'ALL' },
+              { label: 'सितंबर 2026', val: '2026-09' },
+              { label: 'अगस्त 2026', val: '2026-08' },
+              { label: 'जुलाई 2026', val: '2026-07' },
+              { label: 'जून 2026', val: '2026-06' },
+              { label: 'मई 2026', val: '2026-05' },
+              { label: 'अप्रैल 2026', val: '2026-04' },
+              { label: 'मार्च 2026', val: '2026-03' },
+              { label: 'फ़रवरी 2026', val: '2026-02' },
+              { label: 'जनवरी 2026', val: '2026-01' },
+              { label: 'फ़रवरी 2025', val: '2025-02' },
+            ].map((f) => (
+              <button
+                key={f.val}
+                onClick={() => setDailyMonthFilter(f.val)}
+                className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
+                  dailyMonthFilter === f.val
+                    ? 'bg-indigo-700 text-white shadow-2xs'
+                    : 'bg-white text-indigo-900 dark:bg-slate-800 dark:text-indigo-200 border border-indigo-200 hover:bg-indigo-50'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-            {UPPCS_DAILY_CURRENT_AFFAIRS.map((dayData, idx) => {
+            {UPPCS_DAILY_CURRENT_AFFAIRS.filter((d) => dailyMonthFilter === 'ALL' || d.date.startsWith(dailyMonthFilter)).map((dayData, idx) => {
               const isSelected = selectedDailyDate === dayData.date;
               return (
                 <div

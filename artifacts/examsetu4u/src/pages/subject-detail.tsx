@@ -33,10 +33,22 @@ import NotFoundPage from '@/pages/not-found';
 
 type SortOption = 'recommended' | 'not_started' | 'in_progress' | 'completed';
 
+import { ScienceDashboard } from '@/components/cbse-science/ScienceDashboard';
+
 export default function SubjectDetailPage() {
   const { examId = '', subjectId = '' } = useParams<{ examId: string; subjectId: string }>();
   const exam = getExam(examId);
-  const subject = getSubject(subjectId);
+  const subject = getSubject(subjectId, examId);
+
+  // Dedicated CBSE Class 10 Science Dashboard delegation
+  if (
+    exam?.id === 'cbse-class-10' &&
+    (subject?.id === 'cbse-class-10-science' ||
+      subjectId === 'science' ||
+      subjectId === 'cbse-class-10-science')
+  ) {
+    return <ScienceDashboard examId={exam.id} />;
+  }
 
   const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('recommended');

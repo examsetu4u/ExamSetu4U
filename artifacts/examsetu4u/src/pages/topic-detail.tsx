@@ -22,6 +22,8 @@ import { getExam, getSubject, getTopic } from '@/data/curriculum';
 import { useProgress } from '@/lib/progress';
 import { getTopicLearningDetails, TOPIC_STATUS_LABELS } from '@/lib/learning-path';
 import NotFoundPage from '@/pages/not-found';
+import { getScienceChapter } from '@/data/cbse-class-10-science';
+import { ScienceChapterDetail } from '@/components/cbse-science/ScienceChapterDetail';
 
 export default function TopicDetailPage() {
   const { examId = '', subjectId = '', topicId = '' } = useParams<{
@@ -31,8 +33,27 @@ export default function TopicDetailPage() {
   }>();
 
   const exam = getExam(examId);
-  const subject = getSubject(subjectId);
+  const subject = getSubject(subjectId, examId);
   const topic = getTopic(topicId);
+
+  // Dedicated CBSE Class 10 Science Chapter delegation
+  if (
+    exam?.id === 'cbse-class-10' &&
+    (subject?.id === 'cbse-class-10-science' ||
+      subjectId === 'science' ||
+      subjectId === 'cbse-class-10-science')
+  ) {
+    const sciChapter = getScienceChapter(topicId);
+    if (sciChapter) {
+      return (
+        <ScienceChapterDetail
+          chapter={sciChapter}
+          examId={exam.id}
+          subjectId="cbse-class-10-science"
+        />
+      );
+    }
+  }
   const { setTopicProgress, resetTopicProgress } = useProgress();
   const [refreshKey, setRefreshKey] = useState(0);
 

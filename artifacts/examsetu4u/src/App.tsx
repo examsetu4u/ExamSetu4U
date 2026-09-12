@@ -37,6 +37,11 @@ import CurrentAffairsPage from '@/pages/current-affairs';
 import StudyPlannerPage from '@/pages/study-planner';
 import StudyPlannerHistoryPage from '@/pages/study-planner-history';
 import { PYQDashboardPage, PYQExamPage, PYQPracticePage, PYQSubjectPage } from '@/pages/pyq';
+import {
+  CbseScienceSubjectPage,
+  CbseScienceChapterPage,
+  CbseScienceSectionPage,
+} from '@/pages/cbse-science';
 
 const queryClient = new QueryClient();
 
@@ -54,6 +59,12 @@ function Router() {
         <Route path="/exams/uppcs-pre/current-affairs" component={CurrentAffairsPage} />
         <Route path="/exams/uppcs-pre/uppcs-pre-current-affairs" component={CurrentAffairsPage} />
         <Route path="/current-affairs" component={CurrentAffairsPage} />
+        <Route path="/exams/cbse-class-10/science/:chapterId/:section" component={CbseScienceSectionPage} />
+        <Route path="/exams/cbse-class-10/science/:chapterId" component={CbseScienceChapterPage} />
+        <Route path="/exams/cbse-class-10/science" component={CbseScienceSubjectPage} />
+        <Route path="/exams/cbse-class-10/cbse-class-10-science/:chapterId/:section" component={CbseScienceSectionPage} />
+        <Route path="/exams/cbse-class-10/cbse-class-10-science/:chapterId" component={CbseScienceChapterPage} />
+        <Route path="/exams/cbse-class-10/cbse-class-10-science" component={CbseScienceSubjectPage} />
         <Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} />
         <Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} />
         <Route path="/exams/:examId" component={ExamDetailPage} />

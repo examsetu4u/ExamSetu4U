@@ -133,8 +133,8 @@ function createCurriculum(definitions: ExamDefinition[]) {
               subjectId === 'super-tet-child-development' ||
               subjectId === 'super-tet-teaching-skills' ||
               subjectId === 'uppcs-pre-current-affairs',
-            pyq: index % 3 !== 1,
-            quiz: true,
+            pyq: subjectId === 'cbse-class-10-science' ? index === 0 : index % 3 !== 1,
+            quiz: subjectId === 'cbse-class-10-science' ? false : true,
             theory: index % 2 === 0,
           },
         });
@@ -251,7 +251,26 @@ const curriculumDefinitions: ExamDefinition[] = [
     description: 'A lightweight Class 10 curriculum map for concept revision, practice and board exam preparation.',
     subjects: [
       { id: 'mathematics', name: 'Mathematics', description: 'Revise the core mathematics chapters in a manageable order.', topics: ['Real Numbers', 'Polynomials', 'Triangles'] },
-      { id: 'science', name: 'Science', description: 'Keep physics, chemistry and biology revision connected to the syllabus.', topics: ['Chemical Reactions', 'Light and Human Eye', 'Life Processes'] },
+      {
+        id: 'science',
+        name: 'Science',
+        description: 'Structured chapter-wise syllabus covering Chemical Substances, World of Living, Natural Phenomena, Effects of Current, and Natural Resources.',
+        topics: [
+          'Chemical Reactions and Equations',
+          'Acids, Bases and Salts',
+          'Metals and Non-metals',
+          'Carbon and its Compounds',
+          'Life Processes',
+          'Control and Coordination',
+          'How do Organisms Reproduce?',
+          'Heredity',
+          'Light – Reflection and Refraction',
+          'The Human Eye and the Colourful World',
+          'Electricity',
+          'Magnetic Effects of Electric Current',
+          'Our Environment',
+        ],
+      },
       { id: 'social-science', name: 'Social Science', description: 'Study history, geography, political science and economics together.', topics: ['Nationalism in India', 'Resources and Development', 'Power Sharing'] },
       { id: 'english', name: 'English', description: 'Prepare literature, reading and writing skills for board exams.', topics: ['Reading Skills', 'Writing Skills', 'Literature Reader'] },
       { id: 'hindi', name: 'Hindi', description: 'Revise Hindi language, writing and prescribed literature.', topics: ['अपठित बोध', 'लेखन कौशल', 'क्षितिज और कृतिका'] },
@@ -532,11 +551,33 @@ export function getExam(examId: string) {
   return exams.find((exam) => exam.id === examId);
 }
 
-export function getSubject(subjectId: string) {
+export function getSubject(subjectId: string, examId?: string) {
   const norm = (subjectId || '').toLowerCase().trim();
+  const normExam = (examId || '').toLowerCase().trim();
+
+  // If examId is provided, prioritize subject matching that exam
+  if (normExam) {
+    const directMatch = subjects.find(
+      (s) =>
+        s.examId.toLowerCase() === normExam &&
+        (s.id.toLowerCase() === norm ||
+          s.id.toLowerCase() === `${normExam}-${norm}` ||
+          (s.id === 'cbse-class-10-science' && (norm === 'science' || norm === 'cbse-science')) ||
+          (s.id === 'super-tet-science' && (norm === 'science' || norm === 'vigyan')))
+    );
+    if (directMatch) return directMatch;
+  }
+
   return subjects.find(
     (subject) =>
       subject.id.toLowerCase() === norm ||
+      (subject.examId === 'cbse-class-10' && (
+        subject.id === 'cbse-class-10-science' && (
+          norm === 'cbse-class-10-science' ||
+          norm === 'cbse-10-science' ||
+          norm === 'class-10-science'
+        )
+      )) ||
       (subject.examId === 'super-tet' && (
         (subject.id === 'super-tet-teaching-skills' && (norm === 'teaching-skills' || norm === 'shikshan-kaushal' || norm === 'super-tet-shikshan-kaushal' || norm === 'shikshan-kaushal-pedagogy')) ||
         (subject.id === 'super-tet-child-development' && (
@@ -576,6 +617,20 @@ export function getTopic(topicId: string) {
   // 1. Direct match
   const direct = topics.find((topic) => topic.id.toLowerCase() === norm);
   if (direct) return direct;
+
+  // 2. CBSE Class 10 Science chapter aliases
+  if (
+    norm.startsWith('cbse-class-10-science-') ||
+    norm.startsWith('cbse-10-science-') ||
+    norm.startsWith('science-ch-') ||
+    norm.startsWith('chapter-')
+  ) {
+    const num = parseInt(norm.replace(/\D/g, ''), 10);
+    if (!isNaN(num) && num >= 1 && num <= 13) {
+      const match = topics.find((t) => t.id === `cbse-class-10-science-${num}`);
+      if (match) return match;
+    }
+  }
 
   // 2. Google Sheet Topic aliases for Super TET CDP chapters
   if (norm === 'bal-vikas-arth-prakriti' || norm.includes('bal-vikas-arth')) {

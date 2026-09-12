@@ -873,3 +873,5 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
 
   return result;
 }
+
+export const getFilteredQuestions = filterQuizQuestions;
