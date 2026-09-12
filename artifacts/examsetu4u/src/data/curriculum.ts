@@ -1,3 +1,5 @@
+import { convertNotesToStudyMaterial, getStudyNotesForTopic } from '@/services/study-notes-loader';
+
 export type ContentAvailability = {
   studyMaterial: boolean;
   pyq: boolean;
@@ -126,7 +128,9 @@ function createCurriculum(definitions: ExamDefinition[]) {
           description: `Build a clear understanding of ${topicName.toLowerCase()} with focused notes, practice and revision.`,
           estimatedMinutes: 20 + (index % 3) * 10,
           availability: {
-            studyMaterial: false,
+            studyMaterial:
+              subjectId === 'super-tet-child-development' ||
+              subjectId === 'super-tet-teaching-skills',
             pyq: index % 3 !== 1,
             quiz: true,
             theory: index % 2 === 0,
@@ -146,7 +150,21 @@ const curriculumDefinitions: ExamDefinition[] = [
     shortDescription: 'Prepare for teaching eligibility with focused practice and clear concepts.',
     description: 'A guided preparation path for Super TET with pedagogy, languages, subject knowledge and general awareness.',
     subjects: [
-      { id: 'child-development', name: 'बाल विकास एवं शिक्षाशास्त्र', description: 'Understand how children learn, grow and respond to different teaching approaches.', topics: ['बाल विकास के सिद्धांत', 'अधिगम और प्रेरणा', 'समावेशी शिक्षा'] },
+      {
+        id: 'child-development',
+        name: 'बाल विकास एवं शिक्षाशास्त्र',
+        description: 'Understand how children learn, grow and respond to different teaching approaches.',
+        topics: [
+          'बाल विकास — अर्थ, प्रकृति एवं क्षेत्र',
+          'विकास की अवस्थाएँ',
+          'वंशानुक्रम एवं वातावरण',
+          'व्यक्तिगत विभिन्नताएँ',
+          'अधिगम एवं विकास का संबंध',
+          'बाल विकास के सिद्धांत',
+          'अधिगम और प्रेरणा',
+          'समावेशी शिक्षा',
+        ],
+      },
       {
         id: 'teaching-skills',
         name: 'शिक्षण कौशल',
@@ -490,7 +508,10 @@ const studyMaterialByTopic: Record<string, StudyMaterial> = {
 };
 
 topics.forEach((topic) => {
-  topic.availability.studyMaterial = Boolean(studyMaterialByTopic[topic.id]);
+  topic.availability.studyMaterial =
+    Boolean(studyMaterialByTopic[topic.id]) ||
+    topic.subjectId === 'super-tet-child-development' ||
+    topic.subjectId === 'super-tet-teaching-skills';
 });
 
 export function getExam(examId: string) {
@@ -504,7 +525,15 @@ export function getSubject(subjectId: string) {
       subject.id.toLowerCase() === norm ||
       (subject.examId === 'super-tet' && (
         (subject.id === 'super-tet-teaching-skills' && (norm === 'teaching-skills' || norm === 'shikshan-kaushal' || norm === 'super-tet-shikshan-kaushal' || norm === 'shikshan-kaushal-pedagogy')) ||
-        (subject.id === 'super-tet-child-development' && (norm === 'child-development' || norm === 'bal-vikas' || norm === 'super-tet-bal-vikas' || norm === 'cdp' || norm === 'bal-manovigyan')) ||
+        (subject.id === 'super-tet-child-development' && (
+          norm === 'child-development' ||
+          norm === 'bal-vikas' ||
+          norm === 'super-tet-bal-vikas' ||
+          norm === 'cdp' ||
+          norm === 'bal-manovigyan' ||
+          norm === 'bal-vikas-shikshan-vidhiyan' ||
+          norm === 'super-tet-bal-vikas-shikshan-vidhiyan'
+        )) ||
         (subject.id === 'super-tet-hindi' && norm === 'hindi') ||
         (subject.id === 'super-tet-english' && norm === 'english') ||
         (subject.id === 'super-tet-mathematics' && (norm === 'mathematics' || norm === 'maths' || norm === 'math')) ||
@@ -520,24 +549,42 @@ export function getSubject(subjectId: string) {
 
 export function getTopic(topicId: string) {
   const norm = (topicId || '').toLowerCase().trim();
-  return (
-    topics.find((topic) => topic.id.toLowerCase() === norm) ||
-    topics.find((topic) => {
-      // Handle st-sk-01 / ST-SK-TOP-01 aliases to super-tet-teaching-skills-1
-      const skNorm = norm.replace('st-sk-top-', '').replace('st-sk-', '');
-      const num = parseInt(skNorm, 10);
-      if (!isNaN(num) && num >= 1 && num <= 15) {
-        return topic.id === `super-tet-teaching-skills-${num}`;
-      }
-      // Handle st-cd-01 / ST-CD-TOP-01 aliases to super-tet-child-development-1
-      const cdNorm = norm.replace('st-cd-top-', '').replace('st-cd-', '');
-      const cdNum = parseInt(cdNorm, 10);
-      if (!isNaN(cdNum) && cdNum >= 1 && cdNum <= 10) {
-        return topic.id === `super-tet-child-development-${cdNum}`;
-      }
-      return false;
-    })
-  );
+
+  // 1. Direct match
+  const direct = topics.find((topic) => topic.id.toLowerCase() === norm);
+  if (direct) return direct;
+
+  // 2. Google Sheet Topic aliases for Super TET CDP chapters
+  if (norm === 'bal-vikas-arth-prakriti' || norm.includes('bal-vikas-arth')) {
+    return topics.find((t) => t.id === 'super-tet-child-development-1');
+  }
+  if (norm === 'vikas-ki-avasthayen' || norm.includes('vikas-ki-avastha')) {
+    return topics.find((t) => t.id === 'super-tet-child-development-2');
+  }
+  if (norm === 'vanshanukram-evam-vatavaran' || norm.includes('vanshanukram')) {
+    return topics.find((t) => t.id === 'super-tet-child-development-3');
+  }
+  if (norm === 'vyaktigat-vibhinnataen' || norm.includes('vyaktigat-vibhinnat')) {
+    return topics.find((t) => t.id === 'super-tet-child-development-4');
+  }
+  if (norm === 'adhigam-evam-vikas-ka-sambandh' || norm.includes('adhigam-evam-vikas')) {
+    return topics.find((t) => t.id === 'super-tet-child-development-5');
+  }
+
+  // 3. Numbered aliases (st-sk-01, st-cd-01, etc.)
+  return topics.find((topic) => {
+    const skNorm = norm.replace('st-sk-top-', '').replace('st-sk-', '');
+    const num = parseInt(skNorm, 10);
+    if (!isNaN(num) && num >= 1 && num <= 15) {
+      return topic.id === `super-tet-teaching-skills-${num}`;
+    }
+    const cdNorm = norm.replace('st-cd-top-', '').replace('st-cd-', '');
+    const cdNum = parseInt(cdNorm, 10);
+    if (!isNaN(cdNum) && cdNum >= 1 && cdNum <= 10) {
+      return topic.id === `super-tet-child-development-${cdNum}`;
+    }
+    return false;
+  });
 }
 
 export function getSubjectsForExam(examId: string) {
@@ -549,5 +596,13 @@ export function getTopicsForSubject(subjectId: string) {
 }
 
 export function getStudyMaterial(topicId: string) {
-  return studyMaterialByTopic[topicId];
+  if (studyMaterialByTopic[topicId]) {
+    return studyMaterialByTopic[topicId];
+  }
+  // Check dynamically loaded / bundled notes from Google Sheet
+  const notes = getStudyNotesForTopic(topicId);
+  if (notes && notes.length > 0) {
+    return convertNotesToStudyMaterial(topicId, notes);
+  }
+  return undefined;
 }

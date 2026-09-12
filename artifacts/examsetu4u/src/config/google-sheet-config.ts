@@ -29,3 +29,10 @@
  */
 
 export const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?output=csv";
+
+/**
+ * GOOGLE SHEETS STUDY NOTES / THEORY CONFIGURATION
+ * Connected to live Study Notes sheet (Super TET CDP Bal Vikas chapters)
+ * 9 required columns: id, examId, subjectId, topicId, title, content, importantPoint, examTip, status
+ */
+export const STUDY_NOTES_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=867134801&single=true&output=csv";

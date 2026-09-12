@@ -34,16 +34,19 @@ export function useQuestionBank(): UseQuestionBankResult {
     });
 
     // If report is not loaded yet and it's configured, kick off initial load
-    if (!report && isConfigured) {
-      fetchGoogleSheetQuestions().catch((err) => {
-        console.warn('[useQuestionBank] Initial fetch error:', err);
-      });
+    if (isConfigured) {
+      const currentReport = getGoogleSheetReport();
+      if (!currentReport) {
+        fetchGoogleSheetQuestions().catch((err) => {
+          console.warn('[useQuestionBank] Initial fetch error:', err);
+        });
+      }
     }
 
     return () => {
       unsubscribe();
     };
-  }, [report, isConfigured]);
+  }, [isConfigured]);
 
   const handleRefresh = useCallback(async () => {
     return refreshGoogleSheetQuestions();

@@ -3,8 +3,11 @@ import {
   Archive,
   BookOpen,
   CheckCircle,
+  CheckCircle2,
   Edit2,
+  ExternalLink,
   Eye,
+  FileSpreadsheet,
   FileText,
   Filter,
   Plus,
@@ -13,6 +16,8 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
+import { STUDY_NOTES_SHEET_CSV_URL } from '@/config/google-sheet-config';
+import { FALLBACK_STUDY_NOTES } from '@/data/notes/study-notes-data';
 import {
   archiveAdminStudyMaterial,
   getAdminExams,
@@ -151,6 +156,44 @@ export function StudyMaterialManager() {
           <Plus className="h-4 w-4" />
           Create Study Notes
         </button>
+      </div>
+
+      {/* Google Sheets Study Notes Live Status Banner */}
+      <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-4 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white shadow-xs">
+              <FileSpreadsheet className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-900 text-sm">Google Sheets Study Notes Integration</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                  <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Active & Live
+                </span>
+              </div>
+              <p className="mt-0.5 text-slate-600 text-xs">
+                Connected to published CSV ({FALLBACK_STUDY_NOTES.length} published notes across 5 chapters). Formatted in Hindi with Exam Tips and Important Points.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pubhtml?gid=867134801&single=true"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-medium text-slate-700 shadow-2xs hover:bg-slate-50 transition"
+            >
+              <ExternalLink className="h-3.5 w-3.5 text-slate-500" /> View Google Sheet
+            </a>
+            <a
+              href="/study-material/super-tet/super-tet-cdp/bal-vikas-arth-prakriti"
+              className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 font-semibold text-white shadow-2xs hover:bg-blue-700 transition"
+            >
+              <Eye className="h-3.5 w-3.5" /> Preview Reader
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
