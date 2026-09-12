@@ -45,6 +45,7 @@ export function Button({ children, href, variant = 'primary', className = '', ..
 const navItems = [
   { label: 'Home', href: '/' },
   { label: 'Exams', href: '/exams' },
+  { label: 'Current Affairs', href: '/exams/uppcs-pre/current-affairs' },
   { label: 'Study Planner', href: '/study-planner' },
   { label: 'Study Material', href: '/study-material' },
   { label: 'PYQ', href: '/pyq' },

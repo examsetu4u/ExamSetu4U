@@ -1,4 +1,5 @@
 import { convertNotesToStudyMaterial, getStudyNotesForTopic } from '@/services/study-notes-loader';
+import { uppcsCurrentAffairsStudyMaterials } from '@/data/uppcs-current-affairs/study-materials';
 
 export type ContentAvailability = {
   studyMaterial: boolean;
@@ -130,7 +131,8 @@ function createCurriculum(definitions: ExamDefinition[]) {
           availability: {
             studyMaterial:
               subjectId === 'super-tet-child-development' ||
-              subjectId === 'super-tet-teaching-skills',
+              subjectId === 'super-tet-teaching-skills' ||
+              subjectId === 'uppcs-pre-current-affairs',
             pyq: index % 3 !== 1,
             quiz: true,
             theory: index % 2 === 0,
@@ -273,10 +275,21 @@ const curriculumDefinitions: ExamDefinition[] = [
   {
     id: 'uppcs-pre',
     name: 'UPPCS Pre',
-    shortDescription: 'Prepare for UPPCS Prelims with a focused general studies route.',
-    description: 'A sample UPPCS Prelims structure organised around General Studies I and CSAT practice.',
+    shortDescription: 'Prepare for UPPCS Prelims with focused General Studies, Current Affairs & CSAT.',
+    description: 'Comprehensive UPPCS Prelims structure organised around Current Affairs (दैनिक, साप्ताहिक, मासिक व वार्षिकी), General Studies I, and CSAT practice.',
     subjects: [
-      { id: 'general-studies-1', name: 'General Studies I', description: 'Cover history, polity, geography, economy, science and current affairs.', topics: ['Indian History and Culture', 'Indian Polity', 'Geography and Economy'] },
+      {
+        id: 'current-affairs',
+        name: 'समसामयिकी एवं करेंट अफेयर्स (Current Affairs)',
+        description: 'UPPCS Pre हेतु दैनिक, साप्ताहिक, मासिक व वार्षिकी करेंट अफेयर्स नोट्स, यूपी विशेषांक एवं परीक्षा उपयोगी MCQ क्विज़।',
+        topics: [
+          'Daily Current Affairs (दैनिक समसामयिकी)',
+          'Weekly Current Affairs (साप्ताहिक राउंडअप)',
+          'Monthly Current Affairs (मासिक करेंट अफेयर्स)',
+          'Yearly & UP Special (वार्षिकी एवं उत्तर प्रदेश समसामयिकी)',
+        ],
+      },
+      { id: 'general-studies-1', name: 'General Studies I', description: 'Cover history, polity, geography, economy, science and environment.', topics: ['Indian History and Culture', 'Indian Polity', 'Geography and Economy'] },
       { id: 'general-studies-2', name: 'General Studies II / CSAT', description: 'Practice comprehension, reasoning, numeracy and decision-making skills.', topics: ['Comprehension', 'Logical Reasoning', 'Numeracy and Data Interpretation'] },
     ],
     tone: 'saffron',
@@ -301,6 +314,7 @@ const curriculumDefinitions: ExamDefinition[] = [
 export const { exams, subjects, topics } = createCurriculum(curriculumDefinitions);
 
 const studyMaterialByTopic: Record<string, StudyMaterial> = {
+  ...uppcsCurrentAffairsStudyMaterials,
   'super-tet-child-development-1': {
     topicId: 'super-tet-child-development-1',
     intro: 'बाल विकास को समझने का सबसे अच्छा तरीका है बच्चे को एक सक्रिय, बदलते हुए व्यक्ति के रूप में देखना। विकास केवल कद और वजन में बदलाव नहीं, बल्कि सोच, भाषा, भावनाओं और सामाजिक व्यवहार में निरंतर परिवर्तन भी है।',
@@ -543,6 +557,15 @@ export function getSubject(subjectId: string) {
         (subject.id === 'super-tet-general-knowledge' && (norm === 'general-knowledge' || norm === 'gk')) ||
         (subject.id === 'super-tet-current-affairs' && (norm === 'current-affairs' || norm === 'ca')) ||
         (subject.id === 'super-tet-information-technology' && (norm === 'information-technology' || norm === 'it' || norm === 'computer'))
+      )) ||
+      (subject.examId === 'uppcs-pre' && (
+        (subject.id === 'uppcs-pre-current-affairs' && (
+          norm === 'current-affairs' ||
+          norm === 'uppcs-current-affairs' ||
+          norm === 'uppcs-pre-current-affairs' ||
+          norm === 'ca' ||
+          norm === 'samayiki'
+        ))
       ))
   );
 }

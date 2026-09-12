@@ -19,6 +19,7 @@ import { Link, useParams } from 'wouter';
 import { Button, Card, Container, Layout, SearchBar, SectionTitle } from '@/components/site';
 import { AvailabilityList, Breadcrumbs, EstimatedTime, ProgressBar } from '@/components/curriculum-ui';
 import { ContinueLearningCard } from '@/components/continue-learning-card';
+import { CurrentAffairsHub } from '@/components/current-affairs-hub';
 import { QuickPractice } from '@/components/quick-practice';
 import { getExam, getSubject, getTopicsForSubject } from '@/data/curriculum';
 import {
@@ -49,6 +50,10 @@ export default function SubjectDetailPage() {
     if (!exam || !subject) return null;
     return getSmartContinueLearning(exam.id, subject.id);
   }, [exam, subject]);
+
+  const isUppcsCurrentAffairs =
+    exam?.id === 'uppcs-pre' &&
+    (subject?.id === 'uppcs-pre-current-affairs' || subject?.id === 'current-affairs');
 
   const rawTopics = useMemo(() => {
     if (!subjectStats) return [];
@@ -197,6 +202,15 @@ export default function SubjectDetailPage() {
               </div>
             </div>
             <ContinueLearningCard item={continueItem} />
+          </Container>
+        </section>
+      )}
+
+      {/* Interactive Current Affairs Hub for UPPCS Pre */}
+      {isUppcsCurrentAffairs && (
+        <section className="border-b-2 border-indigo-200/80 bg-white py-10 dark:bg-slate-950">
+          <Container>
+            <CurrentAffairsHub />
           </Container>
         </section>
       )}

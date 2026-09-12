@@ -3,6 +3,7 @@ import {
   Award,
   BookOpen,
   Brain,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -257,6 +258,77 @@ export default function ExamDetailPage() {
               <SearchBar value={query} onChange={setQuery} placeholder="विषय खोजें..." />
             </div>
           </div>
+
+          {/* Special UPPCS Pre Current Affairs Spotlight */}
+          {exam.id === 'uppcs-pre' && (
+            <div className="mt-8 overflow-hidden rounded-2xl border-2 border-indigo-300/90 bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4338ca] p-6 text-white shadow-md">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-violet-400/20 border border-violet-300/40 px-3 py-0.5 text-xs font-bold text-violet-200">
+                      <Sparkles size={13} /> UPPCS Pre Special
+                    </span>
+                    <span className="rounded-full bg-emerald-400/20 border border-emerald-300/40 px-2.5 py-0.5 text-[11px] font-bold text-emerald-200">
+                      30-35 प्रश्न वेटेज (GS Paper-1)
+                    </span>
+                  </div>
+                  <h3 className="font-display mt-2.5 text-2xl font-black text-white">
+                    समसामयिकी एवं करेंट अफेयर्स केंद्र (Current Affairs Hub)
+                  </h3>
+                  <p className="mt-1.5 max-w-2xl text-xs sm:text-sm text-indigo-100/90 leading-relaxed">
+                    दैनिक (Daily), साप्ताहिक (Weekly), मासिक (Monthly) एवं वार्षिकी (Yearly) नोट्स — उत्तर प्रदेश बजट, रामसर स्थल, जीआई टैग और वास्तविक UPPCS प्रीलिम्स MCQ क्विज़।
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2.5">
+                  <Link
+                    href="/exams/uppcs-pre/current-affairs"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs sm:text-sm font-black text-indigo-950 shadow-sm hover:bg-indigo-50 transition"
+                  >
+                    करेंट अफेयर्स केंद्र खोलें <ArrowRight size={15} />
+                  </Link>
+                  <Link
+                    href="/quiz/uppcs-pre/uppcs-pre-current-affairs"
+                    className="inline-flex items-center gap-2 rounded-xl bg-violet-500/90 border border-violet-300/40 px-4 py-2.5 text-xs sm:text-sm font-black text-white hover:bg-violet-600 transition"
+                  >
+                    <Zap size={14} /> सभी क्विज़ हल करें
+                  </Link>
+                </div>
+              </div>
+
+              {/* 4 quick format pills */}
+              <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-white/15 text-center">
+                <Link
+                  href="/exams/uppcs-pre/current-affairs"
+                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                >
+                  <p className="text-[10px] font-bold text-indigo-200 uppercase">1. दैनिक</p>
+                  <p className="text-xs sm:text-sm font-extrabold text-white">Daily CA & Quiz</p>
+                </Link>
+                <Link
+                  href="/exams/uppcs-pre/current-affairs"
+                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                >
+                  <p className="text-[10px] font-bold text-indigo-200 uppercase">2. साप्ताहिक</p>
+                  <p className="text-xs sm:text-sm font-extrabold text-white">Weekly Roundup</p>
+                </Link>
+                <Link
+                  href="/exams/uppcs-pre/current-affairs"
+                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                >
+                  <p className="text-[10px] font-bold text-indigo-200 uppercase">3. मासिक</p>
+                  <p className="text-xs sm:text-sm font-extrabold text-white">Monthly Dossier</p>
+                </Link>
+                <Link
+                  href="/exams/uppcs-pre/current-affairs"
+                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                >
+                  <p className="text-[10px] font-bold text-indigo-200 uppercase">4. वार्षिकी</p>
+                  <p className="text-xs sm:text-sm font-extrabold text-white">Yearly & UP Special</p>
+                </Link>
+              </div>
+            </div>
+          )}
 
           {filteredSubjectStats.length ? (
             <div className="mt-8 grid gap-5 md:grid-cols-2">

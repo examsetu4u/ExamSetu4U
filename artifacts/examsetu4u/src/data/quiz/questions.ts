@@ -1,5 +1,6 @@
 import { loadShikshanKaushalAsMCQQuestions, resolveTopicId } from '@/data/questions/super-tet/shikshan-kaushal';
 import { getPublishedGoogleSheetQuestions, registerLocalQuestionIdsSupplier } from '@/services/google-sheet-loader';
+import { uppcsCurrentAffairsQuestions } from './uppcs-current-affairs-questions';
 import type { MCQQuestion, QuizFilterOptions } from './types';
 
 // Register supplier so Google Sheet validator knows existing local question IDs and avoids overwriting
@@ -16,6 +17,7 @@ registerLocalQuestionIdsSupplier(() => {
 });
 
 export const sampleMCQQuestions: MCQQuestion[] = [
+  ...uppcsCurrentAffairsQuestions,
   // Topic 1: शिक्षण का अर्थ एवं परिभाषा (super-tet-teaching-skills-1)
   {
     id: 'st-ts-01',

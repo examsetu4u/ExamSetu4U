@@ -33,6 +33,7 @@ import MockTestLiveExamPage from '@/pages/mock-tests/live';
 import MockTestResultPage from '@/pages/mock-tests/result';
 import MockTestHistoryPage from '@/pages/mock-tests/history';
 import AdminPage from '@/pages/admin';
+import CurrentAffairsPage from '@/pages/current-affairs';
 import StudyPlannerPage from '@/pages/study-planner';
 import StudyPlannerHistoryPage from '@/pages/study-planner-history';
 import { PYQDashboardPage, PYQExamPage, PYQPracticePage, PYQSubjectPage } from '@/pages/pyq';
@@ -50,6 +51,9 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/search" component={SearchPage} />
         <Route path="/exams" component={ExamsPage} />
+        <Route path="/exams/uppcs-pre/current-affairs" component={CurrentAffairsPage} />
+        <Route path="/exams/uppcs-pre/uppcs-pre-current-affairs" component={CurrentAffairsPage} />
+        <Route path="/current-affairs" component={CurrentAffairsPage} />
         <Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} />
         <Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} />
         <Route path="/exams/:examId" component={ExamDetailPage} />
