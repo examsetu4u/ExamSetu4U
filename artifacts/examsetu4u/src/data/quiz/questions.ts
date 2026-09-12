@@ -1,6 +1,14 @@
 import { loadShikshanKaushalAsMCQQuestions, resolveTopicId } from '@/data/questions/super-tet/shikshan-kaushal';
 import { getPublishedGoogleSheetQuestions, registerLocalQuestionIdsSupplier } from '@/services/google-sheet-loader';
 import { uppcsCurrentAffairsQuestions } from './uppcs-current-affairs-questions';
+import { superTetExtendedQuestions } from './supertet-extended-questions';
+import { ctetQuestions } from './ctet-questions';
+import { uptetQuestions } from './uptet-questions';
+import { sscCglQuestions } from './ssc-cgl-questions';
+import { cbseScienceQuestions } from './cbse-science-questions';
+import { uppcsGsQuestions } from './uppcs-gs-questions';
+import { pyqQuestions } from '@/data/pyq';
+import automatedUppcsData from '@/data/current-affairs/automated-uppcs.json';
 import type { MCQQuestion, QuizFilterOptions } from './types';
 
 // Register supplier so Google Sheet validator knows existing local question IDs and avoids overwriting
@@ -18,6 +26,12 @@ registerLocalQuestionIdsSupplier(() => {
 
 export const sampleMCQQuestions: MCQQuestion[] = [
   ...uppcsCurrentAffairsQuestions,
+  ...superTetExtendedQuestions,
+  ...ctetQuestions,
+  ...uptetQuestions,
+  ...sscCglQuestions,
+  ...cbseScienceQuestions,
+  ...uppcsGsQuestions,
   // Topic 1: शिक्षण का अर्थ एवं परिभाषा (super-tet-teaching-skills-1)
   {
     id: 'st-ts-01',
@@ -635,39 +649,113 @@ export const sampleMCQQuestions: MCQQuestion[] = [
   },
 ];
 
-// Unified getter for all quiz questions including Shikshan Kaushal 1000 MCQ system and Google Sheets
-export function getAllQuizQuestions(): MCQQuestion[] {
-  const map = new Map<string, MCQQuestion>();
-  sampleMCQQuestions.forEach((q) => map.set(q.id, q));
+// Convert PYQ questions into standard MCQQuestion format
+function convertPyqToMCQ(): MCQQuestion[] {
+  const list: MCQQuestion[] = [];
   try {
-    const skList = loadShikshanKaushalAsMCQQuestions();
-    skList.forEach((q) => map.set(q.id, q));
+    for (const pq of pyqQuestions) {
+      const opts: Record<string, string> = {};
+      pq.options.forEach((opt) => {
+        opts[opt.label] = opt.text;
+      });
+      const correctKey = (pq.correctOptionId || 'a').toUpperCase();
+      list.push({
+        id: `pyq-${pq.id}`,
+        examId: pq.metadata.examId,
+        examName: pq.metadata.examId.toUpperCase().replace(/-/g, ' '),
+        subjectId: pq.metadata.subjectId,
+        topicId: pq.metadata.topicId,
+        question: pq.prompt,
+        options: {
+          A: opts['A'] || '',
+          B: opts['B'] || '',
+          C: opts['C'] || '',
+          D: opts['D'] || '',
+        },
+        correctAnswer: (['A', 'B', 'C', 'D'].includes(correctKey) ? correctKey : 'A') as 'A' | 'B' | 'C' | 'D',
+        explanation: pq.explanation.answerReason || '',
+        importantPoint: pq.explanation.importantPoint || '',
+        additionalFact: pq.explanation.additionalFact || '',
+        commonMistake: pq.explanation.commonMistake || '',
+        difficulty: (pq.metadata.difficulty === 'Challenging' ? 'Hard' : pq.metadata.difficulty) as 'Easy' | 'Moderate' | 'Hard',
+        sourceType: 'PYQ',
+        year: pq.metadata.year,
+      });
+    }
   } catch (err) {
-    console.warn('[QuizQuestions] Failed to load Shikshan Kaushal batch questions:', err);
+    console.warn('[QuizQuestions] Failed to convert PYQs:', err);
   }
-  try {
-    const sheetQuestions = getPublishedGoogleSheetQuestions();
-    sheetQuestions.forEach((q) => {
-      // Rule: Do not overwrite an existing local question having the same ID
-      if (!map.has(q.id)) {
-        map.set(q.id, q);
-      }
-    });
-  } catch (err) {
-    console.warn('[QuizQuestions] Failed to load Google Sheet questions:', err);
-  }
-  return Array.from(map.values());
+  return list;
 }
 
+// Convert automated current affairs items into MCQQuestions
+function convertAutomatedCurrentAffairs(): MCQQuestion[] {
+  const list: MCQQuestion[] = [];
+  try {
+    const items = (automatedUppcsData as any)?.items || [];
+    items.forEach((item: any, itemIdx: number) => {
+      const mcqs = item.mcqs || [];
+      mcqs.forEach((mcq: any, mcqIdx: number) => {
+        if (mcq && mcq.question && mcq.options) {
+          list.push({
+            id: `auto-ca-${item.id || itemIdx}-${mcqIdx}`,
+            examId: 'uppcs-pre',
+            examName: 'UPPCS Pre',
+            subjectId: 'uppcs-pre-current-affairs',
+            topicId: 'uppcs-pre-current-affairs-1',
+            question: mcq.question,
+            options: {
+              A: mcq.options.A || '',
+              B: mcq.options.B || '',
+              C: mcq.options.C || '',
+              D: mcq.options.D || '',
+            },
+            correctAnswer: (mcq.correctAnswer || 'A') as 'A' | 'B' | 'C' | 'D',
+            explanation: mcq.explanation || item.summaryHi || '',
+            importantPoint: item.staticLinkage || 'UPPCS GS Current Affairs Linkage',
+            additionalFact: (item.tags || []).join(', '),
+            commonMistake: '',
+            difficulty: (mcq.difficulty || 'Moderate') as 'Easy' | 'Moderate' | 'Hard',
+            sourceType: 'Current Affairs Automation',
+            year: 2024,
+          });
+        }
+      });
+    });
+  } catch (err) {
+    console.warn('[QuizQuestions] Failed to load automated current affairs:', err);
+  }
+  return list;
+}
+
+// Single source of truth index for all quiz questions across the entire platform
 function getIndexedQuestions(): Map<string, MCQQuestion> {
   const map = new Map<string, MCQQuestion>();
   sampleMCQQuestions.forEach((q) => map.set(q.id, q));
+
+  // 1. Converted PYQ items
+  const pyqs = convertPyqToMCQ();
+  pyqs.forEach((q) => {
+    if (!map.has(q.id)) map.set(q.id, q);
+  });
+
+  // 2. Automated Current Affairs MCQs
+  const autoCAs = convertAutomatedCurrentAffairs();
+  autoCAs.forEach((q) => {
+    if (!map.has(q.id)) map.set(q.id, q);
+  });
+
+  // 3. Shikshan Kaushal batch question files
   try {
     const skList = loadShikshanKaushalAsMCQQuestions();
-    skList.forEach((q) => map.set(q.id, q));
+    skList.forEach((q) => {
+      if (!map.has(q.id)) map.set(q.id, q);
+    });
   } catch (err) {
     console.warn('[QuizQuestions] Failed to index Shikshan Kaushal questions:', err);
   }
+
+  // 4. Google Sheets published questions
   try {
     const sheetQuestions = getPublishedGoogleSheetQuestions();
     sheetQuestions.forEach((q) => {
@@ -678,6 +766,8 @@ function getIndexedQuestions(): Map<string, MCQQuestion> {
   } catch (err) {
     console.warn('[QuizQuestions] Failed to index Google Sheet questions:', err);
   }
+
+  // 5. Admin portal stored questions (localStorage)
   try {
     if (typeof window !== 'undefined') {
       const adminRaw = localStorage.getItem('examsetu4u_admin_content');
@@ -711,7 +801,13 @@ function getIndexedQuestions(): Map<string, MCQQuestion> {
   } catch (err) {
     console.warn('[QuizQuestions] Failed to index admin stored questions:', err);
   }
+
   return map;
+}
+
+// Unified getter for all quiz questions
+export function getAllQuizQuestions(): MCQQuestion[] {
+  return Array.from(getIndexedQuestions().values());
 }
 
 export function getQuestionById(id: string): MCQQuestion | undefined {
@@ -735,9 +831,35 @@ export function areExamsEquivalent(a?: string, b?: string): boolean {
   const normA = a.trim().toLowerCase().replace(/[\s_]+/g, '-');
   const normB = b.trim().toLowerCase().replace(/[\s_]+/g, '-');
   if (normA === normB) return true;
-  const superTetAliases = new Set(['super-tet', 'supertet', 'super-tet-exam']);
+
+  const superTetAliases = new Set(['super-tet', 'supertet', 'super-tet-exam', 'stet']);
   if (superTetAliases.has(normA) && superTetAliases.has(normB)) return true;
+
+  const uppcsAliases = new Set(['uppcs', 'uppcs-pre', 'uppcs-prelims', 'uppcs-exam', 'uppcs-pre-exam', 'up-pcs', 'uppsc', 'uppcs-mains']);
+  if (uppcsAliases.has(normA) && uppcsAliases.has(normB)) return true;
+
+  const ctetAliases = new Set(['ctet', 'ctet-exam', 'ctet-paper-1', 'ctet-paper-2']);
+  if (ctetAliases.has(normA) && ctetAliases.has(normB)) return true;
+
+  const uptetAliases = new Set(['uptet', 'uptet-exam', 'uptet-paper-1', 'uptet-paper-2']);
+  if (uptetAliases.has(normA) && uptetAliases.has(normB)) return true;
+
+  const sscAliases = new Set(['ssc', 'ssc-cgl', 'ssc-cgl-exam', 'cgl']);
+  if (sscAliases.has(normA) && sscAliases.has(normB)) return true;
+
+  const cbse10Aliases = new Set(['cbse-class-10', 'cbse-10', 'class-10', 'cbse-class-10-science', 'cbse10', 'class10']);
+  if (cbse10Aliases.has(normA) && cbse10Aliases.has(normB)) return true;
+
+  const cbse12Aliases = new Set(['cbse-class-12', 'cbse-12', 'class-12', 'cbse12', 'class12']);
+  if (cbse12Aliases.has(normA) && cbse12Aliases.has(normB)) return true;
+
   return false;
+}
+
+function stripSubjectPrefix(val: string): string {
+  return val
+    .replace(/^(super-tet|uppcs-pre|uppcs|ctet|uptet|ssc-cgl|cbse-class-10|cbse-class-12|ssc)-/, '')
+    .trim();
 }
 
 export function areSubjectsEquivalent(a?: string, b?: string): boolean {
@@ -748,25 +870,62 @@ export function areSubjectsEquivalent(a?: string, b?: string): boolean {
   const normB = b.trim().toLowerCase().replace(/[\s_]+/g, '-');
   if (normA === normB) return true;
 
-  const skAliases = new Set([
-    'shikshan-kaushal',
-    'teaching-skills',
-    'super-tet-teaching-skills',
-    'super-tet-shikshan-kaushal',
-  ]);
-  if (skAliases.has(normA) && skAliases.has(normB)) return true;
+  const strippedA = stripSubjectPrefix(normA);
+  const strippedB = stripSubjectPrefix(normB);
+  if (strippedA === strippedB) return true;
+  if (normA.endsWith(`-${strippedB}`) || normB.endsWith(`-${strippedA}`)) return true;
 
+  // Teaching skills / pedagogy
+  const skAliases = new Set(['shikshan-kaushal', 'teaching-skills', 'pedagogy']);
+  if (skAliases.has(strippedA) && skAliases.has(strippedB)) return true;
+
+  // Child Development / CDP
   const cdpAliases = new Set([
     'bal-vikas-shikshan-vidhiyan',
     'bal-vikas',
     'child-development',
-    'super-tet-child-development',
     'cdp',
-    'super-tet-cdp',
-    'super-tet-bal-vikas',
-    'super-tet-bal-vikas-shikshan-vidhiyan',
+    'bal-manovigyan',
+    'child-psychology',
+    'pedagogy',
   ]);
-  if (cdpAliases.has(normA) && cdpAliases.has(normB)) return true;
+  if (cdpAliases.has(strippedA) && cdpAliases.has(strippedB)) return true;
+
+  // Mathematics
+  const mathAliases = new Set(['mathematics', 'maths', 'math', 'ganit', 'quantitative-aptitude']);
+  if (mathAliases.has(strippedA) && mathAliases.has(strippedB)) return true;
+
+  // Hindi
+  const hindiAliases = new Set(['hindi', 'language-1', 'bhasha-hindi', 'general-hindi']);
+  if (hindiAliases.has(strippedA) && hindiAliases.has(strippedB)) return true;
+
+  // English
+  const englishAliases = new Set(['english', 'language-2', 'english-comprehension', 'general-english']);
+  if (englishAliases.has(strippedA) && englishAliases.has(strippedB)) return true;
+
+  // EVS / Environment
+  const evsAliases = new Set(['evs', 'environmental-studies', 'paryavaran-adhyayan', 'environment']);
+  if (evsAliases.has(strippedA) && evsAliases.has(strippedB)) return true;
+
+  // Science
+  const scienceAliases = new Set(['science', 'vigyan', 'general-science']);
+  if (scienceAliases.has(strippedA) && scienceAliases.has(strippedB)) return true;
+
+  // Current affairs
+  const caAliases = new Set(['current-affairs', 'ca', 'samsamayiki', 'samayiki']);
+  if (caAliases.has(strippedA) && caAliases.has(strippedB)) return true;
+
+  // General Studies / GK
+  const gsAliases = new Set(['general-studies-1', 'gs-1', 'general-knowledge', 'general-awareness', 'gk']);
+  if (gsAliases.has(strippedA) && gsAliases.has(strippedB)) return true;
+
+  // Reasoning / CSAT
+  const reasoningAliases = new Set(['reasoning', 'general-intelligence', 'general-studies-2', 'csat']);
+  if (reasoningAliases.has(strippedA) && reasoningAliases.has(strippedB)) return true;
+
+  // Information Technology
+  const itAliases = new Set(['information-technology', 'it', 'computer', 'ict']);
+  if (itAliases.has(strippedA) && itAliases.has(strippedB)) return true;
 
   return false;
 }
@@ -777,7 +936,7 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
   const allQuestions = getAllQuizQuestions();
 
   const isMatchingTopic = (qTopicId: string, filterTopicId?: string): boolean => {
-    if (!filterTopicId || filterTopicId === 'all') return true;
+    if (!filterTopicId || filterTopicId === 'all' || filterTopicId === '') return true;
     if (qTopicId === filterTopicId) return true;
     const normQ = qTopicId.trim().toLowerCase().replace(/[\s_]+/g, '-');
     const normFilter = filterTopicId.trim().toLowerCase().replace(/[\s_]+/g, '-');
@@ -786,6 +945,18 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
     const resolvedFilter = resolveTopicId(filterTopicId) || normFilter;
     const resolvedQ = resolveTopicId(qTopicId) || normQ;
     if (resolvedFilter === resolvedQ) return true;
+
+    // Substring or suffix matching
+    if (normQ.endsWith(`-${normFilter}`) || normFilter.endsWith(`-${normQ}`)) return true;
+
+    // Numerical index matching within same subject
+    const numQ = normQ.match(/\d+$/)?.[0];
+    const numFilter = normFilter.match(/\d+$/)?.[0];
+    if (numQ && numFilter && numQ === numFilter) {
+      const baseQ = normQ.replace(/-\d+$/, '');
+      const baseFilter = normFilter.replace(/-\d+$/, '');
+      if (areSubjectsEquivalent(baseQ, baseFilter)) return true;
+    }
 
     // Child Development curriculum topics mapping:
     // super-tet-child-development-1 = 'बाल विकास के सिद्धांत'
@@ -855,6 +1026,23 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
     }
     return true;
   });
+
+  // Intelligent fallback: if narrow topic filter yielded 0 questions, check if relaxing topic returns subject questions
+  if (filtered.length === 0 && topicId && topicId !== 'all') {
+    const subjectQuestions = allQuestions.filter((q) => {
+      if (examId && !areExamsEquivalent(q.examId, examId)) return false;
+      if (subjectId && !areSubjectsEquivalent(q.subjectId, subjectId)) return false;
+      if (difficulty && difficulty !== 'All' && q.difficulty !== difficulty) return false;
+      if (query) {
+        const matchText = `${q.question} ${q.options.A} ${q.options.B} ${q.options.C} ${q.options.D} ${q.explanation} ${q.importantPoint} ${q.id}`.toLowerCase();
+        if (!matchText.includes(query)) return false;
+      }
+      return true;
+    });
+    if (subjectQuestions.length > 0) {
+      filtered = subjectQuestions;
+    }
+  }
 
   // Create a copy so we never mutate the original dataset
   let result = [...filtered];

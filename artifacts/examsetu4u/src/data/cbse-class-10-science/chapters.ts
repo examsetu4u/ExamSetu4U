@@ -585,7 +585,7 @@ export function calculateScienceChapterProgress(chapterId: string): ScienceChapt
 
   return {
     chapterId: targetId,
-    studyMaterialProgress,
+    studyMaterialProgress: studyProgress,
     mcqProgress,
     assertionReasonProgress,
     shortAnswerProgress,

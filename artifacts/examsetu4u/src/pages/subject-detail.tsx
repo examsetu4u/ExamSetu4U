@@ -29,11 +29,10 @@ import {
   TopicStatus,
   TOPIC_STATUS_LABELS,
 } from '@/lib/learning-path';
+import { ScienceDashboard } from '@/components/cbse-science/ScienceDashboard';
 import NotFoundPage from '@/pages/not-found';
 
 type SortOption = 'recommended' | 'not_started' | 'in_progress' | 'completed';
-
-import { ScienceDashboard } from '@/components/cbse-science/ScienceDashboard';
 
 export default function SubjectDetailPage() {
   const { examId = '', subjectId = '' } = useParams<{ examId: string; subjectId: string }>();
