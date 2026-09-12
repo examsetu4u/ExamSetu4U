@@ -175,7 +175,10 @@ export default function Home() {
       )}
 
       {/* 3. Popular Exams */}
-      <section className="py-14 sm:py-18">
+      <section
+        id="home-popular-exams-section"
+        className="border-y-2 border-indigo-200/90 bg-gradient-to-b from-[#e3e0ff] via-[#eeeaff] to-[#ded8ff] py-14 sm:py-18 dark:border-indigo-900/80 dark:from-[#0d0a29] dark:via-[#161242] dark:to-[#0d0a29]"
+      >
         <Container>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <SectionTitle
@@ -185,7 +188,7 @@ export default function Home() {
             />
             <Link
               href="/exams"
-              className="focus-ring flex w-fit items-center gap-1.5 rounded px-1 py-1.5 text-xs sm:text-sm font-bold text-blue-700 hover:text-blue-800 transition"
+              className="focus-ring inline-flex w-fit items-center gap-1.5 rounded-lg border border-indigo-300/90 bg-white px-3 py-1.5 text-xs sm:text-sm font-extrabold text-indigo-950 shadow-2xs hover:bg-indigo-50 hover:text-indigo-900 dark:border-indigo-700 dark:bg-slate-900 dark:text-indigo-200 transition"
               data-testid="link-home-all-exams"
             >
               View all exams <ArrowRight size={15} />

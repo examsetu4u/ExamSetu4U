@@ -35,12 +35,12 @@ export const AUTH_STORAGE_KEYS = {
 } as const;
 
 export const DEFAULT_AVATAR_COLORS = [
-  { label: 'Deep Blue', value: '#1e3a8a' },
-  { label: 'Emerald Green', value: '#065f46' },
-  { label: 'Warm Amber', value: '#b45309' },
-  { label: 'Royal Purple', value: '#581c87' },
-  { label: 'Teal Blue', value: '#0f766e' },
-  { label: 'Crimson Red', value: '#991b1b' },
+  { label: 'Vibrant Indigo', value: '#4338ca' },
+  { label: 'Electric Violet', value: '#7c3aed' },
+  { label: 'Bright Purple', value: '#9333ea' },
+  { label: 'Neon Indigo', value: '#6366f1' },
+  { label: 'Deep Midnight', value: '#1e1b4b' },
+  { label: 'Electric Fuchsia', value: '#c026d3' },
 ];
 
 export const DEMO_USER: User = {
@@ -57,7 +57,7 @@ export const DEMO_PROFILE: UserProfile = {
   email: 'demo@examsetu4u.com',
   joinedDate: '15 जनवरी 2025',
   preferredExamId: 'super-tet',
-  avatarColor: '#1e3a8a',
+  avatarColor: '#4338ca',
   bio: 'Super TET और शिक्षण भर्ती परीक्षा 2025 का समर्पित अभ्यर्थी।',
   learningStreak: 6,
   lastActiveDate: new Date().toISOString(),

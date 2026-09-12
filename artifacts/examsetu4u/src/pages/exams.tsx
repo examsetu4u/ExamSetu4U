@@ -36,16 +36,16 @@ export default function ExamsPage() {
         </Container>
       </section>
 
-      <section className="py-12 sm:py-16">
+      <section className="border-b-2 border-indigo-200/90 bg-gradient-to-b from-[#e3e0ff] via-[#eeeaff] to-[#faf9ff] py-12 sm:py-16 dark:border-indigo-900/80 dark:from-[#0d0a29] dark:via-[#161242] dark:to-[#080616]">
         <Container>
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm font-bold text-slate-600">
-              <span className="text-blue-700">{filtered.length}</span> {filtered.length === 1 ? 'exam' : 'exams'} available
+            <p className="text-sm font-bold text-slate-600 dark:text-slate-300">
+              <span className="text-indigo-700 dark:text-indigo-400 font-extrabold">{filtered.length}</span> {filtered.length === 1 ? 'exam' : 'exams'} available
             </p>
             {query && (
               <button
                 onClick={() => setQuery('')}
-                className="text-xs font-bold text-blue-700 hover:underline"
+                className="text-xs font-bold text-indigo-700 hover:text-indigo-800 dark:text-indigo-400 hover:underline"
               >
                 Clear search
               </button>
