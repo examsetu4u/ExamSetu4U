@@ -145,11 +145,19 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
     return currentDaily.items.filter((item) => {
       const matchesCategory =
         selectedCategory === 'ALL' || item.category === selectedCategory;
+      const summaryMatches = Array.isArray(item.summary)
+        ? item.summary.some((s: string) => s.toLowerCase().includes(searchQuery.toLowerCase()))
+        : typeof item.summary === 'string'
+        ? (item.summary as string).toLowerCase().includes(searchQuery.toLowerCase())
+        : false;
+      const tagsMatches = Array.isArray(item.tags)
+        ? item.tags.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+        : false;
       const matchesQuery =
         !searchQuery ||
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.summary.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        item.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        summaryMatches ||
+        tagsMatches;
       return matchesCategory && matchesQuery;
     });
   }, [currentDaily, selectedCategory, searchQuery]);
@@ -793,13 +801,15 @@ export function CurrentAffairsHub({ initialTab = 'daily', standalone = false }: 
                     )}
 
                     {/* Tags */}
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {item.tags.map((tag) => (
-                        <span key={tag} className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {item.tags.map((tag) => (
+                          <span key={tag} className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </article>
                 ))}
               </div>

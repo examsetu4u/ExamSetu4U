@@ -409,9 +409,10 @@ export default function MistakesPracticePage() {
       </section>
 
       {/* Confirmation Modal when finishing active quiz */}
-      {isConfirmingFinish && session && (
+      {session && (
         <FinishConfirmModal
-          totalCount={currentQuestions.length}
+          isOpen={isConfirmingFinish}
+          totalQuestions={currentQuestions.length}
           attemptedCount={Object.keys(session.selectedAnswers).length}
           unansweredCount={currentQuestions.length - Object.keys(session.selectedAnswers).length}
           markedCount={Object.values(session.markedForReview).filter(Boolean).length}

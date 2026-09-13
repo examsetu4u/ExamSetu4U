@@ -110,7 +110,7 @@ export const uppcsCurrentAffairsQuestions: MCQQuestion[] = [
     importantPoint: 'गंगा एक्सप्रेसवे उत्तर प्रदेश का सबसे लंबा (594 किमी) ग्रीनफील्ड एक्सप्रेसवे है।',
     additionalFact: 'शाहजहांपुर के जलालाबाद के निकट 3.5 किमी लंबी हवाई पट्टी बनाई गई है।',
     commonMistake: 'यमुना एक्सप्रेसवे के जिलों (आगरा, मथुरा, अलीगढ़) को गंगा एक्सप्रेसवे से भ्रमित करना।',
-    difficulty: 'Challenging',
+    difficulty: 'Hard',
     sourceType: 'Practice',
   },
   {
@@ -244,7 +244,7 @@ export const uppcsCurrentAffairsQuestions: MCQQuestion[] = [
     importantPoint: 'सांडी = हरदोई, समन = मैनपुरी, समसपुर = रायबरेली, नवाबगंज = उन्नाव।',
     additionalFact: 'उत्तर प्रदेश में कुल 10 रामसर स्थल हैं, जो तमिलनाडु (18) के बाद देश में सर्वाधिक हैं।',
     commonMistake: 'सांडी (हरदोई) और समन (मैनपुरी) के नामों में समानता के कारण भ्रम।',
-    difficulty: 'Challenging',
+    difficulty: 'Hard',
     sourceType: 'Practice',
   },
   {

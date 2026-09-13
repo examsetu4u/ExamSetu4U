@@ -26,6 +26,8 @@ import { getScienceChapter } from '@/data/cbse-class-10-science';
 import { ScienceChapterDetail } from '@/components/cbse-science/ScienceChapterDetail';
 import { getMathsChapter } from '@/data/cbse-class-10-maths';
 import { MathsChapterDetail } from '@/components/cbse-maths/MathsChapterDetail';
+import { getCbseSubjectConfig, getCbseChapter } from '@/data/cbse-curriculum';
+import { CbseChapterDetail } from '@/components/cbse-common/CbseChapterDetail';
 
 export default function TopicDetailPage() {
   const { examId = '', subjectId = '', topicId = '' } = useParams<{
@@ -72,6 +74,22 @@ export default function TopicDetailPage() {
           chapter={mathChapter}
           examId={exam.id}
           subjectId="cbse-class-10-mathematics"
+        />
+      );
+    }
+  }
+
+  // Dedicated CBSE Board Chapter delegation (Social Science, English, Hindi, Class 12 Physics, Chemistry, Maths, Biology, etc.)
+  const cbseConfig = getCbseSubjectConfig(subjectId, examId || exam?.id);
+  if (cbseConfig) {
+    const cbseChapter = getCbseChapter(topicId, examId || exam?.id, subjectId);
+    if (cbseChapter) {
+      return (
+        <CbseChapterDetail
+          chapter={cbseChapter}
+          subjectConfig={cbseConfig}
+          examId={examId || cbseConfig.examId}
+          subjectId={subjectId}
         />
       );
     }

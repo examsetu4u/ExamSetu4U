@@ -621,7 +621,7 @@ export function DashboardPage() {
                 <div className="h-full rounded-full bg-blue-600" style={{ width: `${overall.overallPercentage}%` }} />
               </div>
               <p className="mt-2 text-xs text-slate-500">
-                {overall.studyMaterialsCompleted} अध्याय पूर्ण • {overall.totalQuestionsSolved || overall.totalQuestionsAttempted} प्रश्न हल
+                {overall.studyMaterialsCompleted} अध्याय पूर्ण • {overall.totalQuestionsAttempted} प्रश्न हल
               </p>
             </Card>
 

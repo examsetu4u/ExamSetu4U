@@ -651,6 +651,8 @@ export const sampleMCQQuestions: MCQQuestion[] = [
   },
 ];
 
+export const quizQuestions = sampleMCQQuestions;
+
 // Convert PYQ questions into standard MCQQuestion format
 function convertPyqToMCQ(): MCQQuestion[] {
   const list: MCQQuestion[] = [];

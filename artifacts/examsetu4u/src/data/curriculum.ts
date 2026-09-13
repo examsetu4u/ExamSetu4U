@@ -1,5 +1,15 @@
 import { convertNotesToStudyMaterial, getStudyNotesForTopic } from '@/services/study-notes-loader';
 import { uppcsCurrentAffairsStudyMaterials } from '@/data/uppcs-current-affairs/study-materials';
+import {
+  CBSE_CLASS_10_SOCIAL_SCIENCE,
+  CBSE_CLASS_10_ENGLISH,
+  CBSE_CLASS_10_HINDI,
+  CBSE_CLASS_12_PHYSICS,
+  CBSE_CLASS_12_CHEMISTRY,
+  CBSE_CLASS_12_MATHEMATICS,
+  CBSE_CLASS_12_BIOLOGY,
+  CBSE_CLASS_12_ENGLISH,
+} from '@/data/cbse-curriculum';
 
 export type ContentAvailability = {
   studyMaterial: boolean;
@@ -291,9 +301,24 @@ const curriculumDefinitions: ExamDefinition[] = [
           'Our Environment',
         ],
       },
-      { id: 'social-science', name: 'Social Science', description: 'Study history, geography, political science and economics together.', topics: ['Nationalism in India', 'Resources and Development', 'Power Sharing'] },
-      { id: 'english', name: 'English', description: 'Prepare literature, reading and writing skills for board exams.', topics: ['Reading Skills', 'Writing Skills', 'Literature Reader'] },
-      { id: 'hindi', name: 'Hindi', description: 'Revise Hindi language, writing and prescribed literature.', topics: ['अपठित बोध', 'लेखन कौशल', 'क्षितिज और कृतिका'] },
+      {
+        id: 'social-science',
+        name: 'Social Science',
+        description: 'Comprehensive NCERT Class 10 Social Science: History, Geography, Political Science and Economics with complete map work and board questions.',
+        topics: CBSE_CLASS_10_SOCIAL_SCIENCE.chapters.map((c) => c.title),
+      },
+      {
+        id: 'english',
+        name: 'English',
+        description: 'Class 10 English (Language & Literature): First Flight prose & poetry, Footprints without Feet, Reading Comprehension, Formal Letters and Analytical Paragraphs.',
+        topics: CBSE_CLASS_10_ENGLISH.chapters.map((c) => c.title),
+      },
+      {
+        id: 'hindi',
+        name: 'Hindi',
+        description: 'सीबीएसई कक्षा 10 हिंदी (कोर्स अ): क्षितिज भाग-2, कृतिका भाग-2, व्यावहारिक व्याकरण व रचनात्मक लेखन।',
+        topics: CBSE_CLASS_10_HINDI.chapters.map((c) => c.title),
+      },
     ],
     tone: 'blue',
   },
@@ -301,13 +326,38 @@ const curriculumDefinitions: ExamDefinition[] = [
     id: 'cbse-class-12',
     name: 'CBSE Class 12',
     shortDescription: 'Organise senior secondary revision with subject-wise topic routes.',
-    description: 'An extensible Class 12 sample structure for board preparation and topic-level progress tracking.',
+    description: 'Complete CBSE Class 12 Science & Humanities board curriculum with chapter notes, PYQs, MCQs, and subject-specific exam blueprints.',
     subjects: [
-      { id: 'physics', name: 'Physics', description: 'Move through the major Class 12 physics units with focused revision.', topics: ['Electrostatics', 'Current Electricity', 'Optics'] },
-      { id: 'chemistry', name: 'Chemistry', description: 'Revise physical, organic and inorganic chemistry concepts.', topics: ['Solutions', 'Electrochemistry', 'Amines'] },
-      { id: 'mathematics', name: 'Mathematics', description: 'Build a structured path across calculus, algebra and vectors.', topics: ['Relations and Functions', 'Integrals', 'Vectors and 3D Geometry'] },
-      { id: 'biology', name: 'Biology', description: 'Cover reproduction, genetics, ecology and human welfare topics.', topics: ['Reproduction', 'Genetics and Evolution', 'Ecology'] },
-      { id: 'english', name: 'English Core', description: 'Prepare reading, writing and literature sections for the board exam.', topics: ['Reading Comprehension', 'Writing Skills', 'Literature'] },
+      {
+        id: 'physics',
+        name: 'Physics',
+        description: 'Class 12 Physics: Electrostatics, Current Electricity, Magnetism, Optics, Modern Physics and Semiconductor Electronics with derivations & numericals.',
+        topics: CBSE_CLASS_12_PHYSICS.chapters.map((c) => c.title),
+      },
+      {
+        id: 'chemistry',
+        name: 'Chemistry',
+        description: 'Class 12 Chemistry: Solutions, Electrochemistry, Chemical Kinetics, d-f Blocks, Coordination Compounds and complete Organic reaction mechanisms.',
+        topics: CBSE_CLASS_12_CHEMISTRY.chapters.map((c) => c.title),
+      },
+      {
+        id: 'mathematics',
+        name: 'Mathematics',
+        description: 'Class 12 Mathematics: Calculus, Relations & Functions, Matrices & Determinants, Vectors, 3D Geometry and Probability with master formula sheet.',
+        topics: CBSE_CLASS_12_MATHEMATICS.chapters.map((c) => c.title),
+      },
+      {
+        id: 'biology',
+        name: 'Biology',
+        description: 'Class 12 Biology: Reproduction, Genetics & Evolution, Biotechnology, Human Health & Disease and Ecology with labeled diagrams.',
+        topics: CBSE_CLASS_12_BIOLOGY.chapters.map((c) => c.title),
+      },
+      {
+        id: 'english',
+        name: 'English Core',
+        description: 'Class 12 English Core: Flamingo Prose & Poetry, Vistas Supplementary, Reading Comprehension and Creative Writing Skills.',
+        topics: CBSE_CLASS_12_ENGLISH.chapters.map((c) => c.title),
+      },
     ],
     tone: 'teal',
   },

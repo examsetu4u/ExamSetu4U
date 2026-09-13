@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, ChevronRight, HelpCircle, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronRight, HelpCircle, History, RotateCcw, Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { Breadcrumbs } from '@/components/curriculum-ui';

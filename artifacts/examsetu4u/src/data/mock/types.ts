@@ -86,6 +86,7 @@ export interface MockResult {
   subjectWise: SubjectPerformance[];
   topicWise: TopicPerformance[];
   averageTimePerQuestionSeconds: number;
+  completedAt?: string;
 }
 
 export interface MockActiveAttempt {

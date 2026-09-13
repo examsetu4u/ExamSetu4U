@@ -13,6 +13,7 @@ import {
   Target,
   FileQuestion,
   BookCheck,
+  Award,
 } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { Breadcrumbs } from '@/components/curriculum-ui';
@@ -26,6 +27,7 @@ import {
 } from '@/data/cbse-class-10-maths';
 import { getPYQsForTopic } from '@/data/pyq';
 import { getFilteredQuestions } from '@/data/quiz/questions';
+import { useQuestionBank } from '@/hooks/useQuestionBank';
 
 interface MathsSectionViewerProps {
   chapter: MathsChapter;
@@ -41,6 +43,7 @@ export function MathsSectionViewer({
   subjectId = 'cbse-class-10-mathematics',
 }: MathsSectionViewerProps) {
   const [, setLocation] = useLocation();
+  const { publishedSheetCount } = useQuestionBank();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [revealedSolutions, setRevealedSolutions] = useState<Record<string, boolean>>({});
 
@@ -84,12 +87,12 @@ export function MathsSectionViewer({
         question: q.question,
         questionType: 'MCQ' as const,
         options: {
-          A: q.options[0],
-          B: q.options[1],
-          C: q.options[2],
-          D: q.options[3],
+          A: typeof q.options?.A === 'string' ? q.options.A : (q.options as any)?.[0] || '',
+          B: typeof q.options?.B === 'string' ? q.options.B : (q.options as any)?.[1] || '',
+          C: typeof q.options?.C === 'string' ? q.options.C : (q.options as any)?.[2] || '',
+          D: typeof q.options?.D === 'string' ? q.options.D : (q.options as any)?.[3] || '',
         },
-        correctAnswer: (q.correctOption?.toUpperCase() || 'A'),
+        correctAnswer: (q.correctAnswer || (q as any).correctOption?.toUpperCase() || 'A') as 'A' | 'B' | 'C' | 'D',
         explanation: q.explanation,
         importantPoint: q.importantPoint,
         additionalFact: q.additionalFact,
@@ -118,7 +121,7 @@ export function MathsSectionViewer({
       return getMathsQuestions(chapter.id, 'CASE_BASED');
     }
     return [];
-  }, [chapter.id, chapter.slug, section.key]);
+  }, [chapter.id, chapter.slug, section.key, publishedSheetCount]);
 
   const handleSelectOption = (qId: string, optionKey: string) => {
     setSelectedAnswers((prev) => ({ ...prev, [qId]: optionKey }));
@@ -525,6 +528,68 @@ export function MathsSectionViewer({
                   className="focus-ring inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800"
                 >
                   <Target size={14} /> संपूर्ण मिस्टेक बुक खोलें
+                </Link>
+              </div>
+            </Card>
+          )}
+
+          {/* Section: Chapter Mock Test */}
+          {section.key === 'chapter-test' && (
+            <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-0.5 text-xs font-bold text-emerald-700">
+                    <Award size={14} /> अध्याय-वार गणित मॉक टेस्ट
+                  </span>
+                  <h2 className="mt-3 text-xl font-bold text-slate-900 sm:text-2xl">
+                    {chapter.title} — सीबीएसई बोर्ड पैटर्न अध्याय टेस्ट
+                  </h2>
+                  <p className="mt-1 text-xs text-slate-600 sm:text-sm">
+                    {chapter.hindiTitle} के सभी मुख्य सूत्रों और संकल्पनाओं पर आधारित समयबद्ध ऑनलाइन मॉक टेस्ट।
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3.5 text-center">
+                  <span className="text-[11px] font-semibold text-slate-500">प्रश्नों की संख्या</span>
+                  <p className="mt-1 text-lg font-black text-slate-900">15 प्रश्न</p>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3.5 text-center">
+                  <span className="text-[11px] font-semibold text-slate-500">समय सीमा</span>
+                  <p className="mt-1 text-lg font-black text-emerald-700">25 मिनट</p>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3.5 text-center">
+                  <span className="text-[11px] font-semibold text-slate-500">कुल अंक</span>
+                  <p className="mt-1 text-lg font-black text-slate-900">15 अंक</p>
+                </div>
+                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3.5 text-center">
+                  <span className="text-[11px] font-semibold text-slate-500">नेगेटिव मार्किंग</span>
+                  <p className="mt-1 text-lg font-black text-slate-600">कोई नहीं</p>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4 text-xs text-slate-700">
+                <p className="font-bold text-emerald-900">गणित परीक्षा अभ्यास निर्देश:</p>
+                <ul className="mt-1.5 space-y-1 text-slate-600">
+                  <li>• अपने साथ रफ पेपर और पेन रखें ताकि गणना और सूत्र सही प्रकार लिख सकें।</li>
+                  <li>• सभी वस्तुनिष्ठ प्रश्न सीबीएसई बोर्ड स्टैंडर्ड के अनुसार तैयार किए गए हैं।</li>
+                  <li>• टेस्ट पूरा करने के बाद स्टेप-बाय-स्टेप हल और स्कोरकार्ड देखें।</li>
+                </ul>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href={`/quiz/${examId}/${subjectId}/${chapter.id}`}
+                  className="focus-ring inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-emerald-800"
+                >
+                  <Clock size={15} /> मॉक टेस्ट प्रारंभ करें (Start Test)
+                </Link>
+                <Link
+                  href={`/exams/${examId}/mathematics/${chapter.id}/mcq`}
+                  className="focus-ring inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  MCQ अभ्यास करें
                 </Link>
               </div>
             </Card>

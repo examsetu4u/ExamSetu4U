@@ -139,7 +139,7 @@ export function MockTestCard({ test, className = '' }: MockTestCardProps) {
         {isAttempted && summary.lastAttemptId ? (
           <Button
             href={`/mock-tests/result/${summary.lastAttemptId}`}
-            variant="ghost"
+            variant="text"
             className="text-xs px-2.5 text-slate-500 hover:text-blue-700"
             data-testid={`button-view-result-${test.id}`}
           >

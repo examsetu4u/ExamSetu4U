@@ -242,7 +242,10 @@ export function getTodayProgress(): TodayProgressSummary {
 
   // Cross-reference with today's mock tests
   const mockAttempts = loadMockAttempts();
-  const todayMocks = mockAttempts.filter((m) => m.completedAt && m.completedAt.startsWith(today));
+  const todayMocks = mockAttempts.filter((m) => {
+    const d = m.completedAt || m.date;
+    return d && d.startsWith(today);
+  });
   const mockQuestionsAttempted = todayMocks.reduce((acc, m) => acc + (m.attempted || 0), 0);
   const mockQuestionsCorrect = todayMocks.reduce((acc, m) => acc + (m.correct || 0), 0);
 
@@ -327,8 +330,9 @@ export function getStudyStreak(): StreakInfo {
 
   // From mock tests
   mockAttempts.forEach((m) => {
-    if (m.completedAt) {
-      activeDateSet.add(m.completedAt.slice(0, 10));
+    const d = m.completedAt || m.date;
+    if (d) {
+      activeDateSet.add(d.slice(0, 10));
     }
   });
 
@@ -603,7 +607,7 @@ export function getDailyPlan(): DailyTask[] {
       topicId: pendingPyq.metadata.topicId,
       topicName: topic?.name || 'PYQ Topic',
       title: `विगत वर्ष प्रश्न (PYQ): ${topic?.name || 'प्रामाणिक प्रश्न'}`,
-      description: `${pendingPyq.source.examName} (${pendingPyq.source.year}) का विगत वर्ष प्रश्न हल करें।`,
+      description: `${exam.name} (${pendingPyq.metadata.year}) का विगत वर्ष प्रश्न हल करें।`,
       priority: 4,
       estimatedQuestions: 5,
       completed: pyqDoneToday,
@@ -687,9 +691,10 @@ export function getDailyPlan(): DailyTask[] {
   if (examMocks.length > 0) {
     const mock = examMocks[0];
     const mockAttempts = loadMockAttempts();
-    const attemptedToday = mockAttempts.some(
-      (m) => m.testId === mock.id && m.completedAt && m.completedAt.startsWith(today)
-    );
+    const attemptedToday = mockAttempts.some((m) => {
+      const d = m.completedAt || m.date;
+      return m.testId === mock.id && d && d.startsWith(today);
+    });
 
     tasks.push({
       id: `task_mock_${mock.id}`,
@@ -797,7 +802,10 @@ export function getStudyHistory(): StudyHistoryEntry[] {
 
   Object.keys(dailyMap).forEach((d) => dateSet.add(d));
   quizHistory.forEach((q) => q.date && dateSet.add(q.date.slice(0, 10)));
-  mockAttempts.forEach((m) => m.completedAt && dateSet.add(m.completedAt.slice(0, 10)));
+  mockAttempts.forEach((m) => {
+    const d = m.completedAt || m.date;
+    if (d) dateSet.add(d.slice(0, 10));
+  });
   mistakes.forEach((m) => {
     if (m.lastAttemptedAt) dateSet.add(m.lastAttemptedAt.slice(0, 10));
     if (m.lastReviewedAt) dateSet.add(m.lastReviewedAt.slice(0, 10));
@@ -820,7 +828,10 @@ export function getStudyHistory(): StudyHistoryEntry[] {
     const quizQCorrect = dateQuizzes.reduce((acc, q) => acc + (q.correct || 0), 0);
 
     // Mock tests on this date
-    const dateMocks = mockAttempts.filter((m) => m.completedAt && m.completedAt.startsWith(dateStr));
+    const dateMocks = mockAttempts.filter((m) => {
+      const d = m.completedAt || m.date;
+      return d && d.startsWith(dateStr);
+    });
     const mockQAttempted = dateMocks.reduce((acc, m) => acc + (m.attempted || 0), 0);
     const mockQCorrect = dateMocks.reduce((acc, m) => acc + (m.correct || 0), 0);
 

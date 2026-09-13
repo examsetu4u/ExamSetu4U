@@ -1,5 +1,5 @@
 export type MCQDifficulty = 'Easy' | 'Moderate' | 'Hard' | 'Very Hard';
-export type MCQSourceType = 'PYQ' | 'PYQ-based' | 'Practice';
+export type MCQSourceType = 'PYQ' | 'PYQ-based' | 'Practice' | 'Current Affairs Automation';
 
 export interface MCQQuestion {
   id: string;

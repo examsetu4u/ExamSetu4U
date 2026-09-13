@@ -1,6 +1,5 @@
 import { getExam, getSubject, getTopic } from '@/data/curriculum';
 import { pyqQuestions, PYQQuestion } from '@/data/pyq';
-import { quizQuestions } from '@/data/quiz/questions';
 import { MCQDifficulty, MCQQuestion } from '@/data/quiz/types';
 import { getWeakAreas } from '@/lib/user-progress';
 import { recordQuestionAttemptToday } from '@/lib/analytics';

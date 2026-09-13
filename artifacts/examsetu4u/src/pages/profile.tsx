@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Award, BookOpen, Calendar, Check, CheckCircle2, ChevronRight, Edit2, Flame, Info, LogOut, RefreshCw, RotateCcw, Sparkles, Target, Trophy, User, Zap } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Award, BookOpen, Calendar, Check, CheckCircle2, ChevronRight, Edit2, Flame, Info, LogOut, Play, RefreshCw, RotateCcw, Sparkles, Target, Trophy, User, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Breadcrumbs, ProgressBar } from '@/components/curriculum-ui';
@@ -27,7 +27,7 @@ export function ProfilePage() {
   const unlockedBadges = useMemo(() => achievements.filter((a) => a.isUnlocked), [achievements]);
   const dailyGoal = useMemo(() => getDailyGoalStatus(), []);
   const continueItem = useMemo(() => getContinueLearning(), []);
-  const weakAreas = useMemo(() => getWeakAreas(preferredExamId), [preferredExamId]);
+  const weakAreas = useMemo(() => getWeakAreas(), []);
   const weakestTopic = weakAreas.length > 0 ? weakAreas[0] : null;
 
   const currentExam = getExam(preferredExamId);
@@ -453,7 +453,7 @@ export function ProfilePage() {
                           {weakestTopic.subjectName} • सटीकता: {weakestTopic.accuracy}% ({weakestTopic.incorrectCount} गलत)
                         </p>
                         <Link
-                          href={weakestTopic.actionUrl}
+                          href={weakestTopic.practiceUrl}
                           className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--accent-foreground))] hover:underline"
                         >
                           पुनः अभ्यास करें →
@@ -479,7 +479,7 @@ export function ProfilePage() {
                         : 'दैनिक क्विज़ देकर अपना इंटेलिजेंट स्कोर बढ़ाएं।'}
                     </p>
                     <Link
-                      href={weakestTopic ? weakestTopic.actionUrl : continueItem ? continueItem.url : '/quiz'}
+                      href={weakestTopic ? weakestTopic.practiceUrl : continueItem ? continueItem.url : '/quiz'}
                       className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--primary))] hover:underline"
                     >
                       शुरू करें <ChevronRight size={12} />

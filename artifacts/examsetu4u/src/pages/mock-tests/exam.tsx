@@ -87,7 +87,7 @@ export default function ExamMockTestsPage() {
                 वास्तविक परीक्षा प्रारूप, टाइमर और नकारात्मक अंकन के साथ अभ्यास करें
               </p>
             </div>
-            <Button href="/mock-tests" variant="ghost" className="text-xs">
+            <Button href="/mock-tests" variant="text" className="text-xs">
               <ArrowLeft size={14} />
               <span>अन्य परीक्षाएं</span>
             </Button>

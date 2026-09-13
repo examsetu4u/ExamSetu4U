@@ -506,13 +506,25 @@ export function calculateScienceChapterProgress(chapterId: string): ScienceChapt
   }
 
   // 2. MCQ Progress: check real questions in Quiz Engine
-  const mcqQuestions = getFilteredQuestions({
-    examId: 'cbse-class-10',
-    subjectId: 'cbse-class-10-science',
-    topicId: targetId,
-  });
+  const mcqQuestions = [
+    ...getFilteredQuestions({
+      examId: 'cbse-class-10',
+      subjectId: 'cbse-class-10-science',
+      topicId: targetId,
+    }),
+    ...(chapter?.slug && chapter.slug !== targetId
+      ? getFilteredQuestions({
+          examId: 'cbse-class-10',
+          subjectId: 'cbse-class-10-science',
+          topicId: chapter.slug,
+        })
+      : []),
+  ];
   const customMCQs = getScienceQuestions(targetId, 'MCQ');
-  const totalMCQs = mcqQuestions.length + customMCQs.length;
+  const seenIds = new Set<string>();
+  mcqQuestions.forEach((q) => seenIds.add(q.id));
+  customMCQs.forEach((q) => seenIds.add(q.id));
+  const totalMCQs = seenIds.size;
 
   let mcqProgress = 0;
   if (totalMCQs > 0) {

@@ -169,18 +169,26 @@ export function getAllPYQQuestions(): PYQQuestion[] {
     for (const sq of sheetQuestions) {
       if (sq && sq.id && !seenIds.has(sq.id)) {
         seenIds.add(sq.id);
-        const options: PYQOption[] = (sq.options || []).map((opt, i) => ({
-          id: String.fromCharCode(97 + i),
-          label: String.fromCharCode(65 + i),
-          text: opt,
-        }));
+        const options: PYQOption[] = Array.isArray(sq.options)
+          ? (sq.options as string[]).map((text, i) => ({
+              id: String.fromCharCode(97 + i),
+              label: String.fromCharCode(65 + i),
+              text: String(text),
+            }))
+          : sq.options && typeof sq.options === 'object'
+          ? Object.entries(sq.options).map(([key, text]) => ({
+              id: key.toLowerCase(),
+              label: key.toUpperCase(),
+              text: String(text),
+            }))
+          : [];
 
         let correctId = (sq.correctAnswer || 'a').toLowerCase().trim();
         if (!['a', 'b', 'c', 'd'].includes(correctId)) {
-          const matchedIdx = (sq.options || []).findIndex(
-            (o) => o.trim().toLowerCase() === sq.correctAnswer.trim().toLowerCase()
+          const matchedOpt = options.find(
+            (o) => o.text.trim().toLowerCase() === String(sq.correctAnswer || '').trim().toLowerCase()
           );
-          correctId = matchedIdx !== -1 ? String.fromCharCode(97 + matchedIdx) : 'a';
+          correctId = matchedOpt ? matchedOpt.id : 'a';
         }
 
         result.push({

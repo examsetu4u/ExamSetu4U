@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Router as WouterRouter, Switch } from 'wouter';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -5,6 +6,8 @@ import { ScrollToTop } from '@/components/scroll-to-top';
 import { ThemeProvider } from '@/context/theme-context';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { fetchGoogleSheetQuestions } from '@/services/google-sheet-loader';
+import { initStudyNotes, fetchStudyNotesFromSheet } from '@/services/study-notes-loader';
 import ExamsPage from '@/pages/exams';
 import Home from '@/pages/home';
 import NotFoundPage from '@/pages/not-found';
@@ -47,6 +50,7 @@ import {
   CbseMathsChapterPage,
   CbseMathsSectionPage,
 } from '@/pages/cbse-maths';
+import { CbseGenericSectionPage } from '@/pages/cbse-common';
 
 const queryClient = new QueryClient();
 
@@ -76,6 +80,7 @@ function Router() {
         <Route path="/exams/cbse-class-10/cbse-class-10-mathematics/:chapterId/:section" component={CbseMathsSectionPage} />
         <Route path="/exams/cbse-class-10/cbse-class-10-mathematics/:chapterId" component={CbseMathsChapterPage} />
         <Route path="/exams/cbse-class-10/cbse-class-10-mathematics" component={CbseMathsSubjectPage} />
+        <Route path="/exams/:examId/:subjectId/:chapterId/:section" component={CbseGenericSectionPage} />
         <Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} />
         <Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} />
         <Route path="/exams/:examId" component={ExamDetailPage} />
@@ -115,6 +120,17 @@ function Router() {
 }
 
 function App() {
+  useEffect(() => {
+    // Proactively initialize and prefetch questions and study notes from Google Sheets
+    fetchGoogleSheetQuestions().catch((err) => {
+      console.debug('[App] Questions background fetch:', err);
+    });
+    initStudyNotes();
+    fetchStudyNotesFromSheet().catch((err) => {
+      console.debug('[App] Study notes background fetch:', err);
+    });
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>

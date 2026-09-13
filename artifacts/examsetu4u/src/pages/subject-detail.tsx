@@ -31,6 +31,8 @@ import {
 } from '@/lib/learning-path';
 import { ScienceDashboard } from '@/components/cbse-science/ScienceDashboard';
 import { MathsDashboard } from '@/components/cbse-maths/MathsDashboard';
+import { getCbseSubjectConfig } from '@/data/cbse-curriculum';
+import { CbseSubjectDashboard } from '@/components/cbse-common/CbseSubjectDashboard';
 import NotFoundPage from '@/pages/not-found';
 
 type SortOption = 'recommended' | 'not_started' | 'in_progress' | 'completed';
@@ -59,6 +61,12 @@ export default function SubjectDetailPage() {
       subjectId === 'cbse-class-10-mathematics')
   ) {
     return <MathsDashboard examId={exam.id} />;
+  }
+
+  // Dedicated CBSE Board Subject Dashboard delegation (Social Science, English, Hindi, Class 12 Physics, Chemistry, Maths, Biology, etc.)
+  const cbseConfig = getCbseSubjectConfig(subjectId, examId || exam?.id);
+  if (cbseConfig) {
+    return <CbseSubjectDashboard examId={examId || cbseConfig.examId} subjectId={subjectId} />;
   }
 
   const [query, setQuery] = useState('');
