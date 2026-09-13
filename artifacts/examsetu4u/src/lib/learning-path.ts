@@ -275,7 +275,9 @@ export function getTopicLearningDetails(topicId: string): TopicLearningDetails |
       type: 'pyq',
       label: pyqStatus === 'in_progress' ? 'PYQ अभ्यास जारी रखें' : 'PYQ हल करें',
       url: `/pyq/${topic.examId}/${topic.subjectId}/${topic.id}`,
-      reason: 'Study Material पूरा हो चुका है। अब PYQ हल करें।',
+      reason: topic.examId === 'ssc-cgl'
+        ? 'SSC CGL पिछले वर्षों के वास्तविक MCQ प्रश्नों का अभ्यास करें।'
+        : 'Study Material पूरा हो चुका है। अब PYQ हल करें।',
     };
   } else if (topic.availability.quiz && quizStatus !== 'completed') {
     nextAction = {

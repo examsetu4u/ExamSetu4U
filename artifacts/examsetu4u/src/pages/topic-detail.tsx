@@ -170,6 +170,11 @@ export default function TopicDetailPage() {
               </p>
 
               <div className="mt-4 flex flex-wrap items-center gap-3">
+                {exam.id === 'ssc-cgl' && (
+                  <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-0.5 text-xs font-bold text-amber-800">
+                    100% Objective MCQ Topic
+                  </span>
+                )}
                 <span
                   className={`rounded-full px-3 py-0.5 text-xs font-bold ${
                     isComplete
@@ -209,267 +214,492 @@ export default function TopicDetailPage() {
       <section className="py-12 sm:py-16">
         <Container>
           <div className="mb-8">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-700">सीखने के चरण (Learning Steps)</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-700">
+              {exam.id === 'ssc-cgl' ? '100% बहुविकल्पीय परीक्षा प्रारूप (Objective MCQ Sequence)' : 'सीखने के चरण (Learning Steps)'}
+            </p>
             <h2 className="font-display mt-2 text-2xl sm:text-3xl font-bold text-slate-900">
-              क्रमबद्ध अध्ययन चरण (Study Material → PYQ → Quiz)
+              {exam.id === 'ssc-cgl' ? 'SSC CGL टॉपिक अभ्यास (PYQ MCQs → Timed Quiz)' : 'क्रमबद्ध अध्ययन चरण (Study Material → PYQ → Quiz)'}
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-slate-600">
-              अवधारणाओं को पढ़ें, पूर्व वर्षों के वास्तविक प्रश्नों का अभ्यास करें और क्विज़ के साथ स्कोर जांचें।
+              {exam.id === 'ssc-cgl'
+                ? 'SSC CGL परीक्षा में केवल वस्तुनिष्ठ बहुविकल्पीय प्रश्न (MCQs) पूछे जाते हैं। पहले पिछले वर्षों के वास्तविक PYQ हल करें, फिर समयबद्ध क्विज़ से गति और सटीकता परखें।'
+                : 'अवधारणाओं को पढ़ें, पूर्व वर्षों के वास्तविक प्रश्नों का अभ्यास करें और क्विज़ के साथ स्कोर जांचें।'}
             </p>
           </div>
 
           {/* Learning Steps Detail Cards */}
           <div className="grid gap-6 md:grid-cols-3">
-            {/* Step 1: Study Material */}
-            <Card
-              className={`flex flex-col justify-between p-6 transition hover:border-blue-300 hover:shadow-xs ${
-                studyMaterialStatus === 'completed'
-                  ? 'border-emerald-300/80 bg-emerald-50/20'
-                  : studyMaterialStatus === 'in_progress'
-                  ? 'border-blue-300 shadow-xs'
-                  : 'border-slate-200'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                    चरण 1 (Step 1)
-                  </span>
-                  {studyMaterialStatus === 'completed' ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
-                      <Check size={12} strokeWidth={3} />
-                      Completed
+            {/* Step 1: For SSC CGL show PYQ Practice as Step 1 or Study Material for others */}
+            {exam.id === 'ssc-cgl' ? (
+              <Card
+                className={`flex flex-col justify-between p-6 transition hover:border-indigo-300 hover:shadow-xs ${
+                  pyqStatus === 'completed'
+                    ? 'border-emerald-300/80 bg-emerald-50/20'
+                    : pyqPracticed
+                    ? 'border-indigo-300 shadow-xs'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                      चरण 1 (Step 1)
                     </span>
-                  ) : (
-                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
-                      {studyMaterialStatus === 'in_progress' ? 'In Progress' : 'Not Started'}
+                    {pyqStatus === 'completed' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                        <Check size={12} strokeWidth={3} />
+                        Completed
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
+                        {pyqPracticed ? 'In Progress' : 'Not Started'}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                      <FileQuestion size={20} />
                     </span>
-                  )}
-                </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        PYQ MCQs Practice
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        पूर्व वर्षों में पूछे गए वास्तविक MCQs
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                    <FileText size={20} />
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      Study Material
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      अवधारणात्मक नोट्स व मुख्य बिंदु
-                    </p>
+                  <div className="mt-5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                      <span>
+                        {pyqPracticed
+                          ? `${pyqAttempted} प्रश्न हल किए (${pyqAccuracy}% सटीकता)`
+                          : 'अभी अभ्यास नहीं किया'}
+                      </span>
+                      <span className="font-bold text-indigo-700">{pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%'}</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          pyqStatus === 'completed' ? 'bg-emerald-600' : 'bg-indigo-600'
+                        }`}
+                        style={{ width: pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%' }}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
-                    <span>नोट्स अध्ययन प्रगति</span>
-                    <span className="font-bold text-blue-700">{studyMaterialProgress}%</span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        studyMaterialStatus === 'completed' ? 'bg-emerald-600' : 'bg-blue-600'
-                      }`}
-                      style={{ width: `${studyMaterialProgress}%` }}
-                    />
-                  </div>
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <Button
+                    href={`/pyq/${exam.id}/${subject.id}/${topic.id}`}
+                    variant={pyqStatus === 'completed' ? 'secondary' : 'primary'}
+                    className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
+                    onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 50))}
+                  >
+                    {pyqStatus === 'completed' ? (
+                      <>
+                        <RotateCcw size={12} /> पुनः अभ्यास करें
+                      </>
+                    ) : pyqPracticed ? (
+                      <>
+                        <Play size={12} className="fill-current" /> Practice PYQ जारी रखें
+                      </>
+                    ) : (
+                      <>
+                        PYQ MCQs हल करें <ArrowRight size={13} />
+                      </>
+                    )}
+                  </Button>
                 </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-slate-100">
-                <Button
-                  href={`/study-material/${exam.id}/${subject.id}/${topic.id}`}
-                  variant={studyMaterialStatus === 'completed' ? 'secondary' : 'primary'}
-                  className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
-                  onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 25))}
-                >
-                  {studyMaterialStatus === 'completed' ? (
-                    <>
-                      <RotateCcw size={12} /> दोबारा पढ़ें (Re-read)
-                    </>
-                  ) : studyMaterialStatus === 'in_progress' ? (
-                    <>
-                      <Play size={12} className="fill-current" /> पढ़ना जारी रखें
-                    </>
-                  ) : (
-                    <>
-                      नोट्स पढ़ना शुरू करें <ArrowRight size={13} />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </Card>
-
-            {/* Step 2: Previous Year Questions (PYQ) */}
-            <Card
-              className={`flex flex-col justify-between p-6 transition hover:border-indigo-300 hover:shadow-xs ${
-                pyqStatus === 'completed'
-                  ? 'border-emerald-300/80 bg-emerald-50/20'
-                  : pyqPracticed
-                  ? 'border-indigo-300 shadow-xs'
-                  : 'border-slate-200'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
-                    चरण 2 (Step 2)
-                  </span>
-                  {pyqStatus === 'completed' ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
-                      <Check size={12} strokeWidth={3} />
-                      Completed
+              </Card>
+            ) : (
+              <Card
+                className={`flex flex-col justify-between p-6 transition hover:border-blue-300 hover:shadow-xs ${
+                  studyMaterialStatus === 'completed'
+                    ? 'border-emerald-300/80 bg-emerald-50/20'
+                    : studyMaterialStatus === 'in_progress'
+                    ? 'border-blue-300 shadow-xs'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                      चरण 1 (Step 1)
                     </span>
-                  ) : (
-                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
-                      {pyqPracticed ? 'In Progress' : 'Not Started'}
+                    {studyMaterialStatus === 'completed' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                        <Check size={12} strokeWidth={3} />
+                        Completed
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
+                        {studyMaterialStatus === 'in_progress' ? 'In Progress' : 'Not Started'}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                      <FileText size={20} />
                     </span>
-                  )}
-                </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Study Material
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        अवधारणात्मक नोट्स व मुख्य बिंदु
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
-                    <FileQuestion size={20} />
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      PYQ Practice
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      परीक्षा में पूछे गए पिछले प्रश्न
-                    </p>
+                  <div className="mt-5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                      <span>नोट्स अध्ययन प्रगति</span>
+                      <span className="font-bold text-blue-700">{studyMaterialProgress}%</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          studyMaterialStatus === 'completed' ? 'bg-emerald-600' : 'bg-blue-600'
+                        }`}
+                        style={{ width: `${studyMaterialProgress}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
-                    <span>
-                      {pyqPracticed
-                        ? `${pyqAttempted} प्रश्न हल किए (${pyqAccuracy}% सटीकता)`
-                        : 'अभी अभ्यास नहीं किया'}
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <Button
+                    href={`/study-material/${exam.id}/${subject.id}/${topic.id}`}
+                    variant={studyMaterialStatus === 'completed' ? 'secondary' : 'primary'}
+                    className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
+                    onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 25))}
+                  >
+                    {studyMaterialStatus === 'completed' ? (
+                      <>
+                        <RotateCcw size={12} /> दोबारा पढ़ें (Re-read)
+                      </>
+                    ) : studyMaterialStatus === 'in_progress' ? (
+                      <>
+                        <Play size={12} className="fill-current" /> पढ़ना जारी रखें
+                      </>
+                    ) : (
+                      <>
+                        नोट्स पढ़ना शुरू करें <ArrowRight size={13} />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            {/* Step 2: For SSC CGL show Timed Topic Quiz, for others show PYQ */}
+            {exam.id === 'ssc-cgl' ? (
+              <Card
+                className={`flex flex-col justify-between p-6 transition hover:border-sky-300 hover:shadow-xs ${
+                  quizStatus === 'completed'
+                    ? 'border-emerald-300/80 bg-emerald-50/20'
+                    : quizAttempted
+                    ? 'border-sky-300 shadow-xs'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+                      चरण 2 (Step 2)
                     </span>
-                    <span className="font-bold text-indigo-700">{pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%'}</span>
+                    {quizStatus === 'completed' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                        <Check size={12} strokeWidth={3} />
+                        Completed
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
+                        {quizAttempted ? 'In Progress' : 'Not Started'}
+                      </span>
+                    )}
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        pyqStatus === 'completed' ? 'bg-emerald-600' : 'bg-indigo-600'
-                      }`}
-                      style={{ width: pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%' }}
-                    />
-                  </div>
-                </div>
-              </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100">
-                <Button
-                  href={`/pyq/${exam.id}/${subject.id}/${topic.id}`}
-                  variant={pyqStatus === 'completed' ? 'secondary' : 'primary'}
-                  className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
-                  onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 50))}
-                >
-                  {pyqStatus === 'completed' ? (
-                    <>
-                      <RotateCcw size={12} /> पुनः अभ्यास करें
-                    </>
-                  ) : pyqPracticed ? (
-                    <>
-                      <Play size={12} className="fill-current" /> Practice PYQ जारी रखें
-                    </>
-                  ) : (
-                    <>
-                      Practice PYQ <ArrowRight size={13} />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </Card>
-
-            {/* Step 3: MCQ Quiz */}
-            <Card
-              className={`flex flex-col justify-between p-6 transition hover:border-sky-300 hover:shadow-xs ${
-                quizStatus === 'completed'
-                  ? 'border-emerald-300/80 bg-emerald-50/20'
-                  : quizAttempted
-                  ? 'border-sky-300 shadow-xs'
-                  : 'border-slate-200'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
-                    चरण 3 (Step 3)
-                  </span>
-                  {quizStatus === 'completed' ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
-                      <Check size={12} strokeWidth={3} />
-                      Completed
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                      <Brain size={20} />
                     </span>
-                  ) : (
-                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
-                      {quizAttempted ? 'In Progress' : 'Not Started'}
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Timed MCQ Quiz
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        निगेटिव मार्किंग के साथ टाइमर टेस्ट
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                      <span>
+                        {quizAttempted
+                          ? `क्विज़ सटीकता: ${quizAccuracy}%`
+                          : 'अभी टेस्ट नहीं दिया'}
+                      </span>
+                      <span className="font-bold text-sky-700">{quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%'}</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          quizStatus === 'completed' ? 'bg-emerald-600' : 'bg-sky-600'
+                        }`}
+                        style={{ width: quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <Button
+                    href={`/quiz/${exam.id}/${subject.id}/${topic.id}`}
+                    variant={quizStatus === 'completed' ? 'secondary' : 'primary'}
+                    className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
+                    onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 75))}
+                  >
+                    {quizStatus === 'completed' ? (
+                      <>
+                        <RotateCcw size={12} /> दोबारा टेस्ट दें
+                      </>
+                    ) : quizAttempted ? (
+                      <>
+                        <Play size={12} className="fill-current" /> स्कोर सुधारें (Retake)
+                      </>
+                    ) : (
+                      <>
+                        MCQ Quiz शुरू करें <ArrowRight size={13} />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            ) : (
+              <Card
+                className={`flex flex-col justify-between p-6 transition hover:border-indigo-300 hover:shadow-xs ${
+                  pyqStatus === 'completed'
+                    ? 'border-emerald-300/80 bg-emerald-50/20'
+                    : pyqPracticed
+                    ? 'border-indigo-300 shadow-xs'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                      चरण 2 (Step 2)
                     </span>
-                  )}
-                </div>
-
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
-                    <Brain size={20} />
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      MCQ Quiz
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      समयबद्ध बहुविकल्पीय परीक्षा
-                    </p>
+                    {pyqStatus === 'completed' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                        <Check size={12} strokeWidth={3} />
+                        Completed
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
+                        {pyqPracticed ? 'In Progress' : 'Not Started'}
+                      </span>
+                    )}
                   </div>
-                </div>
 
-                <div className="mt-5">
-                  <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
-                    <span>
-                      {quizAttempted
-                        ? `क्विज़ सटीकता: ${quizAccuracy}%`
-                        : 'अभी टेस्ट नहीं दिया'}
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                      <FileQuestion size={20} />
                     </span>
-                    <span className="font-bold text-sky-700">{quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%'}</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        PYQ Practice
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        परीक्षा में पूछे गए पिछले प्रश्न
+                      </p>
+                    </div>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        quizStatus === 'completed' ? 'bg-emerald-600' : 'bg-sky-600'
-                      }`}
-                      style={{ width: quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%' }}
-                    />
+
+                  <div className="mt-5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                      <span>
+                        {pyqPracticed
+                          ? `${pyqAttempted} प्रश्न हल किए (${pyqAccuracy}% सटीकता)`
+                          : 'अभी अभ्यास नहीं किया'}
+                      </span>
+                      <span className="font-bold text-indigo-700">{pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%'}</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          pyqStatus === 'completed' ? 'bg-emerald-600' : 'bg-indigo-600'
+                        }`}
+                        style={{ width: pyqStatus === 'completed' ? '100%' : pyqPracticed ? '50%' : '0%' }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100">
-                <Button
-                  href={`/quiz/${exam.id}/${subject.id}/${topic.id}`}
-                  variant={quizStatus === 'completed' ? 'secondary' : 'primary'}
-                  className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
-                  onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 75))}
-                >
-                  {quizStatus === 'completed' ? (
-                    <>
-                      <RotateCcw size={12} /> दोबारा टेस्ट दें
-                    </>
-                  ) : quizAttempted ? (
-                    <>
-                      <Play size={12} className="fill-current" /> स्कोर सुधारें (Retake)
-                    </>
-                  ) : (
-                    <>
-                      Start Quiz <ArrowRight size={13} />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </Card>
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <Button
+                    href={`/pyq/${exam.id}/${subject.id}/${topic.id}`}
+                    variant={pyqStatus === 'completed' ? 'secondary' : 'primary'}
+                    className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
+                    onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 50))}
+                  >
+                    {pyqStatus === 'completed' ? (
+                      <>
+                        <RotateCcw size={12} /> पुनः अभ्यास करें
+                      </>
+                    ) : pyqPracticed ? (
+                      <>
+                        <Play size={12} className="fill-current" /> Practice PYQ जारी रखें
+                      </>
+                    ) : (
+                      <>
+                        Practice PYQ <ArrowRight size={13} />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            {/* Step 3: For SSC CGL show Full Mock & Speed Drill, for others show MCQ Quiz */}
+            {exam.id === 'ssc-cgl' ? (
+              <Card className="flex flex-col justify-between p-6 border-slate-200 transition hover:border-amber-300 hover:shadow-xs bg-amber-50/20">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
+                      चरण 3 (Step 3)
+                    </span>
+                    <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
+                      Exam Simulation
+                    </span>
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-800">
+                      <Sparkles size={20} />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Full Mock &amp; Speed Drill
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        वास्तविक परीक्षा वातावरण में अभ्यास
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                      <span>गति एवं नेगेटिव मार्किंग जांच</span>
+                      <span className="font-bold text-amber-700">Recommended</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-full rounded-full bg-amber-500" style={{ width: '100%' }} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <Button
+                    href="/mock/ssc-cgl-tier1-mock-01"
+                    variant="primary"
+                    className="w-full justify-center gap-1.5 text-xs h-9 font-bold bg-amber-600 hover:bg-amber-700"
+                  >
+                    टियर-1 फुल मॉक टेस्ट <ArrowRight size={13} />
+                  </Button>
+                </div>
+              </Card>
+            ) : (
+              <Card
+                className={`flex flex-col justify-between p-6 transition hover:border-sky-300 hover:shadow-xs ${
+                  quizStatus === 'completed'
+                    ? 'border-emerald-300/80 bg-emerald-50/20'
+                    : quizAttempted
+                    ? 'border-sky-300 shadow-xs'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+                      चरण 3 (Step 3)
+                    </span>
+                    {quizStatus === 'completed' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                        <Check size={12} strokeWidth={3} />
+                        Completed
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-600">
+                        {quizAttempted ? 'In Progress' : 'Not Started'}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                      <Brain size={20} />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        MCQ Quiz
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        समयबद्ध बहुविकल्पीय परीक्षा
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                      <span>
+                        {quizAttempted
+                          ? `क्विज़ सटीकता: ${quizAccuracy}%`
+                          : 'अभी टेस्ट नहीं दिया'}
+                      </span>
+                      <span className="font-bold text-sky-700">{quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%'}</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          quizStatus === 'completed' ? 'bg-emerald-600' : 'bg-sky-600'
+                        }`}
+                        style={{ width: quizStatus === 'completed' ? '100%' : quizAttempted ? '50%' : '0%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <Button
+                    href={`/quiz/${exam.id}/${subject.id}/${topic.id}`}
+                    variant={quizStatus === 'completed' ? 'secondary' : 'primary'}
+                    className="w-full justify-center gap-1.5 text-xs h-9 font-bold"
+                    onClick={() => setTopicProgress(topic.id, Math.max(overallProgress, 75))}
+                  >
+                    {quizStatus === 'completed' ? (
+                      <>
+                        <RotateCcw size={12} /> दोबारा टेस्ट दें
+                      </>
+                    ) : quizAttempted ? (
+                      <>
+                        <Play size={12} className="fill-current" /> स्कोर सुधारें (Retake)
+                      </>
+                    ) : (
+                      <>
+                        Start Quiz <ArrowRight size={13} />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
 
           {/* 3. Next Recommended Action Banner */}
@@ -514,16 +744,18 @@ export default function TopicDetailPage() {
             <div className="mt-4 grid gap-3 sm:grid-cols-3 text-xs">
               <div
                 className={`flex items-center gap-2 rounded-xl border p-3 ${
-                  studyMaterialStatus === 'completed'
+                  exam.id === 'ssc-cgl' || studyMaterialStatus === 'completed'
                     ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
                     : 'border-slate-200 bg-slate-50 text-slate-500'
                 }`}
               >
                 <Check
                   size={15}
-                  className={studyMaterialStatus === 'completed' ? 'text-emerald-600' : 'opacity-40'}
+                  className={exam.id === 'ssc-cgl' || studyMaterialStatus === 'completed' ? 'text-emerald-600' : 'opacity-40'}
                 />
-                <span className="font-semibold">1. Study Material पूर्ण (≥80%)</span>
+                <span className="font-semibold">
+                  {exam.id === 'ssc-cgl' ? '1. 100% Objective MCQ प्रारूप' : '1. Study Material पूर्ण (≥80%)'}
+                </span>
               </div>
 
               <div

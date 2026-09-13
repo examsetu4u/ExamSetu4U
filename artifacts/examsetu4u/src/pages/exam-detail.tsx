@@ -343,6 +343,142 @@ export default function ExamDetailPage() {
             </div>
           )}
 
+          {/* Special SSC CGL 100% MCQ Objective Pattern Banner */}
+          {exam.id === 'ssc-cgl' && (
+            <div className="mt-8 overflow-hidden rounded-2xl border-2 border-blue-400/80 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f2847] p-6 text-white shadow-md">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/25 border border-blue-300/40 px-3 py-0.5 text-xs font-bold text-blue-200">
+                      <Sparkles size={13} /> 100% Objective MCQ Pattern
+                    </span>
+                    <span className="rounded-full bg-emerald-400/20 border border-emerald-300/40 px-2.5 py-0.5 text-[11px] font-bold text-emerald-200">
+                      Tier-I (Qualifying) &amp; Tier-II (Final Merit)
+                    </span>
+                    <span className="rounded-full bg-amber-400/20 border border-amber-300/40 px-2.5 py-0.5 text-[11px] font-bold text-amber-200">
+                      Negative Marking Active
+                    </span>
+                  </div>
+                  <h3 className="font-display mt-2.5 text-2xl font-black text-white">
+                    SSC CGL पाठ्यक्रम संरचना (Tier-I &amp; Tier-II Modules)
+                  </h3>
+                  <p className="mt-1.5 max-w-2xl text-xs sm:text-sm text-slate-200 leading-relaxed">
+                    कर्मचारी चयन आयोग (SSC CGL) के सभी पेपर्स केवल कंप्यूटर आधारित वस्तुनिष्ठ बहुविकल्पीय प्रश्न (MCQ) प्रारूप में आयोजित होते हैं। टियर-1 और टियर-2 पेपर-1 (अनिवार्य) व वैकल्पिक पेपर्स का अभ्यास करें।
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2.5">
+                  <Link
+                    href="/mock/ssc-cgl-tier1-mock-01"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs sm:text-sm font-black text-slate-900 shadow-sm hover:bg-slate-100 transition"
+                  >
+                    टियर-1 फुल मॉक टेस्ट <ArrowRight size={15} />
+                  </Link>
+                  <Link
+                    href="/quiz/ssc-cgl/ssc-cgl-general-awareness"
+                    className="inline-flex items-center gap-2 rounded-xl bg-blue-600 border border-blue-400/50 px-4 py-2.5 text-xs sm:text-sm font-black text-white hover:bg-blue-500 transition"
+                  >
+                    <Zap size={14} /> GK &amp; Reasoning Quizzes
+                  </Link>
+                </div>
+              </div>
+
+              {/* 4 Quick Tier Breakdown Pills */}
+              <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-white/15 text-center">
+                <button
+                  type="button"
+                  onClick={() => setSscTierFilter('tier1')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    sscTierFilter === 'tier1' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-white/30' : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                >
+                  <p className="text-[10px] font-bold text-blue-200 uppercase">Tier-I Prelims</p>
+                  <p className="text-xs sm:text-sm font-extrabold">4 Subjects (200 M)</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSscTierFilter('tier2-p1')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    sscTierFilter === 'tier2-p1' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-white/30' : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                >
+                  <p className="text-[10px] font-bold text-blue-200 uppercase">Tier-II Paper-I</p>
+                  <p className="text-xs sm:text-sm font-extrabold">Compulsory (390 M)</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSscTierFilter('tier2-p2-3')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    sscTierFilter === 'tier2-p2-3' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-white/30' : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                >
+                  <p className="text-[10px] font-bold text-blue-200 uppercase">Tier-II Paper-II &amp; III</p>
+                  <p className="text-xs sm:text-sm font-extrabold">JSO &amp; AAO Posts</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSscTierFilter('all')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    sscTierFilter === 'all' ? 'bg-blue-600 text-white shadow-sm ring-2 ring-white/30' : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                >
+                  <p className="text-[10px] font-bold text-blue-200 uppercase">Complete Syllabus</p>
+                  <p className="text-xs sm:text-sm font-extrabold">All 12 Modules</p>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SSC CGL Tier Filter Tab Strip */}
+          {exam.id === 'ssc-cgl' && (
+            <div className="mt-8 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
+              <button
+                type="button"
+                onClick={() => setSscTierFilter('all')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  sscTierFilter === 'all'
+                    ? 'bg-blue-700 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                सभी मॉड्यूल्स (All 12 Modules)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSscTierFilter('tier1')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  sscTierFilter === 'tier1'
+                    ? 'bg-blue-700 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                Tier-I Prelims (4 विषय)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSscTierFilter('tier2-p1')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  sscTierFilter === 'tier2-p1'
+                    ? 'bg-blue-700 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                Tier-II Paper-I: Compulsory (6 मॉड्यूल्स)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSscTierFilter('tier2-p2-3')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  sscTierFilter === 'tier2-p2-3'
+                    ? 'bg-blue-700 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                Tier-II Paper-II &amp; III: JSO &amp; AAO
+              </button>
+            </div>
+          )}
+
           {filteredSubjectStats.length ? (
             <div className="mt-8 grid gap-5 md:grid-cols-2">
               {filteredSubjectStats.map(({ subject, stats }) => {

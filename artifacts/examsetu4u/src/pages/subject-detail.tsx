@@ -154,6 +154,11 @@ export default function SubjectDetailPage() {
 
             {/* Quick Stats Pill */}
             <div className="flex flex-wrap items-center gap-2.5">
+              {exam.id === 'ssc-cgl' && (
+                <span className="rounded-full border border-amber-300/40 bg-amber-400/20 px-3.5 py-1.5 text-xs font-bold text-amber-200 backdrop-blur-xs">
+                  100% Objective MCQs
+                </span>
+              )}
               <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-xs shadow-xs">
                 {subjectStats.totalTopics} Topics
               </span>
@@ -333,7 +338,9 @@ export default function SubjectDetailPage() {
 
                         {/* Step Indicators: Study Material, PYQ, Quiz */}
                         <div className="mt-4 flex flex-wrap items-center gap-2">
-                          {steps.map((st) => (
+                          {steps
+                            .filter((st) => (exam.id === 'ssc-cgl' ? st.isAvailable : true))
+                            .map((st) => (
                             <span
                               key={st.type}
                               className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold ${
@@ -350,7 +357,7 @@ export default function SubjectDetailPage() {
                               {st.type === 'study' && <FileText size={12} />}
                               {st.type === 'pyq' && <FileQuestion size={12} />}
                               {st.type === 'quiz' && <Brain size={12} />}
-                              <span>{st.title}</span>
+                              <span>{exam.id === 'ssc-cgl' && st.type === 'pyq' ? 'PYQ (MCQs)' : exam.id === 'ssc-cgl' && st.type === 'quiz' ? 'Quiz (MCQs)' : st.title}</span>
                               {st.isAvailable && (
                                 <span className="text-[10px] opacity-75">
                                   ({st.status === 'completed' ? 'Done' : `${st.progress}%`})
