@@ -59,6 +59,14 @@ export interface MathsQuestion {
   marks?: number;
   status?: MathsQuestionStatus;
 
+  // Diagram fields
+  diagramRequired?: boolean;
+  diagramType?: string;
+  diagramData?: any;
+  diagramCaption?: string;
+  diagramImageUrl?: string;
+  diagramAltText?: string;
+
   // Structural metadata for advanced question types
   assertion?: string;
   reason?: string;

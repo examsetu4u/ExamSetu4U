@@ -22,6 +22,7 @@ import { useMemo } from 'react';
 import { ProgressBar } from '@/components/curriculum-ui';
 import { Button, Card } from '@/components/site';
 import type { MCQQuestion } from '@/data/quiz/types';
+import { AutoDiagramRenderer } from '@/components/diagrams/AutoDiagramRenderer';
 
 interface QuestionScreenProps {
   question: MCQQuestion;
@@ -179,6 +180,32 @@ export function QuestionScreen({
             {question.question}
           </p>
         </div>
+
+        {/* Question Diagram / Image (Auto-Generated SVG or Custom URL) */}
+        {(question.diagramImageUrl || (question.diagramRequired && (question.diagramType || question.diagramData))) && (
+          <div className="my-4 rounded-xl border border-slate-200 bg-slate-50/80 p-3 flex flex-col items-center justify-center text-center overflow-hidden">
+            {question.diagramImageUrl ? (
+              <img
+                src={question.diagramImageUrl}
+                alt={question.diagramAltText || question.diagramCaption || 'Question Diagram'}
+                className="max-h-72 max-w-full rounded-lg object-contain border border-slate-200 shadow-xs bg-white"
+                loading="lazy"
+              />
+            ) : question.diagramType ? (
+              <AutoDiagramRenderer
+                type={question.diagramType}
+                data={question.diagramData}
+                caption={question.diagramCaption}
+                className="max-h-72"
+              />
+            ) : null}
+            {question.diagramCaption && (
+              <span className="mt-2 text-xs font-semibold text-slate-600">
+                {question.diagramCaption}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Four Large Selectable Options (A, B, C, D) */}
         <div className="mt-6 grid gap-3" role="radiogroup" aria-label={`Options for Question ${currentIndex + 1}`}>

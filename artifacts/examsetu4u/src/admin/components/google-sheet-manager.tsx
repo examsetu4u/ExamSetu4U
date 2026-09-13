@@ -19,7 +19,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import React, { useId, useMemo, useState } from 'react';
-import { GOOGLE_SHEET_CSV_URL } from '@/config/google-sheet-config';
+import { GOOGLE_SHEET_CSV_URL, GOOGLE_SHEET_QUESTION_SOURCES } from '@/config/google-sheet-config';
 import { getAllQuizQuestions } from '@/data/quiz/questions';
 import { useQuestionBank } from '@/hooks/useQuestionBank';
 import {
@@ -437,6 +437,40 @@ export function GoogleSheetManager() {
             )}
           </div>
         </form>
+
+        {/* Connected Multi-Tab Sources */}
+        {GOOGLE_SHEET_QUESTION_SOURCES && GOOGLE_SHEET_QUESTION_SOURCES.length > 0 && (
+          <div className="mt-4 border-t border-[hsl(var(--border))] pt-3">
+            <div className="text-[11px] font-semibold text-[hsl(var(--foreground))] mb-2 flex items-center gap-1.5">
+              <FileSpreadsheet className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Active Auto-Synced Tabs ({GOOGLE_SHEET_QUESTION_SOURCES.length}):</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {GOOGLE_SHEET_QUESTION_SOURCES.map((source) => {
+                const isActive = activeUrl === source.url;
+                return (
+                  <button
+                    key={source.id}
+                    type="button"
+                    onClick={() => {
+                      setTestUrlInput(source.url);
+                      setSessionSheetUrlOverride(source.url);
+                      refresh();
+                    }}
+                    className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${
+                      isActive
+                        ? 'border-emerald-500 bg-emerald-50 text-emerald-800 font-bold dark:bg-emerald-950/40 dark:text-emerald-300'
+                        : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
+                    }`}
+                  >
+                    <span>{source.name}</span>
+                    <span className="text-[10px] opacity-70 font-mono">gid={source.gid}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tabs Navigation */}

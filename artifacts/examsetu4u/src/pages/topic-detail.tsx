@@ -28,6 +28,7 @@ import { getMathsChapter } from '@/data/cbse-class-10-maths';
 import { MathsChapterDetail } from '@/components/cbse-maths/MathsChapterDetail';
 import { getCbseSubjectConfig, getCbseChapter } from '@/data/cbse-curriculum';
 import { CbseChapterDetail } from '@/components/cbse-common/CbseChapterDetail';
+import { MainsAnswerWritingCard } from '@/components/mains/MainsAnswerWritingCard';
 
 export default function TopicDetailPage() {
   const { examId = '', subjectId = '', topicId = '' } = useParams<{
@@ -126,6 +127,22 @@ export default function TopicDetailPage() {
     nextAction,
   } = topicDetails;
 
+  const isUppcsMains =
+    exam.id === 'uppcs-mains' ||
+    subject.name.startsWith('Mains:') ||
+    subject.id.startsWith('uppcs-mains') ||
+    subject.id.startsWith('gs-paper') ||
+    subject.id === 'general-hindi' ||
+    subject.id === 'essay';
+
+  const isUppcsPre =
+    exam.id === 'uppcs-pre' ||
+    (exam.id === 'uppcs' &&
+      (subject.name.startsWith('Pre:') ||
+        subject.id.startsWith('pre-') ||
+        subject.id === 'general-studies-1' ||
+        subject.id === 'general-studies-2'));
+
   const handleManualToggle = () => {
     if (isComplete) {
       resetTopicProgress(topic.id);
@@ -175,6 +192,16 @@ export default function TopicDetailPage() {
                     100% Objective MCQ Topic
                   </span>
                 )}
+                {isUppcsMains && (
+                  <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-0.5 text-xs font-bold text-amber-800">
+                    UPPCS Mains: वर्णनात्मक उत्तर लेखन (Subjective)
+                  </span>
+                )}
+                {isUppcsPre && (
+                  <span className="rounded-full border border-blue-300 bg-blue-50 px-3 py-0.5 text-xs font-bold text-blue-800">
+                    UPPCS Pre: 100% वस्तुनिष्ठ बहुविकल्पीय प्रश्न (MCQ)
+                  </span>
+                )}
                 <span
                   className={`rounded-full px-3 py-0.5 text-xs font-bold ${
                     isComplete
@@ -215,17 +242,48 @@ export default function TopicDetailPage() {
         <Container>
           <div className="mb-8">
             <p className="text-xs font-bold uppercase tracking-wider text-blue-700">
-              {exam.id === 'ssc-cgl' ? '100% बहुविकल्पीय परीक्षा प्रारूप (Objective MCQ Sequence)' : 'सीखने के चरण (Learning Steps)'}
+              {exam.id === 'ssc-cgl'
+                ? '100% बहुविकल्पीय परीक्षा प्रारूप (Objective MCQ Sequence)'
+                : isUppcsMains
+                ? 'UPPCS मुख्य परीक्षा: वर्णनात्मक उत्तर लेखन (Subjective Mains Writing)'
+                : isUppcsPre
+                ? 'UPPCS प्रारंभिक परीक्षा: 100% वस्तुनिष्ठ तैयारी (Pre MCQ Pattern)'
+                : 'सीखने के चरण (Learning Steps)'}
             </p>
             <h2 className="font-display mt-2 text-2xl sm:text-3xl font-bold text-slate-900">
-              {exam.id === 'ssc-cgl' ? 'SSC CGL टॉपिक अभ्यास (PYQ MCQs → Timed Quiz)' : 'क्रमबद्ध अध्ययन चरण (Study Material → PYQ → Quiz)'}
+              {exam.id === 'ssc-cgl'
+                ? 'SSC CGL टॉपिक अभ्यास (PYQ MCQs → Timed Quiz)'
+                : isUppcsMains
+                ? 'UPPCS Mains उत्तर लेखन अभ्यास (अभ्यास प्रश्न → टाइमर लेखन → मॉडल उत्तर)'
+                : isUppcsPre
+                ? 'UPPCS Pre चरणबद्ध अभ्यास (नोट्स → विगत वर्ष MCQs → निगेटिव मार्किंग टेस्ट)'
+                : 'क्रमबद्ध अध्ययन चरण (Study Material → PYQ → Quiz)'}
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-slate-600">
               {exam.id === 'ssc-cgl'
                 ? 'SSC CGL परीक्षा में केवल वस्तुनिष्ठ बहुविकल्पीय प्रश्न (MCQs) पूछे जाते हैं। पहले पिछले वर्षों के वास्तविक PYQ हल करें, फिर समयबद्ध क्विज़ से गति और सटीकता परखें।'
+                : isUppcsMains
+                ? 'UPPCS Mains में सफलता गुणवत्तापूर्ण उत्तर लेखन पर निर्भर करती है। निर्धारित शब्द सीमा (125/200 शब्द) में उत्तर लिखें, टाइमर ट्रैक करें और मॉडल उत्तर व मूल्यांकन रूब्रिक से मिलान करें।'
+                : isUppcsPre
+                ? 'UPPCS Pre परीक्षा 100% वस्तुनिष्ठ MCQ आधारित होती है जिसमें कथन, कारण, सुमेलन एवं CSAT प्रश्न आते हैं। 1/3 निगेटिव मार्किंग के साथ अभ्यास करें।'
                 : 'अवधारणाओं को पढ़ें, पूर्व वर्षों के वास्तविक प्रश्नों का अभ्यास करें और क्विज़ के साथ स्कोर जांचें।'}
             </p>
           </div>
+
+          {/* If UPPCS Mains, render interactive subjective answer writing card */}
+          {isUppcsMains && (
+            <div className="mb-10">
+              <MainsAnswerWritingCard
+                topicId={topic.id}
+                subjectId={subject.id}
+                topicName={topic.name}
+                onProgressUpdated={() => {
+                  setTopicProgress(topic.id, Math.max(overallProgress, 100));
+                  setRefreshKey((k) => k + 1);
+                }}
+              />
+            </div>
+          )}
 
           {/* Learning Steps Detail Cards */}
           <div className="grid gap-6 md:grid-cols-3">

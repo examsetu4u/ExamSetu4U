@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { Breadcrumbs } from '@/components/curriculum-ui';
+import { AutoDiagramRenderer } from '@/components/diagrams/AutoDiagramRenderer';
 import { Button, Card, Container, Layout } from '@/components/site';
 import {
   MATHS_CHAPTER_SECTIONS,
@@ -102,6 +103,12 @@ export function MathsSectionViewer({
         year: q.year,
         marks: 1,
         status: 'PUBLISHED' as const,
+        diagramRequired: q.diagramRequired,
+        diagramType: q.diagramType,
+        diagramData: q.diagramData,
+        diagramCaption: q.diagramCaption,
+        diagramImageUrl: q.diagramImageUrl,
+        diagramAltText: q.diagramAltText,
       }));
       return [...cur, ...liveConverted];
     }
@@ -332,6 +339,33 @@ export function MathsSectionViewer({
                         <div className="mt-4 text-sm font-semibold leading-relaxed text-slate-900 sm:text-base whitespace-pre-line">
                           {q.question}
                         </div>
+
+                        {/* Optional Question Diagram (Auto SVG or Hosted Image) */}
+                        {q.diagramRequired && (
+                          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4 text-center">
+                            {q.diagramImageUrl ? (
+                              <div className="mx-auto max-w-sm">
+                                <img
+                                  src={q.diagramImageUrl}
+                                  alt={q.diagramAltText || q.diagramCaption || 'Question Diagram'}
+                                  className="mx-auto max-h-56 rounded-lg object-contain"
+                                  loading="lazy"
+                                />
+                                {q.diagramCaption && (
+                                  <p className="mt-2 text-xs font-medium text-slate-500 italic">
+                                    {q.diagramCaption}
+                                  </p>
+                                )}
+                              </div>
+                            ) : (
+                              <AutoDiagramRenderer
+                                type={q.diagramType as any}
+                                data={q.diagramData}
+                                caption={q.diagramCaption}
+                              />
+                            )}
+                          </div>
+                        )}
 
                         {/* Multiple Choice / Options */}
                         {q.options && (

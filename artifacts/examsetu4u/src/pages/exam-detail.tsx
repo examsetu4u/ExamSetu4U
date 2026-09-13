@@ -45,6 +45,7 @@ export default function ExamDetailPage() {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('all');
   const [topicFilter, setTopicFilter] = useState<'all' | 'study' | 'pyq' | 'quiz'>('all');
   const [sscTierFilter, setSscTierFilter] = useState<'all' | 'tier1' | 'tier2-p1' | 'tier2-p2-3'>('all');
+  const [uppcsStageFilter, setUppcsStageFilter] = useState<'all' | 'pre' | 'mains' | 'ca'>('all');
 
   const subjects = useMemo(() => (exam ? getSubjectsForExam(exam.id) : []), [exam]);
 
@@ -80,9 +81,37 @@ export default function ExamDetailPage() {
           return subject.name.startsWith('Tier-II Paper-II:') || subject.name.startsWith('Tier-II Paper-III:');
         }
       }
+
+      const isUppcs = exam?.id === 'uppcs' || exam?.id === 'uppcs-pre' || exam?.id === 'uppcs-mains';
+      if (isUppcs && uppcsStageFilter !== 'all') {
+        if (uppcsStageFilter === 'pre') {
+          return (
+            subject.name.startsWith('Pre:') ||
+            subject.id.startsWith('pre-') ||
+            subject.id === 'general-studies-1' ||
+            subject.id === 'general-studies-2'
+          );
+        }
+        if (uppcsStageFilter === 'mains') {
+          return (
+            subject.name.startsWith('Mains:') ||
+            subject.id.startsWith('mains-') ||
+            subject.id.startsWith('gs-paper') ||
+            subject.id === 'general-hindi' ||
+            subject.id === 'essay'
+          );
+        }
+        if (uppcsStageFilter === 'ca') {
+          return (
+            subject.id.includes('current-affairs') ||
+            subject.name.includes('Current Affairs') ||
+            subject.name.includes('समसामयिकी')
+          );
+        }
+      }
       return true;
     });
-  }, [query, subjectStatsList, exam?.id, sscTierFilter]);
+  }, [query, subjectStatsList, exam?.id, sscTierFilter, uppcsStageFilter]);
 
   // All topics for the exam
   const allExamTopics = useMemo(() => {
@@ -282,73 +311,96 @@ export default function ExamDetailPage() {
             </div>
           </div>
 
-          {/* Special UPPCS Pre Current Affairs Spotlight */}
-          {exam.id === 'uppcs-pre' && (
-            <div className="mt-8 overflow-hidden rounded-2xl border-2 border-indigo-300/90 bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4338ca] p-6 text-white shadow-md">
+          {/* Special UPPCS Pre & Mains Integrated Architecture Spotlight */}
+          {(exam.id === 'uppcs' || exam.id === 'uppcs-pre' || exam.id === 'uppcs-mains') && (
+            <div className="mt-8 overflow-hidden rounded-2xl border-2 border-amber-300/80 bg-gradient-to-br from-[#1a1c23] via-[#2d2218] to-[#3a1d0f] p-6 text-white shadow-md">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-violet-400/20 border border-violet-300/40 px-3 py-0.5 text-xs font-bold text-violet-200">
-                      <Sparkles size={13} /> UPPCS Pre Special
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/25 border border-amber-300/40 px-3 py-0.5 text-xs font-bold text-amber-200">
+                      <Sparkles size={13} /> UPPCS Civil Services Integrated
+                    </span>
+                    <span className="rounded-full bg-blue-400/20 border border-blue-300/40 px-2.5 py-0.5 text-[11px] font-bold text-blue-200">
+                      Pre: 100% Objective MCQs
                     </span>
                     <span className="rounded-full bg-emerald-400/20 border border-emerald-300/40 px-2.5 py-0.5 text-[11px] font-bold text-emerald-200">
-                      30-35 प्रश्न वेटेज (GS Paper-1)
+                      Mains: Descriptive Answer Writing
                     </span>
                   </div>
                   <h3 className="font-display mt-2.5 text-2xl font-black text-white">
-                    समसामयिकी एवं करेंट अफेयर्स केंद्र (Current Affairs Hub)
+                    UPPCS प्रारंभिक (Pre) एवं मुख्य परीक्षा (Mains) संरचना
                   </h3>
-                  <p className="mt-1.5 max-w-2xl text-xs sm:text-sm text-indigo-100/90 leading-relaxed">
-                    दैनिक (Daily), साप्ताहिक (Weekly), मासिक (Monthly) एवं वार्षिकी (Yearly) नोट्स — उत्तर प्रदेश बजट, रामसर स्थल, जीआई टैग और वास्तविक UPPCS प्रीलिम्स MCQ क्विज़।
+                  <p className="mt-1.5 max-w-2xl text-xs sm:text-sm text-amber-100/90 leading-relaxed">
+                    प्रारंभिक परीक्षा (Pre) में बहुविकल्पीय प्रश्न (कथन, सुमेलन, A/R, CSAT) तथा मुख्य परीक्षा (Mains) में सामान्य हिंदी, निबंध और GS पेपर 1 से 6 (यूपी विशेष सहित) के लिए व्यवस्थित वर्णनात्मक उत्तर लेखन व मॉडल उत्तर।
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-2.5">
                   <Link
                     href="/exams/uppcs-pre/current-affairs"
-                    className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs sm:text-sm font-black text-indigo-950 shadow-sm hover:bg-indigo-50 transition"
+                    className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-4 py-2.5 text-xs sm:text-sm font-black text-slate-950 shadow-sm hover:bg-amber-300 transition"
                   >
-                    करेंट अफेयर्स केंद्र खोलें <ArrowRight size={15} />
+                    करेंट अफेयर्स केंद्र <ArrowRight size={15} />
                   </Link>
                   <Link
-                    href="/quiz/uppcs-pre/uppcs-pre-current-affairs"
-                    className="inline-flex items-center gap-2 rounded-xl bg-violet-500/90 border border-violet-300/40 px-4 py-2.5 text-xs sm:text-sm font-black text-white hover:bg-violet-600 transition"
+                    href="/quiz/uppcs-pre/general-studies-1"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 px-4 py-2.5 text-xs sm:text-sm font-black text-white hover:bg-white/20 transition"
                   >
-                    <Zap size={14} /> सभी क्विज़ हल करें
+                    <Zap size={14} /> Pre वस्तुनिष्ठ टेस्ट
                   </Link>
                 </div>
               </div>
 
-              {/* 4 quick format pills */}
+              {/* 4 quick format stage selector buttons */}
               <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-white/15 text-center">
-                <Link
-                  href="/exams/uppcs-pre/current-affairs"
-                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                <button
+                  type="button"
+                  onClick={() => setUppcsStageFilter('pre')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    uppcsStageFilter === 'pre'
+                      ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-white/30 font-bold'
+                      : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
                 >
-                  <p className="text-[10px] font-bold text-indigo-200 uppercase">1. दैनिक</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-white">Daily CA & Quiz</p>
-                </Link>
-                <Link
-                  href="/exams/uppcs-pre/current-affairs"
-                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                  <p className={`text-[10px] font-bold uppercase ${uppcsStageFilter === 'pre' ? 'text-slate-900' : 'text-amber-200'}`}>1. प्रारंभिक परीक्षा</p>
+                  <p className="text-xs sm:text-sm font-extrabold">Pre (100% MCQs)</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUppcsStageFilter('mains')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    uppcsStageFilter === 'mains'
+                      ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-white/30 font-bold'
+                      : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
                 >
-                  <p className="text-[10px] font-bold text-indigo-200 uppercase">2. साप्ताहिक</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-white">Weekly Roundup</p>
-                </Link>
-                <Link
-                  href="/exams/uppcs-pre/current-affairs"
-                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                  <p className={`text-[10px] font-bold uppercase ${uppcsStageFilter === 'mains' ? 'text-slate-900' : 'text-amber-200'}`}>2. मुख्य परीक्षा</p>
+                  <p className="text-xs sm:text-sm font-extrabold">Mains (उत्तर लेखन)</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUppcsStageFilter('ca')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    uppcsStageFilter === 'ca'
+                      ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-white/30 font-bold'
+                      : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
                 >
-                  <p className="text-[10px] font-bold text-indigo-200 uppercase">3. मासिक</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-white">Monthly Dossier</p>
-                </Link>
-                <Link
-                  href="/exams/uppcs-pre/current-affairs"
-                  className="rounded-xl bg-white/10 hover:bg-white/20 p-2.5 transition backdrop-blur-xs text-left"
+                  <p className={`text-[10px] font-bold uppercase ${uppcsStageFilter === 'ca' ? 'text-slate-900' : 'text-amber-200'}`}>3. समसामयिकी केंद्र</p>
+                  <p className="text-xs sm:text-sm font-extrabold">Current Affairs Hub</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUppcsStageFilter('all')}
+                  className={`rounded-xl p-2.5 transition text-left ${
+                    uppcsStageFilter === 'all'
+                      ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-white/30 font-bold'
+                      : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
                 >
-                  <p className="text-[10px] font-bold text-indigo-200 uppercase">4. वार्षिकी</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-white">Yearly & UP Special</p>
-                </Link>
+                  <p className={`text-[10px] font-bold uppercase ${uppcsStageFilter === 'all' ? 'text-slate-900' : 'text-amber-200'}`}>4. संपूर्ण पाठ्यक्रम</p>
+                  <p className="text-xs sm:text-sm font-extrabold">All 18+ Modules</p>
+                </button>
               </div>
             </div>
           )}
@@ -489,6 +541,56 @@ export default function ExamDetailPage() {
             </div>
           )}
 
+          {/* UPPCS Stage Filter Tab Strip */}
+          {(exam.id === 'uppcs' || exam.id === 'uppcs-pre' || exam.id === 'uppcs-mains') && (
+            <div className="mt-8 flex flex-wrap items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50/50 p-2">
+              <button
+                type="button"
+                onClick={() => setUppcsStageFilter('all')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  uppcsStageFilter === 'all'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                सभी पेपर्स (All Pre + Mains)
+              </button>
+              <button
+                type="button"
+                onClick={() => setUppcsStageFilter('pre')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  uppcsStageFilter === 'pre'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                प्रारंभिक परीक्षा (Pre - 100% MCQs)
+              </button>
+              <button
+                type="button"
+                onClick={() => setUppcsStageFilter('mains')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  uppcsStageFilter === 'mains'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                मुख्य परीक्षा (Mains - Subjective)
+              </button>
+              <button
+                type="button"
+                onClick={() => setUppcsStageFilter('ca')}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  uppcsStageFilter === 'ca'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                }`}
+              >
+                करेंट अफेयर्स केंद्र (CA Hub)
+              </button>
+            </div>
+          )}
+
           {filteredSubjectStats.length ? (
             <div className="mt-8 grid gap-5 md:grid-cols-2">
               {filteredSubjectStats.map(({ subject, stats }) => {
@@ -496,6 +598,10 @@ export default function ExamDetailPage() {
                 const completedTopicCount = stats?.completedTopics || 0;
                 const progressVal = stats?.averageProgress || 0;
                 const quizAcc = stats?.quizAccuracy;
+
+                const isPre = subject.name.startsWith('Pre:') || subject.id.startsWith('pre-') || subject.id === 'general-studies-1' || subject.id === 'general-studies-2';
+                const isMains = subject.name.startsWith('Mains:') || subject.id.startsWith('gs-paper') || subject.id === 'general-hindi' || subject.id === 'essay';
+                const isCA = subject.id.includes('current-affairs') || subject.name.includes('Current Affairs') || subject.name.includes('समसामयिकी');
 
                 return (
                   <Card
@@ -505,9 +611,26 @@ export default function ExamDetailPage() {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                          Subject
-                        </p>
+                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                          <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                            Subject
+                          </p>
+                          {isCA && (
+                            <span className="rounded-full bg-purple-100 text-purple-800 text-[10px] font-black px-2 py-0.5 border border-purple-200">
+                              समसामयिकी केंद्र
+                            </span>
+                          )}
+                          {isPre && !isCA && (
+                            <span className="rounded-full bg-blue-100 text-blue-800 text-[10px] font-black px-2 py-0.5 border border-blue-200">
+                              100% वस्तुनिष्ठ MCQ (Pre)
+                            </span>
+                          )}
+                          {isMains && (
+                            <span className="rounded-full bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 border border-amber-200">
+                              वर्णनात्मक उत्तर लेखन (Mains)
+                            </span>
+                          )}
+                        </div>
                         <h3 className="mt-1 text-xl font-bold text-slate-900">
                           {subject.name}
                         </h3>

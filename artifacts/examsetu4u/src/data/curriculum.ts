@@ -132,6 +132,9 @@ function createCurriculum(definitions: ExamDefinition[]) {
 
       subject.topics.forEach((topicName, index) => {
         const isSscCgl = definition.id === 'ssc-cgl';
+        const isUppcsMains = definition.id === 'uppcs-mains' || subject.name.startsWith('Mains:');
+        const isUppcsPre = definition.id === 'uppcs-pre' || (definition.id === 'uppcs' && subject.name.startsWith('Pre:'));
+
         topics.push({
           id: topicIds[index],
           examId: definition.id,
@@ -139,17 +142,23 @@ function createCurriculum(definitions: ExamDefinition[]) {
           name: topicName,
           description: isSscCgl
             ? `Master ${topicName} through focused Multiple Choice Questions (MCQs), previous year patterns and timed speed testing.`
+            : isUppcsMains
+            ? `Master ${topicName} through subjective descriptive answer writing, structured framework and official model answers.`
+            : isUppcsPre
+            ? `Master ${topicName} for UPPCS Prelims through multi-statement, assertion-reason, match lists and conceptual MCQs.`
             : `Build a clear understanding of ${topicName.toLowerCase()} with focused notes, practice and revision.`,
           estimatedMinutes: 20 + (index % 3) * 10,
           availability: {
             studyMaterial: isSscCgl
               ? false
+              : isUppcsMains || isUppcsPre
+              ? true
               : subjectId === 'super-tet-child-development' ||
                 subjectId === 'super-tet-teaching-skills' ||
                 subjectId === 'uppcs-pre-current-affairs',
-            pyq: isSscCgl ? true : subjectId === 'cbse-class-10-science' ? index === 0 : index % 3 !== 1,
-            quiz: true,
-            theory: isSscCgl ? false : index % 2 === 0,
+            pyq: isSscCgl ? true : isUppcsMains ? false : subjectId === 'cbse-class-10-science' ? index === 0 : true,
+            quiz: isUppcsMains ? false : true,
+            theory: isSscCgl ? false : true,
           },
         });
       });
@@ -628,14 +637,15 @@ const curriculumDefinitions: ExamDefinition[] = [
     tone: 'teal',
   },
   {
-    id: 'uppcs-pre',
-    name: 'UPPCS Pre',
-    shortDescription: 'Prepare for UPPCS Prelims with focused General Studies, Current Affairs & CSAT.',
-    description: 'Comprehensive UPPCS Prelims structure organised around Current Affairs (दैनिक, साप्ताहिक, मासिक व वार्षिकी), General Studies I, and CSAT practice.',
+    id: 'uppcs',
+    name: 'UPPCS (Pre + Mains)',
+    shortDescription: 'Complete UPPCS Civil Services coverage: Prelims (Pre - 100% Objective MCQs) & Mains (Subjective Answer Writing).',
+    description: 'Comprehensive UPPCS exam portal structured into Prelims (Pre: GS-1 & CSAT 100% MCQs) and Mains (General Hindi, Essay, GS 1 to 6 Subjective Answer Writing) alongside the dedicated Current Affairs hub.',
     subjects: [
+      // Pre Subjects
       {
         id: 'current-affairs',
-        name: 'समसामयिकी एवं करेंट अफेयर्स (Current Affairs)',
+        name: 'Pre: समसामयिकी एवं करेंट अफेयर्स (Current Affairs Hub)',
         description: 'UPPCS Pre हेतु दैनिक, साप्ताहिक, मासिक व वार्षिकी करेंट अफेयर्स नोट्स, यूपी विशेषांक एवं परीक्षा उपयोगी MCQ क्विज़।',
         topics: [
           'Daily Current Affairs (दैनिक समसामयिकी)',
@@ -644,25 +654,201 @@ const curriculumDefinitions: ExamDefinition[] = [
           'Yearly & UP Special (वार्षिकी एवं उत्तर प्रदेश समसामयिकी)',
         ],
       },
-      { id: 'general-studies-1', name: 'General Studies I', description: 'Cover history, polity, geography, economy, science and environment.', topics: ['Indian History and Culture', 'Indian Polity', 'Geography and Economy'] },
-      { id: 'general-studies-2', name: 'General Studies II / CSAT', description: 'Practice comprehension, reasoning, numeracy and decision-making skills.', topics: ['Comprehension', 'Logical Reasoning', 'Numeracy and Data Interpretation'] },
+      {
+        id: 'general-studies-1',
+        name: 'Pre: सामान्य अध्ययन I - भारतीय इतिहास व संस्कृति',
+        description: 'प्राचीन, मध्यकालीन व आधुनिक भारत का इतिहास, राष्ट्रीय आंदोलन एवं कला संस्कृति (100% वस्तुनिष्ठ MCQs)।',
+        topics: [
+          'प्राचीन भारत का इतिहास व सिंधु घाटी सभ्यता',
+          'मध्यकालीन भारत एवं मुगल साम्राज्य',
+          'आधुनिक भारत का इतिहास व 1857 का संग्राम',
+          'भारतीय राष्ट्रीय आंदोलन एवं स्वतंत्रता संग्राम',
+        ],
+      },
+      {
+        id: 'pre-gs-geography',
+        name: 'Pre: सामान्य अध्ययन I - भारत एवं विश्व का भूगोल',
+        description: 'भौतिक, सामाजिक एवं आर्थिक भूगोल, नदियां, पर्वत, जलवायु, वन एवं मानचित्र आधारित प्रश्न।',
+        topics: [
+          'भारत का भौतिक भूगोल एवं नदी तंत्र',
+          'मानसून, जलवायु एवं प्राकृतिक वनस्पति',
+          'विश्व भूगोल, महाद्वीप एवं महासागरीय धाराएं',
+          'कृषि, खनिज संसाधन एवं जनसंख्या भूगोल',
+        ],
+      },
+      {
+        id: 'pre-gs-polity',
+        name: 'Pre: सामान्य अध्ययन I - भारतीय राजव्यवस्था व संविधान',
+        description: 'संवैधानिक ढांचा, प्रस्तावना, मौलिक अधिकार, DPSP, संसद, न्यायपालिका एवं पंचायती राज व्यवस्था।',
+        topics: [
+          'संवैधानिक विकास, प्रस्तावना व नागरिकता',
+          'मूल अधिकार, मूल कर्तव्य एवं नीति निदेशक तत्व',
+          'संघीय कार्यपालिका, संसद व सर्वोच्च न्यायालय',
+          'राज्य विधानमंडल, राज्यपाल एवं 73वां/74वां संशोधन',
+        ],
+      },
+      {
+        id: 'pre-gs-economy',
+        name: 'Pre: सामान्य अध्ययन I - आर्थिक एवं सामाजिक विकास',
+        description: 'सतत विकास, राष्ट्रीय आय, गरीबी, समावेशन, जनसांख्यिकी, सामाजिक क्षेत्र के उपक्रम एवं बजट।',
+        topics: [
+          'भारतीय अर्थव्यवस्था की संरचना एवं राष्ट्रीय आय',
+          'बैंकिंग प्रणाली, मौद्रिक नीति व RBI',
+          'गरीबी, बेरोजगारी एवं सरकारी कल्याणकारी योजनाएं',
+          'केंद्रीय बजट, आर्थिक सर्वेक्षण एवं व्यापार संतुलन',
+        ],
+      },
+      {
+        id: 'pre-gs-science-env',
+        name: 'Pre: सामान्य अध्ययन I - सामान्य विज्ञान एवं पर्यावरण',
+        description: 'दैनिक भौतिकी, रसायन, जीव विज्ञान, जैव विविधता, पारिस्थितिकी, रामसर स्थल व जलवायु परिवर्तन।',
+        topics: [
+          'सामान्य भौतिकी एवं दैनिक अनुप्रयोग',
+          'मानव शरीर क्रिया विज्ञान, पोषण एवं रोग',
+          'पारिस्थितिकी तंत्र, जैव विविधता व रामसर स्थल',
+          'पर्यावरण प्रदूषण, जलवायु परिवर्तन एवं सम्मेलन',
+        ],
+      },
+      {
+        id: 'pre-gs-up-special',
+        name: 'Pre: सामान्य अध्ययन I - उत्तर प्रदेश विशेष (UP Special)',
+        description: 'उत्तर प्रदेश का इतिहास, संस्कृति, मेले, नदियां, खनिज, वन्यजीव अभयारण्य, औद्योगिक नीतियां व ODOP।',
+        topics: [
+          'उत्तर प्रदेश का संक्षिप्त इतिहास एवं प्रमुख जननायक',
+          'यूपी का भौगोलिक स्वरूप, नदियां एवं वन्यजीव अभयारण्य',
+          'उत्तर प्रदेश की कला, संस्कृति, लोकगीत एवं मेले',
+          'यूपी की अर्थव्यवस्था, प्रमुख उद्योग, ODOP व नीतियां',
+        ],
+      },
+      {
+        id: 'general-studies-2',
+        name: 'Pre: सामान्य अध्ययन II (CSAT) - संप्रेषण व बोधगम्यता',
+        description: 'Comprehension passages, Interpersonal skills including communication and decision making.',
+        topics: [
+          'Reading Comprehension (अपठित गद्यांश)',
+          'Interpersonal Skills & Communication (अंतरवैयक्तिक संप्रेषण)',
+          'Decision Making & Problem Solving (निर्णय क्षमता)',
+        ],
+      },
+      {
+        id: 'pre-csat-reasoning-maths',
+        name: 'Pre: सामान्य अध्ययन II (CSAT) - तार्किक योग्यता व गणित',
+        description: 'Logical reasoning, analytical ability and elementary mathematics up to class 10 standard.',
+        topics: [
+          'Logical Reasoning & Analytical Ability (तार्किक क्षमता)',
+          'Coding-Decoding, Series & Syllogism',
+          'अंकगणित: प्रतिशत, लाभ-हानि, अनुपात व समय-कार्य',
+          'Data Interpretation (तालिका व आरेखीय विश्लेषण)',
+        ],
+      },
+      {
+        id: 'pre-csat-hindi-english',
+        name: 'Pre: सामान्य अध्ययन II (CSAT) - सामान्य हिंदी व English',
+        description: 'कक्षा 10 स्तर की सामान्य हिंदी व्याकरण एवं General English comprehension and grammar.',
+        topics: [
+          'सामान्य हिंदी: संधि, समास, विलोम व पर्यायवाची',
+          'वाक्य शुद्धि, मुहावरे एवं लोकोक्तियां',
+          'General English: Grammar & Vocabulary',
+          'Idioms, Phrases & Sentence Correction',
+        ],
+      },
+
+      // Mains Subjects (Subjective Answer Writing)
+      {
+        id: 'general-hindi',
+        name: 'Mains: सामान्य हिंदी (General Hindi - 150 Marks)',
+        description: 'दिए गए गद्य खंड का भावार्थ, संक्षेपण, शासकीय/अर्धशासकीय पत्र, मुहावरे व प्रशासनिक शब्दावली (150 अंक)।',
+        topics: [
+          'अपठित गद्यांश, संक्षेपण एवं शीर्षक निर्धारण',
+          'शासकीय, अर्धशासकीय पत्र व परिपत्र प्रारूप लेखन',
+          'विराम चिन्ह, विलोम, उपसर्ग-प्रत्यय एवं वर्तनी शुद्धि',
+          'मुहावरे, लोकोक्तियां एवं प्रशासनिक पारिभाषिक शब्दावली',
+        ],
+      },
+      {
+        id: 'essay',
+        name: 'Mains: निबंध (Essay Paper - 150 Marks)',
+        description: 'तीन खंडों से एक-एक निबंध (कुल 3 निबंध × 50 अंक = 150 अंक, प्रत्येक 700 शब्द सीमा)।',
+        topics: [
+          'खंड (क): साहित्य और संस्कृति / सामाजिक क्षेत्र / राजनीतिक क्षेत्र',
+          'खंड (ख): विज्ञान, पर्यावरण और प्रौद्योगिकी / आर्थिक क्षेत्र / कृषि एवं उद्योग',
+          'खंड (ग): राष्ट्रीय एवं अंतरराष्ट्रीय घटनाक्रम / प्राकृतिक आपदाएं / राष्ट्रीय विकास योजनाएं',
+        ],
+      },
+      {
+        id: 'gs-paper-1',
+        name: 'Mains: सामान्य अध्ययन प्रश्नपत्र 1 (GS Paper 1 - 200 Marks)',
+        description: 'भारतीय संस्कृति का इतिहास, आधुनिक भारत, स्वतंत्रता संग्राम, विश्व इतिहास, भारतीय समाज एवं भूगोल (200 अंक)।',
+        topics: [
+          'भारतीय संस्कृति के प्राचीन से आधुनिक काल तक के कला रूप व वास्तुकला',
+          '1757 से 1947 तक आधुनिक भारतीय इतिहास की महत्वपूर्ण घटनाएं एवं व्यक्तित्व',
+          'स्वतंत्रता संग्राम: विभिन्न चरण व देश के विभिन्न भागों का योगदान',
+          'भारतीय समाज की मुख्य विशेषताएं, महिला संगठन, उदारीकरण व सामाजिक सशक्तीकरण',
+          'भौतिक भूगोल, विश्व के प्रमुख प्राकृतिक संसाधन एवं महत्वपूर्ण भूभौतिकीय घटनाएं',
+        ],
+      },
+      {
+        id: 'gs-paper-2',
+        name: 'Mains: सामान्य अध्ययन प्रश्नपत्र 2 (GS Paper 2 - 200 Marks)',
+        description: 'भारतीय संविधान, शासन प्रणाली, सामाजिक न्याय, नीतियां एवं अंतर्राष्ट्रीय संबंध (200 अंक)।',
+        topics: [
+          'भारतीय संविधान: ऐतिहासिक आधार, विशेषताएं, संशोधन एवं मूल ढांचा',
+          'संघ एवं राज्यों के कार्य, उत्तरदायित्व एवं संघीय ढांचे की चुनौतियां',
+          'शक्तियों का पृथक्करण, विवाद निवारण तंत्र एवं महत्वपूर्ण संवैधानिक पद',
+          'विकास प्रक्रिया, गैर-सरकारी संगठन (NGOs), SHGs एवं सामाजिक न्याय',
+          'भारत एवं इसके पड़ोसी संबंध, द्विपक्षीय, क्षेत्रीय एवं वैश्विक समूह',
+        ],
+      },
+      {
+        id: 'gs-paper-3',
+        name: 'Mains: सामान्य अध्ययन प्रश्नपत्र 3 (GS Paper 3 - 200 Marks)',
+        description: 'आर्थिक विकास, कृषि, विज्ञान एवं प्रौद्योगिकी, जैव विविधता, सुरक्षा एवं आपदा प्रबंधन (200 अंक)।',
+        topics: [
+          'भारतीय अर्थव्यवस्था, नियोजन, संसाधन जुटाना, संवृद्धि एवं विकास',
+          'मुख्य फसलें, सिंचाई के प्रकार, भंडारण, परिवहन एवं किसानों की सहायता हेतु ई-प्रौद्योगिकी',
+          'प्रत्यक्ष एवं अप्रत्यक्ष कृषि सब्सिडी, न्यूनतम समर्थन मूल्य (MSP) एवं PDS',
+          'विज्ञान एवं प्रौद्योगिकी में भारतीयों की उपलब्धियां, साइबर सुरक्षा एवं आंतरिक सुरक्षा',
+          'आपदा प्रबंधन, आपदा शमन एवं पर्यावरण प्रभाव आकलन (EIA)',
+        ],
+      },
+      {
+        id: 'gs-paper-4',
+        name: 'Mains: सामान्य अध्ययन प्रश्नपत्र 4 (GS Paper 4: Ethics - 200 Marks)',
+        description: 'नीतिशास्त्र तथा मानवीय सह-संबंध, अभिवृत्ति, सिविल सेवा मूल्य एवं सत्यनिष्ठा तथा केस स्टडीज (200 अंक)।',
+        topics: [
+          'नीतिशास्त्र तथा मानवीय सह-संबंध, मानवीय मूल्य एवं महापुरुषों का जीवन दर्शन',
+          'अभिवृत्ति (Attitude): संरचना, कार्य, नैतिक एवं राजनीतिक प्रभाव',
+          'सिविल सेवा के बुनियादी मूल्य: सत्यनिष्ठा, निष्पक्षता, गैर-पक्षपात एवं समानुभूति',
+          'भावनात्मक समझ (Emotional Intelligence): अवधारणा एवं प्रशासन में उपयोग',
+          'शासन व्यवस्था में ईमानदारी, लोक सेवा की अवधारणा एवं केस स्टडीज (Case Studies)',
+        ],
+      },
+      {
+        id: 'gs-paper-5',
+        name: 'Mains: सामान्य अध्ययन प्रश्नपत्र 5 (GS Paper 5: UP Special I - 200 Marks)',
+        description: 'उत्तर प्रदेश का इतिहास, संस्कृति, वास्तुकला, त्योहार, लोकनृत्य, राजव्यवस्था, न्यायपालिका एवं सुरक्षा (200 अंक)।',
+        topics: [
+          'उत्तर प्रदेश का इतिहास, सभ्यता, संस्कृति एवं प्राचीन नगर',
+          '1857 के स्वतंत्रता संग्राम एवं भारतीय राष्ट्रीय आंदोलन में यूपी का योगदान',
+          'उत्तर प्रदेश के लोकगीत, लोकनृत्य, मेले, पर्व एवं हस्तशिल्प',
+          'उत्तर प्रदेश की शासन प्रणाली, राज्यपाल, मुख्यमंत्री, विधानसभा एवं उच्च न्यायालय',
+          'उत्तर प्रदेश में लोक सेवाएं, लोक सेवा आयोग, लेखा परीक्षा एवं भूमि सुधार',
+        ],
+      },
+      {
+        id: 'gs-paper-6',
+        name: 'Mains: सामान्य अध्ययन प्रश्नपत्र 6 (GS Paper 6: UP Special II - 200 Marks)',
+        description: 'उत्तर प्रदेश का आर्थिक परिदृश्य, $1T लक्ष्य, बजट, बुनियादी ढांचा, भूगोल, पर्यावरण एवं खनिज (200 अंक)।',
+        topics: [
+          'उत्तर प्रदेश का आर्थिक परिदृश्य: $1 ट्रिलियन अर्थव्यवस्था का रोडमैप एवं राज्य बजट',
+          'उत्तर प्रदेश में बुनियादी ढांचा: एक्सप्रेसवे, हवाई अड्डे, डिफेंस कॉरिडोर एवं औद्योगिक नीतियां',
+          'एक जिला एक उत्पाद (ODOP), हथकरघा, हस्तशिल्प एवं MSME क्षेत्र',
+          'उत्तर प्रदेश का भूगोल: उच्चावच, नदियां, मिट्टी, जलवायु एवं सिंचाई परियोजनाएं',
+          'उत्तर प्रदेश के वन, राष्ट्रीय उद्यान, रामसर आर्द्रभूमियां, प्रदूषण एवं पर्यावरणीय मुद्दे',
+        ],
+      },
     ],
     tone: 'saffron',
-  },
-  {
-    id: 'uppcs-mains',
-    name: 'UPPCS Mains',
-    shortDescription: 'Map UPPCS Mains preparation paper by paper.',
-    description: 'A paper-wise UPPCS Mains structure that can later expand into detailed notes and answer practice.',
-    subjects: [
-      { id: 'general-hindi', name: 'General Hindi', description: 'Build accuracy in grammar, précis, comprehension and writing.', topics: ['व्याकरण', 'संक्षेपण', 'निबंध और पत्र लेखन'] },
-      { id: 'essay', name: 'Essay', description: 'Practice structured arguments, examples and balanced essay writing.', topics: ['Essay Structure', 'Social Issues', 'Governance and Economy'] },
-      { id: 'gs-paper-1', name: 'General Studies Paper I', description: 'Study history, culture, society and geography for the mains paper.', topics: ['History and Culture', 'Indian Society', 'World and Indian Geography'] },
-      { id: 'gs-paper-2', name: 'General Studies Paper II', description: 'Revise polity, governance, social justice and international relations.', topics: ['Constitution and Polity', 'Governance and Social Justice', 'International Relations'] },
-      { id: 'gs-paper-3', name: 'General Studies Paper III', description: 'Cover economy, agriculture, science, technology and security.', topics: ['Indian Economy', 'Agriculture and Environment', 'Science and Security'] },
-      { id: 'gs-paper-4', name: 'General Studies Paper IV', description: 'Develop clarity around ethics, integrity and aptitude case studies.', topics: ['Ethics and Human Values', 'Emotional Intelligence', 'Case Studies'] },
-    ],
-    tone: 'coral',
   },
 ];
 
@@ -891,7 +1077,14 @@ topics.forEach((topic) => {
 });
 
 export function getExam(examId: string) {
-  return exams.find((exam) => exam.id === examId);
+  const norm = (examId || '').toLowerCase().trim();
+  const direct = exams.find((exam) => exam.id.toLowerCase() === norm);
+  if (direct) return direct;
+
+  if (norm === 'uppcs' || norm === 'uppsc' || norm === 'up-pcs' || norm === 'uppcs-exam') {
+    return exams.find((e) => e.id === 'uppcs') || exams.find((e) => e.id === 'uppcs-pre');
+  }
+  return undefined;
 }
 
 export function getSubject(subjectId: string, examId?: string) {
@@ -912,7 +1105,7 @@ export function getSubject(subjectId: string, examId?: string) {
     if (directMatch) return directMatch;
   }
 
-  return subjects.find(
+  const standardMatch = subjects.find(
     (subject) =>
       subject.id.toLowerCase() === norm ||
       (subject.examId === 'cbse-class-10' && (
@@ -962,7 +1155,21 @@ export function getSubject(subjectId: string, examId?: string) {
           norm === 'ca' ||
           norm === 'samayiki'
         ))
+      )) ||
+      (subject.examId === 'uppcs' && (
+        (subject.id === 'uppcs-current-affairs' && (
+          norm === 'current-affairs' ||
+          norm === 'uppcs-current-affairs' ||
+          norm === 'ca' ||
+          norm === 'samayiki'
+        ))
       ))
+  );
+  if (standardMatch) return standardMatch;
+
+  // Suffix or substring match fallback
+  return subjects.find(
+    (s) => s.id.toLowerCase().endsWith(norm) || norm.endsWith(s.id.toLowerCase())
   );
 }
 

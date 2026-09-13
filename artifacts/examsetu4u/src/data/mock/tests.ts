@@ -210,14 +210,14 @@ export const mockTestConfigs: MockTestConfig[] = [
   // 5. UPPCS Pre
   {
     id: 'uppcs-pre-gs1-mock-01',
-    examId: 'uppcs-pre',
+    examId: 'uppcs',
     title: 'UPPCS Prelims General Studies Paper-1 Full Mock',
     description: 'उत्तर प्रदेश लोक सेवा आयोग प्रारंभिक परीक्षा सामान्य अध्ययन पेपर-1 आधारित मानक मॉक टेस्ट।',
     testType: 'full',
     questionCount: 15,
     durationMinutes: 25,
     difficulty: 'Hard',
-    subjects: ['uppcs-pre-general-studies-1', 'uppcs-pre-general-studies-2'],
+    subjects: ['uppcs-general-studies-1', 'uppcs-general-studies-2'],
     randomizeQuestions: true,
     randomizeOptions: false,
     negativeMarking: true,
@@ -233,14 +233,14 @@ export const mockTestConfigs: MockTestConfig[] = [
   // 6. UPPCS Mains
   {
     id: 'uppcs-mains-essay-practice',
-    examId: 'uppcs-mains',
+    examId: 'uppcs',
     title: 'UPPCS Mains Objective Conceptual Assessment',
     description: 'मुख्य परीक्षा परिप्रेक्ष्य हेतु निबंध व सामान्य अध्ययन समझ का वस्तुनिष्ठ मूल्यांकन।',
     testType: 'subject',
     questionCount: 8,
     durationMinutes: 15,
     difficulty: 'Hard',
-    subjects: ['uppcs-mains-general-studies-1', 'uppcs-mains-essay'],
+    subjects: ['uppcs-gs-paper-1', 'uppcs-essay'],
     randomizeQuestions: true,
     randomizeOptions: false,
     negativeMarking: false,

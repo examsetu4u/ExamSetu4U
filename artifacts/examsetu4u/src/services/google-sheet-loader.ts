@@ -619,7 +619,10 @@ export function validateAndConvertSheetRows(
       };
 
       // Handle Diagram properties from Sheet or fallback to automatic detection
-      const isExplicitDiagram = ['true', 'yes', '1', 'y', 'required', 'हाँ', 'सही'].includes(rawDiagramRequired.toLowerCase().trim()) || Boolean(rawDiagramType) || Boolean(diagramImageUrl);
+      const trimmedDiagramRequired = rawDiagramRequired.toLowerCase().trim();
+      const trimmedDiagramType = rawDiagramType.trim();
+      const trimmedImageUrl = diagramImageUrl.trim();
+      const isExplicitDiagram = ['true', 'yes', '1', 'y', 'required', 'हाँ', 'सही'].includes(trimmedDiagramRequired) || Boolean(trimmedDiagramType) || Boolean(trimmedImageUrl);
 
       let parsedDiagramData: any = undefined;
       if (rawDiagramData) {
@@ -632,11 +635,11 @@ export function validateAndConvertSheetRows(
 
       if (isExplicitDiagram) {
         convertedMCQ.diagramRequired = true;
-        if (rawDiagramType) convertedMCQ.diagramType = rawDiagramType;
+        if (trimmedDiagramType) convertedMCQ.diagramType = trimmedDiagramType;
         if (parsedDiagramData) convertedMCQ.diagramData = parsedDiagramData;
-        if (diagramCaption) convertedMCQ.diagramCaption = diagramCaption;
-        if (diagramAltText) convertedMCQ.diagramAltText = diagramAltText;
-        if (diagramImageUrl) convertedMCQ.diagramImageUrl = diagramImageUrl;
+        if (diagramCaption) convertedMCQ.diagramCaption = diagramCaption.trim();
+        if (diagramAltText) convertedMCQ.diagramAltText = diagramAltText.trim();
+        if (trimmedImageUrl) convertedMCQ.diagramImageUrl = trimmedImageUrl;
       } else {
         // Run smart detector automatically for Mathematics and Science questions
         const autoDetected = detectDiagramRequirement(question, {

@@ -65,8 +65,10 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/search" component={SearchPage} />
         <Route path="/exams" component={ExamsPage} />
+        <Route path="/exams/uppcs/current-affairs" component={CurrentAffairsPage} />
         <Route path="/exams/uppcs-pre/current-affairs" component={CurrentAffairsPage} />
         <Route path="/exams/uppcs-pre/uppcs-pre-current-affairs" component={CurrentAffairsPage} />
+        <Route path="/exams/uppcs-mains/current-affairs" component={CurrentAffairsPage} />
         <Route path="/current-affairs" component={CurrentAffairsPage} />
         <Route path="/exams/cbse-class-10/science/:chapterId/:section" component={CbseScienceSectionPage} />
         <Route path="/exams/cbse-class-10/science/:chapterId" component={CbseScienceChapterPage} />

@@ -45,6 +45,14 @@ export interface GoogleSheetSourceConfig {
 
 export const GOOGLE_SHEET_QUESTION_SOURCES: GoogleSheetSourceConfig[] = [
   {
+    id: 'cbse-10-maths',
+    name: 'CBSE Class 10 Mathematics',
+    examId: 'cbse-class-10',
+    subjectId: 'cbse-class-10-mathematics',
+    gid: '884882832',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=884882832&single=true&output=csv',
+  },
+  {
     id: 'cbse-10-science',
     name: 'CBSE Class 10 Science',
     examId: 'cbse-class-10',
