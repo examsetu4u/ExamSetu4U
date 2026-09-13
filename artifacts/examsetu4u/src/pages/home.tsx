@@ -33,6 +33,7 @@ import {
   RecommendationItem,
   PopularSubjectItem,
 } from '@/lib/search';
+import { GraduationCap } from 'lucide-react';
 
 export default function Home() {
   useEffect(() => {
@@ -52,6 +53,8 @@ export default function Home() {
   const recommendations = useMemo(() => getDeterministicRecommendations('super-tet', 4), []);
   const popularSubjects = useMemo(() => getPopularSubjects(), []);
   const recentActivities = useMemo(() => getRecentActivities(), []);
+  // Non-teaching popular exams so Super TET, UPTET & CTET stay exclusively in the Teaching Hub section
+  const nonTeachingExams = useMemo(() => exams.filter((e) => !['super-tet', 'uptet', 'ctet'].includes(e.id)), []);
 
   const getRecBadgeClass = (tone: string) => {
     switch (tone) {
@@ -174,6 +177,132 @@ export default function Home() {
         </section>
       )}
 
+      {/* Teaching Exams Portal (Separated Super TET • UPTET • CTET) */}
+      <section className="border-b border-slate-200 bg-slate-50/70 py-12 sm:py-16" id="home-teaching-exams-section">
+        <Container>
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <SectionTitle
+              eyebrow="शिक्षक भर्ती एवं पात्रता परीक्षा"
+              title="Teaching Exams Hub"
+              description="Super TET, UPTET एवं CTET की अलग-अलग सुव्यवस्थित तैयारी — प्राथमिक (1-5) एवं उच्च प्राथमिक (6-8) स्तर।"
+            />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* 1. Super TET Card */}
+            <Card className="flex flex-col justify-between p-6 border-2 border-indigo-200 hover:border-indigo-400 hover:shadow-md transition">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-100 text-indigo-800 px-2.5 py-1 text-xs font-black">
+                    <GraduationCap size={15} /> Super TET
+                  </span>
+                  <span className="rounded-md bg-emerald-100 text-emerald-800 px-2 py-0.5 text-[11px] font-bold">
+                    150 अंक
+                  </span>
+                </div>
+
+                <h3 className="mt-3 text-xl font-black text-slate-900">
+                  सुपर टीईटी (Super TET)
+                </h3>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                  उत्तर प्रदेश सहायक अध्यापक भर्ती परीक्षा — प्राथमिक (कक्षा 1-5) एवं उच्च प्राथमिक (कक्षा 6-8)।
+                </p>
+
+                <div className="mt-4 flex flex-col gap-1.5 text-xs text-slate-700 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                  <span className="font-semibold text-indigo-950">✓ प्राथमिक स्तर: 10 विषय (150 अंक)</span>
+                  <span className="font-semibold text-indigo-950">✓ उच्च प्राथमिक स्तर: भाषा, बाल विकास व विषय वर्ग</span>
+                  <span className="text-[11px] text-indigo-700">Notes, MCQ, PYQ एवं महत्वपूर्ण सूत्र</span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-slate-100">
+                <Button
+                  href="/exams/super-tet"
+                  variant="primary"
+                  className="w-full text-xs h-9 justify-center gap-1.5 font-bold bg-indigo-700 hover:bg-indigo-800"
+                >
+                  Super TET खोलें <ArrowRight size={14} />
+                </Button>
+              </div>
+            </Card>
+
+            {/* 2. UPTET Card */}
+            <Card className="flex flex-col justify-between p-6 border-2 border-blue-200 hover:border-blue-400 hover:shadow-md transition">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-blue-100 text-blue-800 px-2.5 py-1 text-xs font-black">
+                    <GraduationCap size={15} /> UPTET
+                  </span>
+                  <span className="rounded-md bg-blue-100 text-blue-800 px-2 py-0.5 text-[11px] font-bold">
+                    Paper 1 &amp; 2
+                  </span>
+                </div>
+
+                <h3 className="mt-3 text-xl font-black text-slate-900">
+                  यूपी टीईटी (UPTET)
+                </h3>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                  उत्तर प्रदेश शिक्षक पात्रता परीक्षा — पेपर-1 (कक्षा 1 से 5) एवं पेपर-2 (कक्षा 6 से 8)।
+                </p>
+
+                <div className="mt-4 flex flex-col gap-1.5 text-xs text-slate-700 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
+                  <span className="font-semibold text-blue-950">✓ पेपर-1: बाल विकास, हिंदी, संस्कृत, गणित, पर्यावरण</span>
+                  <span className="font-semibold text-blue-950">✓ पेपर-2: गणित-विज्ञान अथवा सामाजिक अध्ययन</span>
+                  <span className="text-[11px] text-blue-700">Notes, MCQ, PYQ एवं महत्वपूर्ण सूत्र</span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-slate-100">
+                <Button
+                  href="/exams/uptet"
+                  variant="primary"
+                  className="w-full text-xs h-9 justify-center gap-1.5 font-bold"
+                >
+                  UPTET खोलें <ArrowRight size={14} />
+                </Button>
+              </div>
+            </Card>
+
+            {/* 3. CTET Card */}
+            <Card className="flex flex-col justify-between p-6 border-2 border-sky-200 hover:border-sky-400 hover:shadow-md transition">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-sky-100 text-sky-800 px-2.5 py-1 text-xs font-black">
+                    <GraduationCap size={15} /> CTET
+                  </span>
+                  <span className="rounded-md bg-sky-100 text-sky-800 px-2 py-0.5 text-[11px] font-bold">
+                    CBSE राष्ट्रीय स्तर
+                  </span>
+                </div>
+
+                <h3 className="mt-3 text-xl font-black text-slate-900">
+                  सीटेट (CTET)
+                </h3>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                  केंद्रीय शिक्षक पात्रता परीक्षा — Paper-1 (Primary 1-5) एवं Paper-2 (Elementary 6-8)।
+                </p>
+
+                <div className="mt-4 flex flex-col gap-1.5 text-xs text-slate-700 bg-sky-50/50 p-3 rounded-xl border border-sky-100">
+                  <span className="font-semibold text-sky-950">✓ Paper-1: CDP, Language 1 &amp; 2, Maths, EVS</span>
+                  <span className="font-semibold text-sky-950">✓ Paper-2: CDP, Maths &amp; Science / Social Studies</span>
+                  <span className="text-[11px] text-sky-700">Notes, MCQ, PYQ एवं महत्वपूर्ण सूत्र</span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-slate-100">
+                <Button
+                  href="/exams/ctet"
+                  variant="primary"
+                  className="w-full text-xs h-9 justify-center gap-1.5 font-bold bg-sky-700 hover:bg-sky-800"
+                >
+                  CTET खोलें <ArrowRight size={14} />
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </Container>
+      </section>
+
       {/* 3. Popular Exams */}
       <section
         id="home-popular-exams-section"
@@ -195,7 +324,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {exams.map((exam) => (
+            {nonTeachingExams.map((exam) => (
               <ExamCard key={exam.id} exam={exam} />
             ))}
           </div>

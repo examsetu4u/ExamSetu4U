@@ -122,15 +122,25 @@ export function QuestionScreen({
 
       {/* Main Question Card */}
       <Card className="p-5 sm:p-7 rounded-2xl border border-slate-200 bg-white shadow-2xs" data-testid={`question-card-${question.id}`}>
-        {/* Badges: Question Type, Difficulty */}
+        {/* Badges: Question Type, Difficulty, Paper */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-700">
               {question.sourceType}
             </span>
-            {question.year && (
+            {question.paper && (
+              <span className="rounded-md border border-purple-200 bg-purple-50 px-2 py-0.5 text-[11px] font-bold text-purple-700">
+                {question.paper.toUpperCase()}
+              </span>
+            )}
+            {question.questionType && (
+              <span className="rounded-md border border-sky-200 bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">
+                {question.questionType.replace(/_/g, ' ')}
+              </span>
+            )}
+            {(question.pyqReference || question.year) && (
               <span className="rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
-                PYQ {question.year}
+                {question.pyqReference || `PYQ ${question.year}`}
               </span>
             )}
             <span

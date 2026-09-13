@@ -1,6 +1,17 @@
 export type MCQDifficulty = 'Easy' | 'Moderate' | 'Hard' | 'Very Hard';
 export type MCQSourceType = 'PYQ' | 'PYQ-based' | 'Practice' | 'Current Affairs Automation';
 
+export type QuestionType =
+  | 'DIRECT_MCQ'
+  | 'STATEMENT_BASED'
+  | 'ASSERTION_REASON'
+  | 'MATCHING'
+  | 'CASE_BASED'
+  | 'PASSAGE_BASED'
+  | 'SEQUENCE_ORDER'
+  | 'CLASSROOM_SITUATION'
+  | 'DIAGRAM_BASED';
+
 export interface MCQQuestion {
   id: string;
   examId: string;
@@ -22,6 +33,19 @@ export interface MCQQuestion {
   sourceType: MCQSourceType;
   year?: number;
   examName?: string;
+
+  // Visual Flow Architecture Fields
+  paper?: string;
+  level?: string;
+  section?: string;
+  chapter?: string;
+  subTopic?: string;
+  questionType?: QuestionType | string;
+  isPYQ?: boolean;
+  pyqYear?: number;
+  pyqReference?: string;
+  language?: string;
+
   // Optional diagram fields
   diagramRequired?: boolean;
   diagramType?: string;
@@ -33,8 +57,12 @@ export interface MCQQuestion {
 
 export type QuizFilterOptions = {
   examId?: string;
+  paper?: string;
   subjectId?: string;
+  chapter?: string;
   topicId?: string;
+  questionType?: string;
+  isPYQ?: boolean;
   difficulty?: 'All' | MCQDifficulty;
   count?: number;
   random?: boolean;

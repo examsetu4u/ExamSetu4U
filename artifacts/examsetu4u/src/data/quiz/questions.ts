@@ -936,7 +936,23 @@ export function areSubjectsEquivalent(a?: string, b?: string): boolean {
 }
 
 export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
-  const { examId, subjectId, topicId, difficulty, count, random, search } = options;
+  const {
+    examId,
+    subjectId,
+    topicId,
+    paper,
+    level,
+    section,
+    chapter,
+    subTopic,
+    questionType,
+    isPYQ,
+    year,
+    difficulty,
+    count,
+    random,
+    search,
+  } = options;
   const query = (search || '').trim().toLowerCase();
   const allQuestions = getAllQuizQuestions();
 
@@ -1072,9 +1088,20 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
     if (examId && !areExamsEquivalent(q.examId, examId)) return false;
     if (subjectId && !areSubjectsEquivalent(q.subjectId, subjectId)) return false;
     if (topicId && !isMatchingTopic(q.topicId, topicId)) return false;
+    if (paper && paper !== 'all' && q.paper && q.paper.toLowerCase() !== paper.toLowerCase()) return false;
+    if (level && level !== 'all' && q.level && q.level.toLowerCase() !== level.toLowerCase()) return false;
+    if (section && section !== 'all' && q.section && q.section.toLowerCase() !== section.toLowerCase()) return false;
+    if (chapter && chapter !== 'all' && q.chapter && !q.chapter.toLowerCase().includes(chapter.toLowerCase()) && !chapter.toLowerCase().includes(q.chapter.toLowerCase())) return false;
+    if (subTopic && subTopic !== 'all' && q.subTopic && !q.subTopic.toLowerCase().includes(subTopic.toLowerCase())) return false;
+    if (questionType && questionType !== 'All' && q.questionType !== questionType) return false;
+    if (isPYQ !== undefined && isPYQ !== null) {
+      const isQPyq = q.isPYQ ?? (q.sourceType === 'PYQ');
+      if (isQPyq !== isPYQ) return false;
+    }
+    if (year && q.year !== year) return false;
     if (difficulty && difficulty !== 'All' && q.difficulty !== difficulty) return false;
     if (query) {
-      const matchText = `${q.question} ${q.options.A} ${q.options.B} ${q.options.C} ${q.options.D} ${q.explanation} ${q.importantPoint} ${q.id}`.toLowerCase();
+      const matchText = `${q.question} ${q.options.A} ${q.options.B} ${q.options.C} ${q.options.D} ${q.explanation} ${q.importantPoint || ''} ${q.chapter || ''} ${q.subTopic || ''} ${q.id}`.toLowerCase();
       if (!matchText.includes(query)) return false;
     }
     return true;

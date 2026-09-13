@@ -34,6 +34,7 @@ import {
   getSmartContinueLearning,
   getSubjectStats,
 } from '@/lib/learning-path';
+import { TeachingCleanExamView } from '@/components/teaching/TeachingCleanExamView';
 import NotFoundPage from '@/pages/not-found';
 
 export default function ExamDetailPage() {
@@ -239,8 +240,17 @@ export default function ExamDetailPage() {
         </Container>
       </section>
 
-      {/* 3. Continue Learning (Secondary Blue Section) */}
-      <section className="py-8 border-b border-blue-100 bg-blue-50/40">
+      {/* Dedicated Clean Layout for CTET, UPTET, SUPER TET (As per drawing) */}
+      {['ctet', 'uptet', 'super-tet'].includes(exam.id) ? (
+        <section className="py-8 sm:py-12 bg-slate-50/70" id="teaching-clean-exam-section">
+          <Container>
+            <TeachingCleanExamView examId={exam.id as 'ctet' | 'uptet' | 'super-tet'} />
+          </Container>
+        </section>
+      ) : (
+        <>
+          {/* 3. Continue Learning (Secondary Blue Section) */}
+          <section className="py-8 border-b border-blue-100 bg-blue-50/40">
         <Container>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -776,6 +786,8 @@ export default function ExamDetailPage() {
           </div>
         </Container>
       </section>
+        </>
+      )}
     </Layout>
   );
 }

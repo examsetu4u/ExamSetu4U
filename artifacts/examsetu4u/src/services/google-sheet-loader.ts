@@ -104,6 +104,33 @@ const HEADER_ALIASES: Record<string, string> = {
   sourcename: 'sourceName',
   'source name': 'sourceName',
   source_name: 'sourceName',
+  // Visual Flow Architecture Aliases
+  exam: 'examId',
+  paper: 'paper',
+  level: 'level',
+  section: 'section',
+  subject: 'subjectId',
+  chapter: 'chapter',
+  topic: 'topicId',
+  subtopic: 'subTopic',
+  'sub topic': 'subTopic',
+  sub_topic: 'subTopic',
+  questiontype: 'questionType',
+  'question type': 'questionType',
+  question_type: 'questionType',
+  additionalinfo: 'additionalFact',
+  'additional info': 'additionalFact',
+  additional_info: 'additionalFact',
+  ispyq: 'isPYQ',
+  'is pyq': 'isPYQ',
+  is_pyq: 'isPYQ',
+  pyqyear: 'year',
+  'pyq year': 'year',
+  pyq_year: 'year',
+  pyqreference: 'sourceName',
+  'pyq reference': 'sourceName',
+  pyq_reference: 'sourceName',
+  language: 'language',
   // Diagram optional headers
   diagramrequired: 'diagramRequired',
   'diagram required': 'diagramRequired',
@@ -459,6 +486,18 @@ export function validateAndConvertSheetRows(
     const examName = getCell(row, 'examName');
     const rawStatus = getCell(row, 'status');
 
+    // Visual Flow Architecture Fields
+    const paper = getCell(row, 'paper');
+    const level = getCell(row, 'level');
+    const section = getCell(row, 'section');
+    const chapter = getCell(row, 'chapter');
+    const subTopic = getCell(row, 'subTopic');
+    const rawQuestionType = getCell(row, 'questionType').toUpperCase().replace(/[\s-]+/g, '_');
+    const rawIsPYQ = getCell(row, 'isPYQ').toLowerCase().trim();
+    const rawPyqYear = getCell(row, 'pyqYear') || getCell(row, 'year');
+    const pyqReference = getCell(row, 'pyqReference') || getCell(row, 'sourceName');
+    const language = getCell(row, 'language');
+
     // Diagram Columns
     const rawDiagramRequired = getCell(row, 'diagramRequired');
     const rawDiagramType = getCell(row, 'diagramType');
@@ -543,6 +582,8 @@ export function validateAndConvertSheetRows(
 
     let convertedMCQ: MCQQuestion | undefined;
     if (isValid) {
+      const isExplicitPYQ = ['true', 'yes', '1', 'y', 'हाँ'].includes(rawIsPYQ) || sourceType === 'PYQ';
+
       convertedMCQ = {
         id,
         examId,
@@ -562,9 +603,19 @@ export function validateAndConvertSheetRows(
         additionalFact: additionalFact || '',
         commonMistake: commonMistake || '',
         difficulty: normalizeDifficulty(rawDifficulty),
-        sourceType,
+        sourceType: isExplicitPYQ ? 'PYQ' : sourceType,
         ...(parsedYear ? { year: parsedYear } : {}),
         ...(examName ? { examName } : {}),
+        ...(paper ? { paper } : {}),
+        ...(level ? { level } : {}),
+        ...(section ? { section } : {}),
+        ...(chapter ? { chapter } : {}),
+        ...(subTopic ? { subTopic } : {}),
+        ...(rawQuestionType ? { questionType: rawQuestionType } : {}),
+        ...(isExplicitPYQ ? { isPYQ: true } : {}),
+        ...(rawPyqYear && !Number.isNaN(parseInt(rawPyqYear, 10)) ? { pyqYear: parseInt(rawPyqYear, 10) } : {}),
+        ...(pyqReference ? { pyqReference } : {}),
+        ...(language ? { language } : {}),
       };
 
       // Handle Diagram properties from Sheet or fallback to automatic detection

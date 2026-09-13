@@ -29,6 +29,19 @@ export interface RawGoogleSheetRow {
   examName?: string;
   status: string;
   sourceName?: string;
+
+  // Visual Flow Architecture Fields
+  paper?: string;
+  level?: string;
+  section?: string;
+  chapter?: string;
+  subTopic?: string;
+  questionType?: string;
+  isPYQ?: string;
+  pyqYear?: string;
+  pyqReference?: string;
+  language?: string;
+
   // Optional diagram fields
   diagramRequired?: string;
   diagramType?: string;
