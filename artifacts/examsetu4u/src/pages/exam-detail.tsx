@@ -43,6 +43,7 @@ export default function ExamDetailPage() {
   const [query, setQuery] = useState('');
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('all');
   const [topicFilter, setTopicFilter] = useState<'all' | 'study' | 'pyq' | 'quiz'>('all');
+  const [sscTierFilter, setSscTierFilter] = useState<'all' | 'tier1' | 'tier2-p1' | 'tier2-p2-3'>('all');
 
   const subjects = useMemo(() => (exam ? getSubjectsForExam(exam.id) : []), [exam]);
 
@@ -64,11 +65,23 @@ export default function ExamDetailPage() {
   }, [subjects]);
 
   const filteredSubjectStats = useMemo(() => {
-    return subjectStatsList.filter(
-      ({ subject }) =>
-        `${subject.name} ${subject.description}`.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [query, subjectStatsList]);
+    return subjectStatsList.filter(({ subject }) => {
+      const matchesQuery = `${subject.name} ${subject.description}`.toLowerCase().includes(query.toLowerCase());
+      if (!matchesQuery) return false;
+      if (exam?.id === 'ssc-cgl' && sscTierFilter !== 'all') {
+        if (sscTierFilter === 'tier1') {
+          return subject.name.startsWith('Tier-I:');
+        }
+        if (sscTierFilter === 'tier2-p1') {
+          return subject.name.startsWith('Tier-II Paper-I:');
+        }
+        if (sscTierFilter === 'tier2-p2-3') {
+          return subject.name.startsWith('Tier-II Paper-II:') || subject.name.startsWith('Tier-II Paper-III:');
+        }
+      }
+      return true;
+    });
+  }, [query, subjectStatsList, exam?.id, sscTierFilter]);
 
   // All topics for the exam
   const allExamTopics = useMemo(() => {

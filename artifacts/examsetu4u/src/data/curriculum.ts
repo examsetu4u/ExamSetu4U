@@ -131,21 +131,25 @@ function createCurriculum(definitions: ExamDefinition[]) {
       subjects.push({ id: subjectId, examId: definition.id, name: subject.name, description: subject.description, topicIds });
 
       subject.topics.forEach((topicName, index) => {
+        const isSscCgl = definition.id === 'ssc-cgl';
         topics.push({
           id: topicIds[index],
           examId: definition.id,
           subjectId,
           name: topicName,
-          description: `Build a clear understanding of ${topicName.toLowerCase()} with focused notes, practice and revision.`,
+          description: isSscCgl
+            ? `Master ${topicName} through focused Multiple Choice Questions (MCQs), previous year patterns and timed speed testing.`
+            : `Build a clear understanding of ${topicName.toLowerCase()} with focused notes, practice and revision.`,
           estimatedMinutes: 20 + (index % 3) * 10,
           availability: {
-            studyMaterial:
-              subjectId === 'super-tet-child-development' ||
-              subjectId === 'super-tet-teaching-skills' ||
-              subjectId === 'uppcs-pre-current-affairs',
-            pyq: subjectId === 'cbse-class-10-science' ? index === 0 : index % 3 !== 1,
+            studyMaterial: isSscCgl
+              ? false
+              : subjectId === 'super-tet-child-development' ||
+                subjectId === 'super-tet-teaching-skills' ||
+                subjectId === 'uppcs-pre-current-affairs',
+            pyq: isSscCgl ? true : subjectId === 'cbse-class-10-science' ? index === 0 : index % 3 !== 1,
             quiz: true,
-            theory: index % 2 === 0,
+            theory: isSscCgl ? false : index % 2 === 0,
           },
         });
       });
@@ -244,13 +248,273 @@ const curriculumDefinitions: ExamDefinition[] = [
   {
     id: 'ssc-cgl',
     name: 'SSC CGL',
-    shortDescription: 'Keep your SSC preparation organised across aptitude and reasoning.',
-    description: 'Prepare for SSC CGL with compact subject routes for reasoning, awareness, quantitative aptitude and English.',
+    shortDescription: 'Comprehensive SSC CGL preparation across Tier-I (Pre) and Tier-II (Mains) MCQ modules.',
+    description: 'Prepare for Staff Selection Commission Combined Graduate Level (SSC CGL) with dedicated 100% objective MCQ practice for Tier-I and Tier-II Compulsory & Optional papers.',
     subjects: [
-      { id: 'reasoning', name: 'General Intelligence & Reasoning', description: 'Build speed and accuracy across verbal and non-verbal reasoning.', topics: ['Analogy and Classification', 'Series and Coding', 'Non-verbal Reasoning'] },
-      { id: 'general-awareness', name: 'General Awareness', description: 'Organise static GK, current affairs and core general awareness topics.', topics: ['Indian Polity', 'History and Geography', 'Science and Current Affairs'] },
-      { id: 'quantitative-aptitude', name: 'Quantitative Aptitude', description: 'Practice arithmetic, algebra and data interpretation step by step.', topics: ['Percentage and Profit', 'Ratio and Average', 'Data Interpretation'] },
-      { id: 'english-comprehension', name: 'English Comprehension', description: 'Improve grammar, vocabulary and reading comprehension for SSC exams.', topics: ['Spotting Errors', 'Vocabulary', 'Reading Comprehension'] },
+      // PRE / TIER-I
+      {
+        id: 'reasoning',
+        name: 'Tier-I: General Intelligence & Reasoning',
+        description: 'Tier-I 100% Objective MCQ practice: Analogy, classification, series, coding-decoding, blood relations, non-verbal and visual reasoning.',
+        topics: [
+          'Analogy',
+          'Classification',
+          'Series',
+          'Coding-Decoding',
+          'Blood Relations',
+          'Direction & Distance',
+          'Ranking & Order',
+          'Venn Diagram',
+          'Syllogism',
+          'Statement & Conclusion',
+          'Mathematical Operations',
+          'Non-Verbal Reasoning',
+          'Figure/Pattern Based Questions',
+        ],
+      },
+      {
+        id: 'general-awareness',
+        name: 'Tier-I: General Awareness',
+        description: 'Tier-I 100% Objective MCQ practice: History, geography, polity, economy, general science (physics, chemistry, biology), environment, static GK and current affairs.',
+        topics: [
+          'History',
+          'Geography',
+          'Indian Polity',
+          'Indian Economy',
+          'General Science (Physics, Chemistry, Biology)',
+          'Environment',
+          'Static GK',
+          'Art & Culture',
+          'Sports',
+          'Current Affairs',
+        ],
+      },
+      {
+        id: 'quantitative-aptitude',
+        name: 'Tier-I: Quantitative Aptitude',
+        description: 'Tier-I 100% Objective MCQ practice: Number system, arithmetic, percentage, profit & loss, algebra, geometry, trigonometry, mensuration and data interpretation.',
+        topics: [
+          'Number System',
+          'Simplification',
+          'Percentage',
+          'Ratio & Proportion',
+          'Average',
+          'Profit & Loss',
+          'Discount',
+          'Simple Interest',
+          'Compound Interest',
+          'Time & Work',
+          'Time, Speed & Distance',
+          'Algebra',
+          'Geometry',
+          'Trigonometry',
+          'Mensuration',
+          'Data Interpretation',
+          'Statistics/Probability basics',
+        ],
+      },
+      {
+        id: 'english-comprehension',
+        name: 'Tier-I: English Comprehension',
+        description: 'Tier-I 100% Objective MCQ practice: Vocabulary, synonyms, antonyms, idioms, error spotting, voice, narration, cloze test and reading comprehension.',
+        topics: [
+          'Vocabulary',
+          'Synonyms',
+          'Antonyms',
+          'One Word Substitution',
+          'Idioms & Phrases',
+          'Spelling',
+          'Error Detection',
+          'Fill in the Blanks',
+          'Sentence Improvement',
+          'Active & Passive Voice',
+          'Direct & Indirect Speech',
+          'Cloze Test',
+          'Para Jumbles',
+          'Reading Comprehension',
+        ],
+      },
+
+      // MAINS / TIER-II — PAPER-I: COMPULSORY
+      {
+        id: 'tier2-paper1-math',
+        name: 'Tier-II Paper-I: Mathematical Abilities (Sec-I, Mod-I)',
+        description: 'Section-I, Module-I: Advanced mathematical abilities, arithmetic, algebra, geometry, mensuration, trigonometry, statistics & probability MCQs.',
+        topics: [
+          'Number Systems',
+          'Fundamental Arithmetic Operations',
+          'Percentage',
+          'Ratio & Proportion',
+          'Square Roots',
+          'Averages',
+          'Interest',
+          'Profit & Loss',
+          'Discount',
+          'Partnership Business',
+          'Mixture & Alligation',
+          'Time & Distance',
+          'Time & Work',
+          'Algebra',
+          'Geometry',
+          'Mensuration',
+          'Trigonometry',
+          'Statistics',
+          'Probability',
+        ],
+      },
+      {
+        id: 'tier2-paper1-reasoning',
+        name: 'Tier-II Paper-I: Reasoning & General Intelligence (Sec-I, Mod-II)',
+        description: 'Section-I, Module-II: Advanced reasoning, semantic & figural analogy, classification, series, critical thinking, problem solving & logical MCQs.',
+        topics: [
+          'Semantic Analogy',
+          'Symbolic/Number Analogy',
+          'Figural Analogy',
+          'Semantic Classification',
+          'Symbolic Classification',
+          'Figural Classification',
+          'Number Series',
+          'Figural Series',
+          'Coding-Decoding',
+          'Venn Diagrams',
+          'Space Orientation',
+          'Problem Solving',
+          'Critical Thinking',
+          'Decision Making',
+          'Visual Memory',
+          'Observation',
+          'Relationship Concepts',
+          'Arithmetical Reasoning',
+          'Non-Verbal Reasoning',
+          'Statement/Conclusion & Logical Reasoning',
+        ],
+      },
+      {
+        id: 'tier2-paper1-english',
+        name: 'Tier-II Paper-I: English Language & Comprehension (Sec-II, Mod-I)',
+        description: 'Section-II, Module-I: Advanced English comprehension, grammar, sentence shuffling, active/passive voice, direct/indirect narration and cloze passage MCQs.',
+        topics: [
+          'Vocabulary',
+          'Grammar',
+          'Sentence Structure',
+          'Synonyms/Homonyms',
+          'Antonyms',
+          'Spellings',
+          'Error Spotting',
+          'Fill in the Blanks',
+          'Idioms & Phrases',
+          'One Word Substitution',
+          'Sentence Improvement',
+          'Active/Passive Voice',
+          'Direct/Indirect Narration',
+          'Sentence Shuffling',
+          'Para Jumbles',
+          'Cloze Passage',
+          'Reading Comprehension',
+        ],
+      },
+      {
+        id: 'tier2-paper1-general-awareness',
+        name: 'Tier-II Paper-I: General Awareness (Sec-II, Mod-II)',
+        description: 'Section-II, Module-II: Advanced general awareness, history, culture, geography, economic scene, scientific research, environment & current affairs MCQs.',
+        topics: [
+          'History',
+          'Culture',
+          'Geography',
+          'Economic Scene',
+          'General Policy',
+          'Scientific Research',
+          'General Science',
+          'Environment',
+          'Static GK',
+          'Current Affairs',
+        ],
+      },
+      {
+        id: 'tier2-paper1-computer',
+        name: 'Tier-II Paper-I: Computer Knowledge (Sec-III, Mod-I)',
+        description: 'Section-III, Module-I (Qualifying): Computer fundamentals, organization, CPU, memory, OS, MS Office (Word, Excel, PowerPoint), networking and cyber security MCQs.',
+        topics: [
+          'Computer Fundamentals',
+          'Computer Organisation',
+          'CPU',
+          'Memory',
+          'Input/Output Devices',
+          'Windows',
+          'MS Word',
+          'MS Excel',
+          'MS PowerPoint',
+          'Internet',
+          'E-mail',
+          'Networking',
+          'Cyber Security basics',
+        ],
+      },
+      {
+        id: 'tier2-paper1-dest',
+        name: 'Tier-II Paper-I: Data Entry Speed Test / DEST (Sec-III, Mod-II)',
+        description: 'Section-III, Module-II (Qualifying): Typing speed drill, data entry passage practice, key depressions & error rate benchmarks (2000 key depressions in 15 min).',
+        topics: [
+          'Typing Practice',
+          'Data Entry Practice',
+          'Speed/Accuracy Tracking',
+        ],
+      },
+
+      // MAINS / TIER-II — PAPER-II: STATISTICS
+      {
+        id: 'tier2-paper2-statistics',
+        name: 'Tier-II Paper-II: Statistics (JSO / Statistical Posts)',
+        description: 'Paper-II (for Junior Statistical Officer): Data collection, dispersion, moments, skewness, probability distributions, sampling and statistical inference MCQs.',
+        topics: [
+          'Collection, Classification & Presentation of Data',
+          'Measures of Central Tendency',
+          'Measures of Dispersion',
+          'Moments',
+          'Skewness',
+          'Kurtosis',
+          'Correlation',
+          'Regression',
+          'Probability Theory',
+          'Random Variables',
+          'Probability Distributions',
+          'Sampling Theory',
+          'Statistical Inference',
+          'Analysis of Variance',
+          'Time Series',
+          'Index Numbers',
+        ],
+      },
+
+      // MAINS / TIER-II — PAPER-III: GENERAL STUDIES (Finance & Economics)
+      {
+        id: 'tier2-paper3-finance-economics',
+        name: 'Tier-II Paper-III: General Studies (Finance & Economics)',
+        description: 'Paper-III (for Assistant Audit / Accounts Officer): Financial terms, budget, fiscal & monetary policy, micro & macroeconomics, and Indian economic policy MCQs.',
+        topics: [
+          'Finance: Financial & Economic Terms',
+          'Finance: Role of Finance Commission',
+          'Finance: Budget',
+          'Finance: Fiscal Policy',
+          'Finance: Monetary Policy',
+          'Finance: Public Finance',
+          'Finance: Banking',
+          'Finance: Government Financial Schemes',
+          'Economics: Fundamental Economics',
+          'Economics: Micro Economics',
+          'Economics: Macroeconomics',
+          'Economics: National Income',
+          'Economics: Economic Growth & Development',
+          'Economics: Inflation',
+          'Economics: Employment',
+          'Economics: Money & Banking',
+          'Economics: Indian Economy',
+          'Economics: Economic Reforms',
+          'Economics: Demand & Supply',
+          'Economics: Production',
+          'Economics: Government Economic Policies',
+        ],
+      },
     ],
     tone: 'coral',
   },
@@ -611,6 +875,13 @@ const studyMaterialByTopic: Record<string, StudyMaterial> = {
 };
 
 topics.forEach((topic) => {
+  if (topic.examId === 'ssc-cgl') {
+    topic.availability.studyMaterial = false;
+    topic.availability.theory = false;
+    topic.availability.quiz = true;
+    topic.availability.pyq = true;
+    return;
+  }
   topic.availability.studyMaterial =
     Boolean(studyMaterialByTopic[topic.id]) ||
     topic.subjectId === 'super-tet-child-development' ||

@@ -863,6 +863,7 @@ export function areExamsEquivalent(a?: string, b?: string): boolean {
 function stripSubjectPrefix(val: string): string {
   return val
     .replace(/^(super-tet|uppcs-pre|uppcs|ctet|uptet|ssc-cgl|cbse-class-10|cbse-class-12|ssc)-/, '')
+    .replace(/^tier2-paper\d+-/, '')
     .trim();
 }
 
