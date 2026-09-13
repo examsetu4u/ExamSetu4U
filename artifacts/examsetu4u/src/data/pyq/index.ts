@@ -34,6 +34,13 @@ export type PYQQuestion = {
   correctOptionId: string;
   metadata: PYQMetadata;
   explanation: PYQExplanation;
+  // Optional diagram fields
+  diagramRequired?: boolean;
+  diagramType?: string;
+  diagramData?: any;
+  diagramCaption?: string;
+  diagramAltText?: string;
+  diagramImageUrl?: string;
 };
 
 const sample = (examId: string, subjectId: string, topicId: string, year: number, difficulty: PYQDifficulty, id: string, prompt: string, options: [string, string, string, string], correctOptionId: string, explanation: PYQExplanation): PYQQuestion => ({
@@ -247,6 +254,12 @@ export function getAllPYQQuestions(): PYQQuestion[] {
                   additionalFact: q.additionalFact || '',
                   commonMistake: q.commonMistake || '',
                 },
+                diagramRequired: q.diagramRequired,
+                diagramType: q.diagramType,
+                diagramData: q.diagramData,
+                diagramCaption: q.diagramCaption,
+                diagramAltText: q.diagramAltText,
+                diagramImageUrl: q.diagramImageUrl,
               });
             }
           });

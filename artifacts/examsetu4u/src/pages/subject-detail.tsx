@@ -30,6 +30,7 @@ import {
   TOPIC_STATUS_LABELS,
 } from '@/lib/learning-path';
 import { ScienceDashboard } from '@/components/cbse-science/ScienceDashboard';
+import { MathsDashboard } from '@/components/cbse-maths/MathsDashboard';
 import NotFoundPage from '@/pages/not-found';
 
 type SortOption = 'recommended' | 'not_started' | 'in_progress' | 'completed';
@@ -47,6 +48,17 @@ export default function SubjectDetailPage() {
       subjectId === 'cbse-class-10-science')
   ) {
     return <ScienceDashboard examId={exam.id} />;
+  }
+
+  // Dedicated CBSE Class 10 Mathematics Dashboard delegation
+  if (
+    exam?.id === 'cbse-class-10' &&
+    (subject?.id === 'cbse-class-10-mathematics' ||
+      subjectId === 'mathematics' ||
+      subjectId === 'maths' ||
+      subjectId === 'cbse-class-10-mathematics')
+  ) {
+    return <MathsDashboard examId={exam.id} />;
   }
 
   const [query, setQuery] = useState('');

@@ -6,6 +6,7 @@ import { ctetQuestions } from './ctet-questions';
 import { uptetQuestions } from './uptet-questions';
 import { sscCglQuestions } from './ssc-cgl-questions';
 import { cbseScienceQuestions } from './cbse-science-questions';
+import { cbseMathsQuestions } from './cbse-maths-questions';
 import { uppcsGsQuestions } from './uppcs-gs-questions';
 import { pyqQuestions } from '@/data/pyq';
 import automatedUppcsData from '@/data/current-affairs/automated-uppcs.json';
@@ -31,6 +32,7 @@ export const sampleMCQQuestions: MCQQuestion[] = [
   ...uptetQuestions,
   ...sscCglQuestions,
   ...cbseScienceQuestions,
+  ...cbseMathsQuestions,
   ...uppcsGsQuestions,
   // Topic 1: शिक्षण का अर्थ एवं परिभाषा (super-tet-teaching-skills-1)
   {
@@ -982,6 +984,29 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
     if (cbse10ScienceChapterMap[cleanQ] && cbse10ScienceChapterMap[cleanQ] === cleanFilter) return true;
     if (cbse10ScienceChapterMap[cleanFilter] && cbse10ScienceChapterMap[cleanFilter] === normQ) return true;
     if (cbse10ScienceChapterMap[cleanQ] && cbse10ScienceChapterMap[cleanQ] === normFilter) return true;
+
+    // CBSE Class 10 Mathematics chapters & slugs mapping
+    const cbse10MathsChapterMap: Record<string, string> = {
+      'cbse-class-10-mathematics-1': 'real-numbers',
+      'cbse-class-10-mathematics-2': 'polynomials',
+      'cbse-class-10-mathematics-3': 'pair-of-linear-equations-in-two-variables',
+      'cbse-class-10-mathematics-4': 'quadratic-equations',
+      'cbse-class-10-mathematics-5': 'arithmetic-progressions',
+      'cbse-class-10-mathematics-6': 'triangles',
+      'cbse-class-10-mathematics-7': 'coordinate-geometry',
+      'cbse-class-10-mathematics-8': 'introduction-to-trigonometry',
+      'cbse-class-10-mathematics-9': 'some-applications-of-trigonometry',
+      'cbse-class-10-mathematics-10': 'circles',
+      'cbse-class-10-mathematics-11': 'areas-related-to-circles',
+      'cbse-class-10-mathematics-12': 'surface-areas-and-volumes',
+      'cbse-class-10-mathematics-13': 'statistics',
+      'cbse-class-10-mathematics-14': 'probability',
+    };
+
+    if (cbse10MathsChapterMap[cleanFilter] && cbse10MathsChapterMap[cleanFilter] === cleanQ) return true;
+    if (cbse10MathsChapterMap[cleanQ] && cbse10MathsChapterMap[cleanQ] === cleanFilter) return true;
+    if (cbse10MathsChapterMap[cleanFilter] && cbse10MathsChapterMap[cleanFilter] === normQ) return true;
+    if (cbse10MathsChapterMap[cleanQ] && cbse10MathsChapterMap[cleanQ] === normFilter) return true;
 
     // Child Development curriculum topics mapping:
     // super-tet-child-development-1 = 'बाल विकास के सिद्धांत'

@@ -29,6 +29,13 @@ export interface RawGoogleSheetRow {
   examName?: string;
   status: string;
   sourceName?: string;
+  // Optional diagram fields
+  diagramRequired?: string;
+  diagramType?: string;
+  diagramData?: string;
+  diagramCaption?: string;
+  diagramAltText?: string;
+  diagramImageUrl?: string;
 }
 
 export interface GoogleSheetRowValidation {

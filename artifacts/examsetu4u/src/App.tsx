@@ -42,6 +42,11 @@ import {
   CbseScienceChapterPage,
   CbseScienceSectionPage,
 } from '@/pages/cbse-science';
+import {
+  CbseMathsSubjectPage,
+  CbseMathsChapterPage,
+  CbseMathsSectionPage,
+} from '@/pages/cbse-maths';
 
 const queryClient = new QueryClient();
 
@@ -65,6 +70,12 @@ function Router() {
         <Route path="/exams/cbse-class-10/cbse-class-10-science/:chapterId/:section" component={CbseScienceSectionPage} />
         <Route path="/exams/cbse-class-10/cbse-class-10-science/:chapterId" component={CbseScienceChapterPage} />
         <Route path="/exams/cbse-class-10/cbse-class-10-science" component={CbseScienceSubjectPage} />
+        <Route path="/exams/cbse-class-10/mathematics/:chapterId/:section" component={CbseMathsSectionPage} />
+        <Route path="/exams/cbse-class-10/mathematics/:chapterId" component={CbseMathsChapterPage} />
+        <Route path="/exams/cbse-class-10/mathematics" component={CbseMathsSubjectPage} />
+        <Route path="/exams/cbse-class-10/cbse-class-10-mathematics/:chapterId/:section" component={CbseMathsSectionPage} />
+        <Route path="/exams/cbse-class-10/cbse-class-10-mathematics/:chapterId" component={CbseMathsChapterPage} />
+        <Route path="/exams/cbse-class-10/cbse-class-10-mathematics" component={CbseMathsSubjectPage} />
         <Route path="/exams/:examId/:subjectId/:topicId" component={TopicDetailPage} />
         <Route path="/exams/:examId/:subjectId" component={SubjectDetailPage} />
         <Route path="/exams/:examId" component={ExamDetailPage} />

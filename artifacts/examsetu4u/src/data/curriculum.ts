@@ -250,7 +250,27 @@ const curriculumDefinitions: ExamDefinition[] = [
     shortDescription: 'Build a clear Class 10 revision plan across core CBSE subjects.',
     description: 'A lightweight Class 10 curriculum map for concept revision, practice and board exam preparation.',
     subjects: [
-      { id: 'mathematics', name: 'Mathematics', description: 'Revise the core mathematics chapters in a manageable order.', topics: ['Real Numbers', 'Polynomials', 'Triangles'] },
+      {
+        id: 'mathematics',
+        name: 'Mathematics',
+        description: 'Comprehensive chapter-wise CBSE Class 10 Mathematics syllabus covering Number Systems, Algebra, Coordinate Geometry, Geometry, Trigonometry, Mensuration, and Statistics & Probability.',
+        topics: [
+          'Real Numbers',
+          'Polynomials',
+          'Pair of Linear Equations in Two Variables',
+          'Quadratic Equations',
+          'Arithmetic Progressions',
+          'Triangles',
+          'Coordinate Geometry',
+          'Introduction to Trigonometry',
+          'Some Applications of Trigonometry',
+          'Circles',
+          'Areas Related to Circles',
+          'Surface Areas and Volumes',
+          'Statistics',
+          'Probability',
+        ],
+      },
       {
         id: 'science',
         name: 'Science',
@@ -563,6 +583,7 @@ export function getSubject(subjectId: string, examId?: string) {
         (s.id.toLowerCase() === norm ||
           s.id.toLowerCase() === `${normExam}-${norm}` ||
           (s.id === 'cbse-class-10-science' && (norm === 'science' || norm === 'cbse-science')) ||
+          (s.id === 'cbse-class-10-mathematics' && (norm === 'mathematics' || norm === 'maths' || norm === 'math' || norm === 'cbse-maths' || norm === 'cbse-mathematics')) ||
           (s.id === 'super-tet-science' && (norm === 'science' || norm === 'vigyan')))
     );
     if (directMatch) return directMatch;
@@ -572,11 +593,22 @@ export function getSubject(subjectId: string, examId?: string) {
     (subject) =>
       subject.id.toLowerCase() === norm ||
       (subject.examId === 'cbse-class-10' && (
-        subject.id === 'cbse-class-10-science' && (
+        (subject.id === 'cbse-class-10-science' && (
           norm === 'cbse-class-10-science' ||
           norm === 'cbse-10-science' ||
-          norm === 'class-10-science'
-        )
+          norm === 'class-10-science' ||
+          norm === 'science'
+        )) ||
+        (subject.id === 'cbse-class-10-mathematics' && (
+          norm === 'cbse-class-10-mathematics' ||
+          norm === 'cbse-10-mathematics' ||
+          norm === 'class-10-mathematics' ||
+          norm === 'cbse-maths' ||
+          norm === 'cbse-10-maths' ||
+          norm === 'mathematics' ||
+          norm === 'maths' ||
+          norm === 'math'
+        ))
       )) ||
       (subject.examId === 'super-tet' && (
         (subject.id === 'super-tet-teaching-skills' && (norm === 'teaching-skills' || norm === 'shikshan-kaushal' || norm === 'super-tet-shikshan-kaushal' || norm === 'shikshan-kaushal-pedagogy')) ||
@@ -648,6 +680,48 @@ export function getTopic(topicId: string) {
     const num = parseInt(norm.replace(/\D/g, ''), 10);
     if (!isNaN(num) && num >= 1 && num <= 13) {
       const match = topics.find((t) => t.id === `cbse-class-10-science-${num}`);
+      if (match) return match;
+    }
+  }
+
+  // 3. CBSE Class 10 Mathematics chapter aliases & slugs
+  const mathsSlugToId: Record<string, string> = {
+    'real-numbers': 'cbse-class-10-mathematics-1',
+    'polynomials': 'cbse-class-10-mathematics-2',
+    'pair-of-linear-equations-in-two-variables': 'cbse-class-10-mathematics-3',
+    'pair-of-linear-equations': 'cbse-class-10-mathematics-3',
+    'linear-equations': 'cbse-class-10-mathematics-3',
+    'quadratic-equations': 'cbse-class-10-mathematics-4',
+    'arithmetic-progressions': 'cbse-class-10-mathematics-5',
+    'ap': 'cbse-class-10-mathematics-5',
+    'triangles': 'cbse-class-10-mathematics-6',
+    'coordinate-geometry': 'cbse-class-10-mathematics-7',
+    'introduction-to-trigonometry': 'cbse-class-10-mathematics-8',
+    'trigonometry': 'cbse-class-10-mathematics-8',
+    'some-applications-of-trigonometry': 'cbse-class-10-mathematics-9',
+    'applications-of-trigonometry': 'cbse-class-10-mathematics-9',
+    'heights-and-distances': 'cbse-class-10-mathematics-9',
+    'circles': 'cbse-class-10-mathematics-10',
+    'areas-related-to-circles': 'cbse-class-10-mathematics-11',
+    'surface-areas-and-volumes': 'cbse-class-10-mathematics-12',
+    'statistics': 'cbse-class-10-mathematics-13',
+    'probability': 'cbse-class-10-mathematics-14',
+  };
+  if (mathsSlugToId[norm]) {
+    const match = topics.find((t) => t.id === mathsSlugToId[norm]);
+    if (match) return match;
+  }
+
+  if (
+    norm.startsWith('cbse-class-10-mathematics-') ||
+    norm.startsWith('cbse-10-math-') ||
+    norm.startsWith('cbse-10-maths-') ||
+    norm.startsWith('math-ch-') ||
+    norm.startsWith('maths-ch-')
+  ) {
+    const num = parseInt(norm.replace(/\D/g, ''), 10);
+    if (!isNaN(num) && num >= 1 && num <= 14) {
+      const match = topics.find((t) => t.id === `cbse-class-10-mathematics-${num}`);
       if (match) return match;
     }
   }

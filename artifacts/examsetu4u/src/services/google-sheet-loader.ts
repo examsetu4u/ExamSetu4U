@@ -12,6 +12,8 @@ import type {
 const SESSION_URL_KEY = 'examsetu4u_sheets_url_override_v1';
 const PLACEHOLDER_URL = 'PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE';
 
+import { detectDiagramRequirement } from '@/components/diagrams/auto-generator/diagram-detector';
+
 // Canonical required headers in order
 export const REQUIRED_SHEET_HEADERS = [
   'id',
@@ -35,6 +37,18 @@ export const REQUIRED_SHEET_HEADERS = [
   'status',
   'sourceName',
 ] as const;
+
+// Optional Diagram Headers
+export const OPTIONAL_DIAGRAM_HEADERS = [
+  'diagramRequired',
+  'diagramType',
+  'diagramData',
+  'diagramCaption',
+  'diagramAltText',
+  'diagramImageUrl',
+] as const;
+
+export const ALL_SHEET_HEADERS = [...REQUIRED_SHEET_HEADERS, ...OPTIONAL_DIAGRAM_HEADERS];
 
 // Header aliases for tolerant CSV parsing
 const HEADER_ALIASES: Record<string, string> = {
@@ -90,6 +104,28 @@ const HEADER_ALIASES: Record<string, string> = {
   sourcename: 'sourceName',
   'source name': 'sourceName',
   source_name: 'sourceName',
+  // Diagram optional headers
+  diagramrequired: 'diagramRequired',
+  'diagram required': 'diagramRequired',
+  diagram_required: 'diagramRequired',
+  diagramtype: 'diagramType',
+  'diagram type': 'diagramType',
+  diagram_type: 'diagramType',
+  diagramdata: 'diagramData',
+  'diagram data': 'diagramData',
+  diagram_data: 'diagramData',
+  diagramcaption: 'diagramCaption',
+  'diagram caption': 'diagramCaption',
+  diagram_caption: 'diagramCaption',
+  diagramalttext: 'diagramAltText',
+  'diagram alt text': 'diagramAltText',
+  'diagram alt': 'diagramAltText',
+  diagram_alt_text: 'diagramAltText',
+  diagramimageurl: 'diagramImageUrl',
+  'diagram image url': 'diagramImageUrl',
+  diagram_image_url: 'diagramImageUrl',
+  imageurl: 'diagramImageUrl',
+  'image url': 'diagramImageUrl',
 };
 
 // In-memory cache for high performance with 10,000+ questions
@@ -423,6 +459,14 @@ export function validateAndConvertSheetRows(
     const examName = getCell(row, 'examName');
     const rawStatus = getCell(row, 'status');
 
+    // Diagram Columns
+    const rawDiagramRequired = getCell(row, 'diagramRequired');
+    const rawDiagramType = getCell(row, 'diagramType');
+    const rawDiagramData = getCell(row, 'diagramData');
+    const diagramCaption = getCell(row, 'diagramCaption');
+    const diagramAltText = getCell(row, 'diagramAltText');
+    const diagramImageUrl = getCell(row, 'diagramImageUrl');
+
     const status = normalizeStatus(rawStatus);
 
     if (status === 'DRAFT') draftCount++;
@@ -522,6 +566,42 @@ export function validateAndConvertSheetRows(
         ...(parsedYear ? { year: parsedYear } : {}),
         ...(examName ? { examName } : {}),
       };
+
+      // Handle Diagram properties from Sheet or fallback to automatic detection
+      const isExplicitDiagram = ['true', 'yes', '1', 'y', 'required', 'हाँ', 'सही'].includes(rawDiagramRequired.toLowerCase().trim()) || Boolean(rawDiagramType) || Boolean(diagramImageUrl);
+
+      let parsedDiagramData: any = undefined;
+      if (rawDiagramData) {
+        try {
+          parsedDiagramData = JSON.parse(rawDiagramData);
+        } catch {
+          parsedDiagramData = { rawText: rawDiagramData };
+        }
+      }
+
+      if (isExplicitDiagram) {
+        convertedMCQ.diagramRequired = true;
+        if (rawDiagramType) convertedMCQ.diagramType = rawDiagramType;
+        if (parsedDiagramData) convertedMCQ.diagramData = parsedDiagramData;
+        if (diagramCaption) convertedMCQ.diagramCaption = diagramCaption;
+        if (diagramAltText) convertedMCQ.diagramAltText = diagramAltText;
+        if (diagramImageUrl) convertedMCQ.diagramImageUrl = diagramImageUrl;
+      } else {
+        // Run smart detector automatically for Mathematics and Science questions
+        const autoDetected = detectDiagramRequirement(question, {
+          subjectId,
+          topicId,
+          explanation,
+        });
+
+        if (autoDetected.required && autoDetected.confidence >= 0.8) {
+          convertedMCQ.diagramRequired = true;
+          convertedMCQ.diagramType = autoDetected.type;
+          convertedMCQ.diagramData = autoDetected.data;
+          convertedMCQ.diagramCaption = autoDetected.caption;
+          convertedMCQ.diagramAltText = autoDetected.altText;
+        }
+      }
 
       if (isPublished) {
         publishedQuestions.push(convertedMCQ);

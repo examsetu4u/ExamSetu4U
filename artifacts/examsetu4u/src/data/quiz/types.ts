@@ -22,6 +22,13 @@ export interface MCQQuestion {
   sourceType: MCQSourceType;
   year?: number;
   examName?: string;
+  // Optional diagram fields
+  diagramRequired?: boolean;
+  diagramType?: string;
+  diagramData?: any;
+  diagramCaption?: string;
+  diagramAltText?: string;
+  diagramImageUrl?: string;
 }
 
 export type QuizFilterOptions = {

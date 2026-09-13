@@ -24,6 +24,8 @@ import { getTopicLearningDetails, TOPIC_STATUS_LABELS } from '@/lib/learning-pat
 import NotFoundPage from '@/pages/not-found';
 import { getScienceChapter } from '@/data/cbse-class-10-science';
 import { ScienceChapterDetail } from '@/components/cbse-science/ScienceChapterDetail';
+import { getMathsChapter } from '@/data/cbse-class-10-maths';
+import { MathsChapterDetail } from '@/components/cbse-maths/MathsChapterDetail';
 
 export default function TopicDetailPage() {
   const { examId = '', subjectId = '', topicId = '' } = useParams<{
@@ -50,6 +52,26 @@ export default function TopicDetailPage() {
           chapter={sciChapter}
           examId={exam.id}
           subjectId="cbse-class-10-science"
+        />
+      );
+    }
+  }
+
+  // Dedicated CBSE Class 10 Mathematics Chapter delegation
+  if (
+    exam?.id === 'cbse-class-10' &&
+    (subject?.id === 'cbse-class-10-mathematics' ||
+      subjectId === 'mathematics' ||
+      subjectId === 'maths' ||
+      subjectId === 'cbse-class-10-mathematics')
+  ) {
+    const mathChapter = getMathsChapter(topicId);
+    if (mathChapter) {
+      return (
+        <MathsChapterDetail
+          chapter={mathChapter}
+          examId={exam.id}
+          subjectId="cbse-class-10-mathematics"
         />
       );
     }
