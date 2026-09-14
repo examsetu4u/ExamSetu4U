@@ -224,6 +224,27 @@ export default function StudyMaterialPage() {
                 </div>
               </div>
 
+              {notes && notes.length > 0 && (
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 text-xs">
+                  <div className="flex items-center gap-2.5 text-emerald-950 font-medium">
+                    <span className="flex h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>
+                      <strong>Google Sheet सिंक एक्टिव:</strong> ऐप के आधारभूत नोट्स के पश्चात <strong>{notes.length} विशेष अध्ययन नोट्स</strong> व हल उदाहरण निरंतरता (continuity) में प्रदर्शित हैं।
+                    </span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="h-8 gap-1.5 rounded-lg border-emerald-300 bg-white px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-100"
+                    onClick={() => refreshNotes()}
+                    disabled={isNotesLoading}
+                  >
+                    <RefreshCw size={13} className={isNotesLoading ? 'animate-spin' : ''} />
+                    {isNotesLoading ? 'सिंक हो रहा है...' : 'रीफ्रेश शीट (Sync Live)'}
+                  </Button>
+                </div>
+              )}
+
               {material.callouts.map((callout) => (
                 <aside
                   key={callout.title}

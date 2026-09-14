@@ -80,7 +80,38 @@ export const GOOGLE_SHEET_QUESTION_SOURCES: GoogleSheetSourceConfig[] = [
 
 /**
  * GOOGLE SHEETS STUDY NOTES / THEORY CONFIGURATION
- * Connected to live Study Notes sheet (Super TET CDP Bal Vikas chapters)
- * 9 required columns: id, examId, subjectId, topicId, title, content, importantPoint, examTip, status
+ * Multi-tab study notes sources
  */
+export interface GoogleSheetNotesSourceConfig {
+  id: string;
+  name: string;
+  examId: string;
+  subjectId: string;
+  chapterId?: string;
+  gid: string;
+  url: string;
+}
+
+export const CBSE_10_MATHS_NOTES_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=491480742&single=true&output=csv";
+
 export const STUDY_NOTES_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pub?gid=867134801&single=true&output=csv";
+
+export const GOOGLE_SHEET_NOTES_SOURCES: GoogleSheetNotesSourceConfig[] = [
+  {
+    id: 'cbse-10-maths-notes',
+    name: 'CBSE Class 10 Mathematics Notes (Real Numbers)',
+    examId: 'cbse-class-10',
+    subjectId: 'cbse-class-10-mathematics',
+    chapterId: 'cbse-class-10-mathematics-1',
+    gid: '491480742',
+    url: CBSE_10_MATHS_NOTES_SHEET_CSV_URL,
+  },
+  {
+    id: 'stet-notes',
+    name: 'Super TET CDP Notes (Bal Vikas)',
+    examId: 'super-tet',
+    subjectId: 'super-tet-child-development',
+    gid: '867134801',
+    url: STUDY_NOTES_SHEET_CSV_URL,
+  },
+];

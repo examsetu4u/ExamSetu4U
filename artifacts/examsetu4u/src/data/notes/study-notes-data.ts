@@ -7,14 +7,26 @@ export interface RawStudyNote {
   examId: string;
   subjectId: string;
   topicId: string;
+  chapterId?: string;
+  chapterTitle?: string;
+  topicCode?: string;
+  topic?: string;
+  contentType?: string;
   title: string;
   content: string;
-  importantPoint: string;
-  examTip: string;
+  formulaRule?: string;
+  whyWhenToUse?: string;
+  solvedExample?: string;
+  advancedExample?: string;
+  importantPoint?: string;
+  commonMistakes?: string;
+  examApplication?: string;
+  difficulty?: string;
+  examTip?: string;
   status: "PUBLISHED" | "DRAFT" | "REVIEW" | "ARCHIVED" | string;
 }
 
-export const INITIAL_STUDY_NOTES: RawStudyNote[] = [
+const BASE_STUDY_NOTES: RawStudyNote[] = [
   {
     "id": "N-CDP-CH01-01",
     "examId": "super-tet",
@@ -1225,6 +1237,13 @@ export const INITIAL_STUDY_NOTES: RawStudyNote[] = [
     "examTip": "Maturation ≠ Learning; Readiness, Prior Knowledge, Motivation और Scaffolding को विशेष रूप से याद रखें।",
     "status": "PUBLISHED"
   }
+];
+
+import { CBSE_10_MATHS_INITIAL_NOTES } from './cbse-maths-notes-data';
+
+export const INITIAL_STUDY_NOTES: RawStudyNote[] = [
+  ...BASE_STUDY_NOTES,
+  ...CBSE_10_MATHS_INITIAL_NOTES,
 ];
 
 export const FALLBACK_STUDY_NOTES = INITIAL_STUDY_NOTES;

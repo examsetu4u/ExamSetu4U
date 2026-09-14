@@ -1298,13 +1298,11 @@ export function getTopicsForSubject(subjectId: string) {
 }
 
 export function getStudyMaterial(topicId: string) {
-  if (studyMaterialByTopic[topicId]) {
-    return studyMaterialByTopic[topicId];
-  }
+  const baseMaterial = studyMaterialByTopic[topicId];
   // Check dynamically loaded / bundled notes from Google Sheet
   const notes = getStudyNotesForTopic(topicId);
   if (notes && notes.length > 0) {
-    return convertNotesToStudyMaterial(topicId, notes);
+    return convertNotesToStudyMaterial(topicId, notes, baseMaterial);
   }
-  return undefined;
+  return baseMaterial;
 }

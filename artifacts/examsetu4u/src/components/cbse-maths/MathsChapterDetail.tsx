@@ -26,6 +26,7 @@ import {
   type MathsSectionKey,
 } from '@/data/cbse-class-10-maths';
 import { useQuestionBank } from '@/hooks/useQuestionBank';
+import { useTopicStudyNotes } from '@/services/study-notes-loader';
 
 interface MathsChapterDetailProps {
   chapter: MathsChapter;
@@ -40,6 +41,7 @@ export function MathsChapterDetail({
 }: MathsChapterDetailProps) {
   const [, setLocation] = useLocation();
   const { publishedSheetCount } = useQuestionBank();
+  const { notes: sheetNotes } = useTopicStudyNotes(chapter.id, examId, subjectId);
   const progress = useMemo(
     () => calculateMathsChapterProgress(chapter.id),
     [chapter.id, publishedSheetCount]
@@ -213,7 +215,9 @@ export function MathsChapterDetail({
                         <IconComponent size={20} />
                       </div>
                       <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
-                        {sec.badge}
+                        {sec.key === 'study-material' && sheetNotes.length > 0
+                          ? `🟢 ${sheetNotes.length} शीट नोट्स सिंक`
+                          : sec.badge}
                       </span>
                     </div>
 
