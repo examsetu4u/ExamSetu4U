@@ -1111,8 +1111,7 @@ export function calculateMathsChapterProgress(chapterIdOrSlug: string): MathsCha
     subjectId: 'cbse-class-10-mathematics',
     topicId: targetId,
   });
-  const customMCQs = getMathsQuestions(targetId, 'MCQ');
-  const totalMCQs = mcqQuestions.length + customMCQs.length;
+  const totalMCQs = mcqQuestions.length;
 
   let mcqProgress = 0;
   if (totalMCQs > 0) {

@@ -395,6 +395,149 @@ function formatExamNameFallback(examId: string): string {
 }
 
 /**
+ * Canonical chapter names and canonical topicId normalization for CBSE Class 10 Mathematics.
+ * Handles shorthand sheet codes like REAL_01, POLY_02, LE_03, QUAD_04, AP_05, TRI_06, COORD_07,
+ * TRIG_08, CIRC_09, CONST_10, AREA_11, MENS_12, STAT_PROB_13, etc.
+ */
+export const CBSE_10_MATHS_CHAPTER_MAP: Record<string, { id: string; name: string; hindiName: string }> = {
+  'cbse-class-10-mathematics-1': { id: 'cbse-class-10-mathematics-1', name: 'Real Numbers', hindiName: 'वास्तविक संख्याएँ' },
+  'cbse-class-10-mathematics-2': { id: 'cbse-class-10-mathematics-2', name: 'Polynomials', hindiName: 'बहुपद' },
+  'cbse-class-10-mathematics-3': { id: 'cbse-class-10-mathematics-3', name: 'Pair of Linear Equations in Two Variables', hindiName: 'दो चरों वाले रैखिक समीकरण युग्म' },
+  'cbse-class-10-mathematics-4': { id: 'cbse-class-10-mathematics-4', name: 'Quadratic Equations', hindiName: 'द्विघात समीकरण' },
+  'cbse-class-10-mathematics-5': { id: 'cbse-class-10-mathematics-5', name: 'Arithmetic Progressions', hindiName: 'समान्तर श्रेढ़ी' },
+  'cbse-class-10-mathematics-6': { id: 'cbse-class-10-mathematics-6', name: 'Triangles', hindiName: 'त्रिभुज' },
+  'cbse-class-10-mathematics-7': { id: 'cbse-class-10-mathematics-7', name: 'Coordinate Geometry', hindiName: 'निर्देशांक ज्यामिति' },
+  'cbse-class-10-mathematics-8': { id: 'cbse-class-10-mathematics-8', name: 'Introduction to Trigonometry', hindiName: 'त्रिकोणमिति का परिचय' },
+  'cbse-class-10-mathematics-9': { id: 'cbse-class-10-mathematics-9', name: 'Some Applications of Trigonometry', hindiName: 'त्रिकोणमिति के कुछ अनुप्रयोग' },
+  'cbse-class-10-mathematics-10': { id: 'cbse-class-10-mathematics-10', name: 'Circles', hindiName: 'वृत्त' },
+  'cbse-class-10-mathematics-11': { id: 'cbse-class-10-mathematics-11', name: 'Areas Related to Circles', hindiName: 'वृत्तों से संबंधित क्षेत्रफल' },
+  'cbse-class-10-mathematics-12': { id: 'cbse-class-10-mathematics-12', name: 'Surface Areas and Volumes', hindiName: 'पृष्ठीय क्षेत्रफल और आयतन' },
+  'cbse-class-10-mathematics-13': { id: 'cbse-class-10-mathematics-13', name: 'Statistics', hindiName: 'सांख्यिकी' },
+  'cbse-class-10-mathematics-14': { id: 'cbse-class-10-mathematics-14', name: 'Probability', hindiName: 'प्रायिकता' },
+};
+
+export function normalizeMathsTopicAndChapter(
+  rawTopic: string,
+  questionText: string = '',
+  existingChapter?: string
+): { topicId: string; chapter: string; chapterId: string } {
+  const clean = (rawTopic || '').trim();
+  const norm = clean.toUpperCase().replace(/[\s-]+/g, '_');
+
+  // If already canonical cbse-class-10-mathematics-X
+  const canonicalMatch = clean.toLowerCase().match(/^cbse-class-10-mathematics-(\d+)$/);
+  if (canonicalMatch) {
+    const id = clean.toLowerCase();
+    const info = CBSE_10_MATHS_CHAPTER_MAP[id];
+    return {
+      topicId: id,
+      chapter: existingChapter || info?.name || `Chapter ${canonicalMatch[1]}`,
+      chapterId: id,
+    };
+  }
+
+  let resolvedId = '';
+  if (norm === 'REAL_01' || norm === 'REAL_NUMBERS' || norm === 'REAL_NUMBER' || norm === 'REAL') {
+    resolvedId = 'cbse-class-10-mathematics-1';
+  } else if (norm === 'POLY_02' || norm === 'POLYNOMIALS' || norm === 'POLYNOMIAL') {
+    resolvedId = 'cbse-class-10-mathematics-2';
+  } else if (
+    norm === 'LE_03' ||
+    norm === 'LINEAR_EQUATIONS' ||
+    norm === 'PAIR_OF_LINEAR_EQUATIONS' ||
+    norm === 'PAIR_OF_LINEAR_EQUATIONS_IN_TWO_VARIABLES' ||
+    norm.includes('LINEAR')
+  ) {
+    resolvedId = 'cbse-class-10-mathematics-3';
+  } else if (norm === 'QUAD_04' || norm === 'QUADRATIC_EQUATIONS' || norm === 'QUADRATIC_EQUATION' || norm.includes('QUADRATIC')) {
+    resolvedId = 'cbse-class-10-mathematics-4';
+  } else if (norm === 'AP_05' || norm === 'ARITHMETIC_PROGRESSIONS' || norm === 'ARITHMETIC_PROGRESSION' || norm === 'AP') {
+    resolvedId = 'cbse-class-10-mathematics-5';
+  } else if (norm === 'TRI_06' || norm === 'TRIANGLES' || norm === 'TRIANGLE') {
+    resolvedId = 'cbse-class-10-mathematics-6';
+  } else if (norm === 'COORD_07' || norm === 'COORDINATE_GEOMETRY' || norm.includes('COORDINATE')) {
+    resolvedId = 'cbse-class-10-mathematics-7';
+  } else if (norm === 'TRIG_08' || norm === 'INTRODUCTION_TO_TRIGONOMETRY' || norm === 'TRIGONOMETRY') {
+    const q = (questionText || '').toLowerCase();
+    if (
+      q.includes('height') ||
+      q.includes('shadow') ||
+      q.includes('elevation') ||
+      q.includes('depression') ||
+      q.includes('pole') ||
+      q.includes('tower') ||
+      q.includes('ऊँचाई') ||
+      q.includes('अवनमन') ||
+      q.includes('उन्नयन')
+    ) {
+      resolvedId = 'cbse-class-10-mathematics-9';
+    } else {
+      resolvedId = 'cbse-class-10-mathematics-8';
+    }
+  } else if (norm === 'SOME_APPLICATIONS_OF_TRIGONOMETRY' || norm === 'HEIGHTS_AND_DISTANCES') {
+    resolvedId = 'cbse-class-10-mathematics-9';
+  } else if (
+    norm === 'CIRC_09' ||
+    norm === 'CIRCLES' ||
+    norm === 'CIRCLE' ||
+    norm === 'CONST_10' ||
+    norm === 'CONSTRUCTIONS'
+  ) {
+    resolvedId = 'cbse-class-10-mathematics-10';
+  } else if (
+    norm === 'AREA_10' ||
+    norm === 'AREA_11' ||
+    norm === 'AREAS_RELATED_TO_CIRCLES' ||
+    norm.includes('AREA')
+  ) {
+    resolvedId = 'cbse-class-10-mathematics-11';
+  } else if (
+    norm === 'MENS_11' ||
+    norm === 'MENS_12' ||
+    norm === 'SURFACE_AREAS_AND_VOLUMES' ||
+    norm === 'MENSURATION' ||
+    norm.includes('SURFACE')
+  ) {
+    resolvedId = 'cbse-class-10-mathematics-12';
+  } else if (
+    norm === 'STAT_PROB_12' ||
+    norm === 'STAT_PROB_13' ||
+    norm === 'STATISTICS' ||
+    norm === 'PROBABILITY' ||
+    norm === 'STAT_PROB'
+  ) {
+    const q = (questionText || '').toLowerCase();
+    const isProb =
+      q.includes('probab') ||
+      q.includes('die') ||
+      q.includes('dice') ||
+      q.includes('coin') ||
+      q.includes('card') ||
+      q.includes('event') ||
+      q.includes('प्रायिकता') ||
+      q.includes('सिक्का') ||
+      q.includes('पासा') ||
+      q.includes('ताश');
+    resolvedId = isProb ? 'cbse-class-10-mathematics-14' : 'cbse-class-10-mathematics-13';
+  }
+
+  if (resolvedId && CBSE_10_MATHS_CHAPTER_MAP[resolvedId]) {
+    const info = CBSE_10_MATHS_CHAPTER_MAP[resolvedId];
+    return {
+      topicId: resolvedId,
+      chapter: existingChapter || info.name,
+      chapterId: resolvedId,
+    };
+  }
+
+  return {
+    topicId: clean,
+    chapter: existingChapter || clean,
+    chapterId: clean,
+  };
+}
+
+/**
  * Validates and converts raw CSV parsed rows into structured MCQQuestions
  */
 export function validateAndConvertSheetRows(
@@ -462,12 +605,17 @@ export function validateAndConvertSheetRows(
     // Skip completely empty rows
     if (row.length === 0 || row.every((c) => c === '')) continue;
 
+    const id = getCell(row, 'id');
+    const examId = getCell(row, 'examId');
+    // Skip duplicate headers inside CSV (e.g. line 462 duplicate row)
+    if (id.toLowerCase() === 'id' && examId.toLowerCase().includes('examid')) {
+      continue;
+    }
+
     const rowNum = r + 1;
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    const id = getCell(row, 'id');
-    const examId = getCell(row, 'examId');
     const subjectId = getCell(row, 'subjectId');
     const topicId = getCell(row, 'topicId');
     const question = getCell(row, 'question');
@@ -491,6 +639,7 @@ export function validateAndConvertSheetRows(
     const level = getCell(row, 'level');
     const section = getCell(row, 'section');
     const chapter = getCell(row, 'chapter');
+    const chapterId = getCell(row, 'chapterId');
     const subTopic = getCell(row, 'subTopic');
     const rawQuestionType = getCell(row, 'questionType').toUpperCase().replace(/[\s-]+/g, '_');
     const rawIsPYQ = getCell(row, 'isPYQ').toLowerCase().trim();
@@ -584,12 +733,37 @@ export function validateAndConvertSheetRows(
     if (isValid) {
       const isExplicitPYQ = ['true', 'yes', '1', 'y', 'हाँ'].includes(rawIsPYQ) || sourceType === 'PYQ';
 
+      let effectiveTopicId = topicId;
+      let effectiveChapter = chapter;
+      let effectiveChapterId = chapterId;
+
+      let effectiveExamId = examId;
+      let effectiveSubjectId = subjectId;
+      let effectiveExamName = examName;
+
+      const normSubject = (subjectId || '').trim().toLowerCase();
+      const normExam = (examId || '').trim().toLowerCase();
+      if (
+        normSubject === 'cbse-class-10-mathematics' ||
+        normSubject === 'mathematics' ||
+        normSubject === 'maths' ||
+        (normExam === 'cbse-class-10' && (normSubject.includes('math') || !normSubject))
+      ) {
+        const normalizedMaths = normalizeMathsTopicAndChapter(topicId, question, chapter);
+        effectiveTopicId = normalizedMaths.topicId;
+        effectiveChapter = normalizedMaths.chapter;
+        effectiveChapterId = normalizedMaths.chapterId;
+        effectiveSubjectId = 'cbse-class-10-mathematics';
+        effectiveExamId = 'cbse-class-10';
+        effectiveExamName = examName || 'CBSE Class 10 Board';
+      }
+
       convertedMCQ = {
         id,
-        examId,
-        examName: examName || formatExamNameFallback(examId),
-        subjectId,
-        topicId,
+        examId: effectiveExamId,
+        examName: effectiveExamName || formatExamNameFallback(effectiveExamId),
+        subjectId: effectiveSubjectId,
+        topicId: effectiveTopicId,
         question,
         options: {
           A: optionA,
@@ -609,7 +783,8 @@ export function validateAndConvertSheetRows(
         ...(paper ? { paper } : {}),
         ...(level ? { level } : {}),
         ...(section ? { section } : {}),
-        ...(chapter ? { chapter } : {}),
+        ...(effectiveChapter ? { chapter: effectiveChapter } : {}),
+        ...(effectiveChapterId ? { chapterId: effectiveChapterId } : {}),
         ...(subTopic ? { subTopic } : {}),
         ...(rawQuestionType ? { questionType: rawQuestionType } : {}),
         ...(isExplicitPYQ ? { isPYQ: true } : {}),

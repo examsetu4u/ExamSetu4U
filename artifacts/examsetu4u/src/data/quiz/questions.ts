@@ -15,7 +15,12 @@ import type { MCQQuestion, QuizFilterOptions } from './types';
 // Register supplier so Google Sheet validator knows existing local question IDs and avoids overwriting
 registerLocalQuestionIdsSupplier(() => {
   const ids = new Set<string>();
-  sampleMCQQuestions.forEach((q) => ids.add(q.id));
+  sampleMCQQuestions.forEach((q) => {
+    // Only protect non-sheet local curated questions (CBSE10-MATH-*, etc.)
+    if (!q.id.startsWith('cbse10-m-') && !/^\d+$/.test(q.id)) {
+      ids.add(q.id);
+    }
+  });
   try {
     const skList = loadShikshanKaushalAsMCQQuestions();
     skList.forEach((q) => ids.add(q.id));
@@ -763,9 +768,7 @@ function getIndexedQuestions(): Map<string, MCQQuestion> {
   try {
     const sheetQuestions = getPublishedGoogleSheetQuestions();
     sheetQuestions.forEach((q) => {
-      if (!map.has(q.id)) {
-        map.set(q.id, q);
-      }
+      map.set(q.id, q);
     });
   } catch (err) {
     console.warn('[QuizQuestions] Failed to index Google Sheet questions:', err);
@@ -1004,7 +1007,111 @@ export function filterQuizQuestions(options: QuizFilterOptions): MCQQuestion[] {
     if (cbse10ScienceChapterMap[cleanFilter] && cbse10ScienceChapterMap[cleanFilter] === normQ) return true;
     if (cbse10ScienceChapterMap[cleanQ] && cbse10ScienceChapterMap[cleanQ] === normFilter) return true;
 
-    // CBSE Class 10 Mathematics chapters & slugs mapping
+    // CBSE Class 10 Mathematics chapters & aliases mapping
+    const resolveCbse10MathsId = (str: string): string => {
+      const s = (str || '').trim().toLowerCase().replace(/-(mcq|chapter-test|pyq|test|practice)$/, '');
+      const code = s.replace(/[-_\s]+/g, '');
+      if (code.startsWith('cbseclass10mathematics')) {
+        const num = code.replace('cbseclass10mathematics', '');
+        return `cbse-class-10-mathematics-${num}`;
+      }
+      if (code === 'real01' || code === 'realnumbers' || code === 'realnumber' || code === 'real') {
+        return 'cbse-class-10-mathematics-1';
+      }
+      if (code === 'poly02' || code === 'polynomials' || code === 'polynomial') {
+        return 'cbse-class-10-mathematics-2';
+      }
+      if (
+        code === 'le03' ||
+        code === 'pairoflinearequationsintwovariables' ||
+        code === 'pairoflinearequations' ||
+        code === 'linearequations'
+      ) {
+        return 'cbse-class-10-mathematics-3';
+      }
+      if (code === 'quad04' || code === 'quadraticequations' || code === 'quadraticequation') {
+        return 'cbse-class-10-mathematics-4';
+      }
+      if (code === 'ap05' || code === 'arithmeticprogressions' || code === 'arithmeticprogression' || code === 'ap') {
+        return 'cbse-class-10-mathematics-5';
+      }
+      if (code === 'tri06' || code === 'triangles' || code === 'triangle') {
+        return 'cbse-class-10-mathematics-6';
+      }
+      if (code === 'coord07' || code === 'coordinategeometry') {
+        return 'cbse-class-10-mathematics-7';
+      }
+      if (code === 'trig08' || code === 'introductiontotrigonometry' || code === 'trigonometry') {
+        return 'cbse-class-10-mathematics-8';
+      }
+      if (
+        code === 'someapplicationsoftrigonometry' ||
+        code === 'applicationsoftrigonometry' ||
+        code === 'heightsanddistances'
+      ) {
+        return 'cbse-class-10-mathematics-9';
+      }
+      if (
+        code === 'circ09' ||
+        code === 'circles' ||
+        code === 'circle' ||
+        code === 'const10' ||
+        code === 'constructions'
+      ) {
+        return 'cbse-class-10-mathematics-10';
+      }
+      if (
+        code === 'area10' ||
+        code === 'area11' ||
+        code === 'areasrelatedtocircles' ||
+        code === 'areasrelated'
+      ) {
+        return 'cbse-class-10-mathematics-11';
+      }
+      if (
+        code === 'mens11' ||
+        code === 'mens12' ||
+        code === 'surfaceareasandvolumes' ||
+        code === 'mensuration'
+      ) {
+        return 'cbse-class-10-mathematics-12';
+      }
+      if (code === 'statprob12' || code === 'statprob13' || code === 'statprob') {
+        return 'stat_prob_combined';
+      }
+      if (code === 'statistics' || code === 'stat') {
+        return 'cbse-class-10-mathematics-13';
+      }
+      if (code === 'probability' || code === 'prob') {
+        return 'cbse-class-10-mathematics-14';
+      }
+      return s;
+    };
+
+    const resolvedFilterMaths = resolveCbse10MathsId(normFilter);
+    const resolvedQMaths = resolveCbse10MathsId(normQ);
+
+    if (
+      resolvedFilterMaths.startsWith('cbse-class-10-mathematics-') &&
+      resolvedFilterMaths === resolvedQMaths
+    ) {
+      return true;
+    }
+    if (
+      resolvedQMaths === 'stat_prob_combined' &&
+      (resolvedFilterMaths === 'cbse-class-10-mathematics-13' ||
+        resolvedFilterMaths === 'cbse-class-10-mathematics-14')
+    ) {
+      return true;
+    }
+    if (
+      resolvedFilterMaths === 'stat_prob_combined' &&
+      (resolvedQMaths === 'cbse-class-10-mathematics-13' ||
+        resolvedQMaths === 'cbse-class-10-mathematics-14')
+    ) {
+      return true;
+    }
+
     const cbse10MathsChapterMap: Record<string, string> = {
       'cbse-class-10-mathematics-1': 'real-numbers',
       'cbse-class-10-mathematics-2': 'polynomials',

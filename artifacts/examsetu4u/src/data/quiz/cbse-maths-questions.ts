@@ -1,12 +1,13 @@
 import type { MCQQuestion } from './types';
 import { CBSE_CLASS_10_MATHS_CURATED_QUESTIONS } from '@/data/cbse-class-10-maths';
+import cbseMathsBankData from './cbse-maths-bank.json';
 
-export const cbseMathsQuestions: MCQQuestion[] = CBSE_CLASS_10_MATHS_CURATED_QUESTIONS
+const curatedMathsQuestions: MCQQuestion[] = CBSE_CLASS_10_MATHS_CURATED_QUESTIONS
   .filter((q) => q.questionType === 'MCQ' && q.options)
   .map((q) => ({
     id: q.id,
     examId: 'cbse-class-10',
-    examName: 'CBSE Class 10',
+    examName: 'CBSE Class 10 Board',
     subjectId: 'cbse-class-10-mathematics',
     topicId: q.chapterId,
     question: q.question,
@@ -25,3 +26,9 @@ export const cbseMathsQuestions: MCQQuestion[] = CBSE_CLASS_10_MATHS_CURATED_QUE
     sourceType: (q.sourceType === 'PYQ' || (q.sourceType as string) === 'CBSE_PYQ' ? 'PYQ' : 'Practice') as 'PYQ' | 'Practice',
     year: q.year,
   }));
+
+export const cbseMathsQuestions: MCQQuestion[] = [
+  ...curatedMathsQuestions,
+  ...(cbseMathsBankData as MCQQuestion[]),
+];
+
