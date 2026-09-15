@@ -97,13 +97,13 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
 
   // Answer selection
   const selectOption = useCallback((optionKey: 'A' | 'B' | 'C' | 'D') => {
-    if (!session || !currentQuestion) return;
+    if (!currentQuestion) return;
     const qId = currentQuestion.id;
-    // Disallow changing answer if already submitted
-    if (session.submittedAnswers[qId]) return;
 
     setSession((prev) => {
       if (!prev) return null;
+      // Disallow changing answer if already submitted
+      if (prev.submittedAnswers[qId]) return prev;
       return {
         ...prev,
         selectedAnswers: {
@@ -112,16 +112,16 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
         },
       };
     });
-  }, [session, currentQuestion]);
+  }, [currentQuestion]);
 
   // Clear answer
   const clearAnswer = useCallback(() => {
-    if (!session || !currentQuestion) return;
+    if (!currentQuestion) return;
     const qId = currentQuestion.id;
-    if (session.submittedAnswers[qId]) return;
 
     setSession((prev) => {
       if (!prev) return null;
+      if (prev.submittedAnswers[qId]) return prev;
       const nextAnswers = { ...prev.selectedAnswers };
       delete nextAnswers[qId];
       return {
@@ -129,16 +129,16 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
         selectedAnswers: nextAnswers,
       };
     });
-  }, [session, currentQuestion]);
+  }, [currentQuestion]);
 
   // Submit Answer for instant feedback
   const submitAnswer = useCallback(() => {
-    if (!session || !currentQuestion) return;
+    if (!currentQuestion) return;
     const qId = currentQuestion.id;
-    if (!session.selectedAnswers[qId]) return; // Cannot submit without selecting
 
     setSession((prev) => {
       if (!prev) return null;
+      if (!prev.selectedAnswers[qId]) return prev; // Cannot submit without selecting
       return {
         ...prev,
         submittedAnswers: {
@@ -147,11 +147,11 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
         },
       };
     });
-  }, [session, currentQuestion]);
+  }, [currentQuestion]);
 
   // Toggle review mark
   const toggleMarkForReview = useCallback(() => {
-    if (!session || !currentQuestion) return;
+    if (!currentQuestion) return;
     const qId = currentQuestion.id;
 
     setSession((prev) => {
@@ -165,23 +165,35 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
         },
       };
     });
-  }, [session, currentQuestion]);
+  }, [currentQuestion]);
 
   // Navigation: Next
   const goToNext = useCallback(() => {
-    if (!session) return;
-    if (session.currentIndex < session.questionIds.length - 1) {
-      setSession((prev) => (prev ? { ...prev, currentIndex: prev.currentIndex + 1 } : null));
-    }
-  }, [session]);
+    setSession((prev) => {
+      if (!prev) return null;
+      if (prev.currentIndex < prev.questionIds.length - 1) {
+        return {
+          ...prev,
+          currentIndex: prev.currentIndex + 1,
+        };
+      }
+      return prev;
+    });
+  }, []);
 
   // Navigation: Previous
   const goToPrevious = useCallback(() => {
-    if (!session) return;
-    if (session.currentIndex > 0) {
-      setSession((prev) => (prev ? { ...prev, currentIndex: prev.currentIndex - 1 } : null));
-    }
-  }, [session]);
+    setSession((prev) => {
+      if (!prev) return null;
+      if (prev.currentIndex > 0) {
+        return {
+          ...prev,
+          currentIndex: prev.currentIndex - 1,
+        };
+      }
+      return prev;
+    });
+  }, []);
 
   // Skip (moves to next question without answering)
   const skipQuestion = useCallback(() => {
@@ -190,11 +202,17 @@ export function useQuizEngine(initialQuestions?: MCQQuestion[], initialConfig?: 
 
   // Jump to specific question index
   const jumpToQuestion = useCallback((index: number) => {
-    if (!session) return;
-    if (index >= 0 && index < session.questionIds.length) {
-      setSession((prev) => (prev ? { ...prev, currentIndex: index } : null));
-    }
-  }, [session]);
+    setSession((prev) => {
+      if (!prev) return null;
+      if (index >= 0 && index < prev.questionIds.length) {
+        return {
+          ...prev,
+          currentIndex: index,
+        };
+      }
+      return prev;
+    });
+  }, []);
 
   // Calculate final result
   const finishQuiz = useCallback(() => {

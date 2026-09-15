@@ -18,7 +18,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ProgressBar } from '@/components/curriculum-ui';
 import { Button, Card } from '@/components/site';
 import type { MCQQuestion } from '@/data/quiz/types';
@@ -68,42 +68,68 @@ export function QuestionScreen({
   onExit,
 }: QuestionScreenProps) {
   const screenTopRef = useRef<HTMLDivElement>(null);
+  const questionCardRef = useRef<HTMLDivElement>(null);
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === totalQuestions - 1;
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
 
   const isAnswerCorrect = isSubmitted && selectedAnswer === question.correctAnswer;
 
-  // Automatically scroll to the top of the question whenever the question changes
+  const scrollToQuestionContent = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    // Primary target is the actual question content card so the user sees the question text immediately
+    const target = questionCardRef.current || screenTopRef.current;
+    if (!target) return;
+
+    const headerOffset = 76; // Accounts for sticky site header + spacing
+    const rect = target.getBoundingClientRect();
+    const targetY = rect.top + window.scrollY - headerOffset;
+
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior,
+    });
+  }, []);
+
+  // Automatically scroll to the top of the new question content whenever question changes
   useEffect(() => {
-    if (screenTopRef.current) {
-      const headerOffset = 76;
-      const rect = screenTopRef.current.getBoundingClientRect();
-      // Scroll if the question start is scrolled past or hidden behind sticky site header
-      if (rect.top < 65 || rect.top > 250) {
-        const targetY = rect.top + window.scrollY - headerOffset;
-        window.scrollTo({
-          top: Math.max(0, targetY),
-          behavior: 'smooth',
-        });
+    // Wait for the new question content DOM to render and layout
+    const rafId = requestAnimationFrame(() => {
+      scrollToQuestionContent('smooth');
+    });
+
+    // Secondary check to handle browser layout reflow / scroll clamping after explanation collapses
+    const timer = setTimeout(() => {
+      const target = questionCardRef.current;
+      if (target) {
+        const headerOffset = 76;
+        const rect = target.getBoundingClientRect();
+        // If question content top is scrolled past header or sits too far down
+        if (rect.top < 50 || rect.top > 130) {
+          const targetY = rect.top + window.scrollY - headerOffset;
+          window.scrollTo({
+            top: Math.max(0, targetY),
+            behavior: 'smooth',
+          });
+        }
       }
-    }
-  }, [currentIndex, question.id]);
+    }, 60);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timer);
+    };
+  }, [currentIndex, question.id, scrollToQuestionContent]);
 
   const handleNextWithScroll = () => {
     onNext();
-    // Promptly scroll to top of next question
-    requestAnimationFrame(() => {
-      if (screenTopRef.current) {
-        const headerOffset = 76;
-        const rect = screenTopRef.current.getBoundingClientRect();
-        const targetY = rect.top + window.scrollY - headerOffset;
-        window.scrollTo({
-          top: Math.max(0, targetY),
-          behavior: 'smooth',
-        });
-      }
-    });
+  };
+
+  const handlePrevWithScroll = () => {
+    onPrevious();
+  };
+
+  const handleSkipWithScroll = () => {
+    onSkip();
   };
 
   return (
@@ -159,7 +185,12 @@ export function QuestionScreen({
       </div>
 
       {/* Main Question Card */}
-      <Card className="p-5 sm:p-7 rounded-2xl border border-slate-200 bg-white shadow-2xs" data-testid={`question-card-${question.id}`}>
+      <Card
+        ref={questionCardRef}
+        id="current-question-content"
+        className="p-5 sm:p-7 rounded-2xl border border-slate-200 bg-white shadow-2xs scroll-mt-24"
+        data-testid={`question-card-${question.id}`}
+      >
         {/* Badges: Question Type, Difficulty, Paper */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -331,7 +362,7 @@ export function QuestionScreen({
               <Button
                 type="button"
                 variant="secondary"
-                onClick={onPrevious}
+                onClick={handlePrevWithScroll}
                 className="text-xs font-bold inline-flex items-center gap-1.5"
                 data-testid="button-top-prev-question"
               >
@@ -472,7 +503,7 @@ export function QuestionScreen({
             type="button"
             variant="secondary"
             disabled={isFirst}
-            onClick={onPrevious}
+            onClick={handlePrevWithScroll}
             className={`min-h-10 text-xs sm:text-sm font-bold ${isFirst ? 'opacity-40 cursor-not-allowed' : ''}`}
             data-testid="button-prev-question"
           >
@@ -485,7 +516,7 @@ export function QuestionScreen({
               <Button
                 type="button"
                 variant="secondary"
-                onClick={onSkip}
+                onClick={handleSkipWithScroll}
                 className="min-h-10 text-xs sm:text-sm text-slate-500 font-bold"
                 data-testid="button-skip-question"
               >

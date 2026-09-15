@@ -101,23 +101,6 @@ export default function MistakesPracticePage() {
     setActiveResult,
   } = useQuizEngine();
 
-  const revisionSectionRef = useRef<HTMLDivElement>(null);
-
-  // Smoothly scroll to question top whenever currentIndex changes
-  useEffect(() => {
-    if (session && revisionSectionRef.current) {
-      const headerOffset = 76;
-      const rect = revisionSectionRef.current.getBoundingClientRect();
-      if (rect.top < 65 || rect.top > 250) {
-        const targetY = rect.top + window.scrollY - headerOffset;
-        window.scrollTo({
-          top: Math.max(0, targetY),
-          behavior: 'smooth',
-        });
-      }
-    }
-  }, [session?.currentIndex]);
-
   // Keyboard shortcut listener during active session
   useEffect(() => {
     if (!session || !currentQuestion) return;
@@ -220,7 +203,7 @@ export default function MistakesPracticePage() {
             />
           ) : session && currentQuestion ? (
             /* Active Revision Quiz Layout */
-            <div ref={revisionSectionRef} className="grid gap-8 lg:grid-cols-12 scroll-mt-24">
+            <div className="grid gap-8 lg:grid-cols-12 scroll-mt-24">
               <div className="lg:col-span-8">
                 <QuestionScreen
                   question={currentQuestion}
