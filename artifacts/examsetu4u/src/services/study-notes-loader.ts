@@ -1,22 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  CBSE_10_MATHS_NOTES_SHEET_CSV_URL,
-  STUDY_NOTES_SHEET_CSV_URL,
-  GOOGLE_SHEET_NOTES_SOURCES,
-} from '@/config/google-sheet-config';
+import { STUDY_NOTES_SHEET_CSV_URL } from '@/config/google-sheet-config';
 import type { MaterialSection, StudyMaterial, StudyMaterialCallout } from '@/data/curriculum';
 import { INITIAL_STUDY_NOTES, type RawStudyNote } from '@/data/notes/study-notes-data';
 
 // Local storage cache keys
-const STUDY_NOTES_CACHE_KEY = 'examsetu4u_study_notes_cache_v2';
+const STUDY_NOTES_CACHE_KEY = 'examsetu4u_study_notes_cache_v1';
 const STUDY_NOTES_OVERRIDE_URL_KEY = 'examsetu4u_study_notes_url_override_v1';
-const STUDY_NOTES_LAST_SYNC_KEY = 'examsetu4u_study_notes_last_sync_v1';
 
 // In-memory cache
 let inMemoryNotes: RawStudyNote[] = [...INITIAL_STUDY_NOTES];
 let isInitializedFromStorage = false;
 let isFetchingFromSheet = false;
-let lastSyncTimestamp: number | null = null;
 
 // Subscribers
 type NotesSubscriber = (notes: RawStudyNote[]) => void;
@@ -76,7 +70,7 @@ export function getEffectiveStudyNotesUrl(): string {
       return normalizeSheetUrl(override.trim());
     }
   }
-  return normalizeSheetUrl(CBSE_10_MATHS_NOTES_SHEET_CSV_URL || STUDY_NOTES_SHEET_CSV_URL);
+  return normalizeSheetUrl(STUDY_NOTES_SHEET_CSV_URL);
 }
 
 /**
@@ -135,134 +129,142 @@ export function parseStudyNotesCSV(csvText: string): string[][] {
   return rows;
 }
 
+// Canonical headers for Study Notes Sheet
+export const STUDY_NOTES_REQUIRED_HEADERS = [
+  'id',
+  'examId',
+  'subjectId',
+  'topicId',
+  'title',
+  'content',
+  'importantPoint',
+  'examTip',
+  'status',
+] as const;
+
+export const STUDY_NOTES_DIAGRAM_HEADERS = [
+  'diagramImageUrl',
+  'diagramCaption',
+  'diagramAltText',
+] as const;
+
+export const ALL_STUDY_NOTES_HEADERS = [
+  ...STUDY_NOTES_REQUIRED_HEADERS,
+  ...STUDY_NOTES_DIAGRAM_HEADERS,
+];
+
+const STUDY_NOTES_HEADER_ALIASES: Record<string, string> = {
+  id: 'id',
+  noteid: 'id',
+  'note id': 'id',
+  examid: 'examId',
+  'exam id': 'examId',
+  subjectid: 'subjectId',
+  'subject id': 'subjectId',
+  topicid: 'topicId',
+  'topic id': 'topicId',
+  title: 'title',
+  heading: 'title',
+  content: 'content',
+  body: 'content',
+  theory: 'content',
+  notes: 'content',
+  importantpoint: 'importantPoint',
+  'important point': 'importantPoint',
+  important_point: 'importantPoint',
+  keypoint: 'importantPoint',
+  examtip: 'examTip',
+  'exam tip': 'examTip',
+  exam_tip: 'examTip',
+  status: 'status',
+  diagramimageurl: 'diagramImageUrl',
+  'diagram image url': 'diagramImageUrl',
+  diagram_image_url: 'diagramImageUrl',
+  diagramurl: 'diagramImageUrl',
+  'diagram url': 'diagramImageUrl',
+  diagram_url: 'diagramImageUrl',
+  imageurl: 'diagramImageUrl',
+  'image url': 'diagramImageUrl',
+  image_url: 'diagramImageUrl',
+  diagram: 'diagramImageUrl',
+  image: 'diagramImageUrl',
+  diagramcaption: 'diagramCaption',
+  'diagram caption': 'diagramCaption',
+  diagram_caption: 'diagramCaption',
+  caption: 'diagramCaption',
+  diagramalttext: 'diagramAltText',
+  'diagram alt text': 'diagramAltText',
+  diagram_alt_text: 'diagramAltText',
+  alttext: 'diagramAltText',
+  alt: 'diagramAltText',
+};
+
 /**
- * Parses raw CSV rows into validated RawStudyNote records
- * Intelligently supports:
- * 1. 16-column Maths sheet format (Exam, Subject, Chapter, Topic ID, Topic, Content Type, Title, Detailed Concept, Formula/Rule, Why/When to Use, Solved Example, Advanced Example, Important Points, Common Mistakes, Exam Application, Difficulty)
- * 2. 9-column STET format (id, examId, subjectId, topicId, title, content, importantPoint, examTip, status)
+ * Parses raw CSV rows into validated RawStudyNote records with status = PUBLISHED only
  */
 export function parseStudyNotesFromCSV(csvText: string): RawStudyNote[] {
   const rawRows = parseStudyNotesCSV(csvText);
   if (rawRows.length <= 1) return [];
 
-  const rawHeaders = rawRows[0].map((h) => h.trim().toLowerCase());
-
-  // Helper to find column index by several candidate names
-  const findCol = (...candidates: string[]): number => {
-    for (const cand of candidates) {
-      const lowerCand = cand.toLowerCase();
-      const exact = rawHeaders.findIndex((h) => h === lowerCand);
-      if (exact !== -1) return exact;
-    }
-    for (const cand of candidates) {
-      const lowerCand = cand.toLowerCase();
-      const partial = rawHeaders.findIndex((h) => h.includes(lowerCand));
-      if (partial !== -1) return partial;
-    }
-    return -1;
-  };
-
-  const idCol = findCol('topic id', 'id', 'topic_id');
-  const examCol = findCol('exam', 'examid', 'exam_id');
-  const subjectCol = findCol('subject', 'subjectid', 'subject_id');
-  const chapterCol = findCol('chapter', 'chapterid', 'chapter_id');
-  const topicCol = findCol('topic', 'subtopic');
-  const contentTypeCol = findCol('content type', 'content_type', 'type');
-  const titleCol = findCol('title', 'heading', 'topic name');
-  const contentCol = findCol('detailed concept', 'concept', 'content', 'description');
-  const formulaCol = findCol('formula/rule', 'formula', 'rule');
-  const whyCol = findCol('why/when to use', 'when to use', 'why to use');
-  const solvedExampleCol = findCol('solved example', 'example');
-  const advancedExampleCol = findCol('advanced example', 'hots example');
-  const importantCol = findCol('important points', 'important point', 'importantpoint', 'key points');
-  const mistakesCol = findCol('common mistakes', 'mistakes', 'common mistake');
-  const examAppCol = findCol('exam application', 'exam tip', 'examtip', 'tip');
-  const difficultyCol = findCol('difficulty', 'level');
-  const statusCol = findCol('status');
-
   const notes: RawStudyNote[] = [];
 
+  // Parse header row to map columns flexibly
+  const headerRow = rawRows[0];
+  const colMap = new Map<string, number>();
+  headerRow.forEach((col, idx) => {
+    const norm = col.trim().toLowerCase().replace(/[\s_-]+/g, '');
+    const canonical = STUDY_NOTES_HEADER_ALIASES[norm] || col.trim();
+    colMap.set(canonical, idx);
+  });
+
+  const getCell = (row: string[], key: string, fallbackIdx: number): string => {
+    const idx = colMap.get(key);
+    if (idx !== undefined && idx < row.length) {
+      return (row[idx] || '').trim();
+    }
+    if (fallbackIdx < row.length) {
+      return (row[fallbackIdx] || '').trim();
+    }
+    return '';
+  };
+
+  // Data starts at row 1 (row 0 is headers)
   for (let i = 1; i < rawRows.length; i++) {
     const r = rawRows[i];
-    if (!r || r.length === 0 || r.every((c) => !c.trim())) continue;
+    if (r.length < 5 || r.every((c) => c === '')) continue;
 
-    const rawStatus = statusCol !== -1 ? (r[statusCol] || '').trim().toUpperCase() : 'PUBLISHED';
-    if (rawStatus && (rawStatus === 'DRAFT' || rawStatus === 'ARCHIVED')) continue;
+    const id = getCell(r, 'id', 0);
+    const examId = getCell(r, 'examId', 1);
+    const subjectId = getCell(r, 'subjectId', 2);
+    const topicId = getCell(r, 'topicId', 3);
+    const title = getCell(r, 'title', 4);
+    const content = getCell(r, 'content', 5);
+    const importantPoint = getCell(r, 'importantPoint', 6);
+    const examTip = getCell(r, 'examTip', 7);
+    const status = getCell(r, 'status', 8);
 
-    const rawExam = examCol !== -1 ? (r[examCol] || '').trim() : '';
-    const rawSubject = subjectCol !== -1 ? (r[subjectCol] || '').trim() : '';
-    const rawChapter = chapterCol !== -1 ? (r[chapterCol] || '').trim() : '';
-    const rawTopicId = idCol !== -1 ? (r[idCol] || '').trim() : '';
-    const rawTopic = topicCol !== -1 ? (r[topicCol] || '').trim() : '';
-    const rawTitle = titleCol !== -1 ? (r[titleCol] || '').trim() : '';
-    const rawContent = contentCol !== -1 ? (r[contentCol] || '').trim() : '';
+    const diagramImageUrl = getCell(r, 'diagramImageUrl', -1);
+    const diagramCaption = getCell(r, 'diagramCaption', -1);
+    const diagramAltText = getCell(r, 'diagramAltText', -1);
 
-    if (!rawContent && !rawTitle) continue;
+    const effectiveStatus = (status || '').trim().toUpperCase();
 
-    // Normalize exam
-    let examId = 'cbse-class-10';
-    const examLower = rawExam.toLowerCase();
-    if (examLower.includes('tet') || examLower.includes('stet')) {
-      examId = 'super-tet';
-    } else if (examLower.includes('cbse') || examLower.includes('10')) {
-      examId = 'cbse-class-10';
-    }
-
-    // Normalize subject
-    let subjectId = 'cbse-class-10-mathematics';
-    const subjectLower = rawSubject.toLowerCase();
-    if (subjectLower.includes('math')) {
-      subjectId = 'cbse-class-10-mathematics';
-    } else if (subjectLower.includes('science')) {
-      subjectId = 'cbse-class-10-science';
-    } else if (subjectLower.includes('child') || subjectLower.includes('bal')) {
-      subjectId = 'super-tet-child-development';
-    } else if (subjectLower.includes('teach') || subjectLower.includes('shikshan')) {
-      subjectId = 'super-tet-teaching-skills';
-    }
-
-    // Normalize chapter and topic
-    let chapterId = 'cbse-class-10-mathematics-1';
-    let topicId = 'real-numbers';
-    const chapterLower = rawChapter.toLowerCase();
-    const topicIdLower = rawTopicId.toLowerCase();
-
-    if (
-      chapterLower.includes('real number') ||
-      chapterLower.includes('chapter 1') ||
-      topicIdLower.startsWith('rn-') ||
-      topicIdLower === 'real-numbers'
-    ) {
-      chapterId = 'cbse-class-10-mathematics-1';
-      topicId = 'real-numbers';
-    } else if (rawTopicId) {
-      topicId = rawTopicId;
-    }
-
-    const noteId = rawTopicId ? `MATH10-${rawTopicId.replace(/[^a-zA-Z0-9_-]/g, '')}` : `N-${i}`;
+    // Enforce status = PUBLISHED only
+    if (effectiveStatus !== 'PUBLISHED') continue;
 
     notes.push({
-      id: noteId,
-      examId,
-      subjectId,
-      chapterId,
-      chapterTitle: rawChapter || 'Chapter 1: Real Numbers',
-      topicId,
-      topicCode: rawTopicId,
-      topic: rawTopic,
-      contentType: contentTypeCol !== -1 ? (r[contentTypeCol] || '').trim() : undefined,
-      title: rawTitle || rawTopic || `Topic ${i}`,
-      content: rawContent,
-      formulaRule: formulaCol !== -1 ? (r[formulaCol] || '').trim() : undefined,
-      whyWhenToUse: whyCol !== -1 ? (r[whyCol] || '').trim() : undefined,
-      solvedExample: solvedExampleCol !== -1 ? (r[solvedExampleCol] || '').trim() : undefined,
-      advancedExample: advancedExampleCol !== -1 ? (r[advancedExampleCol] || '').trim() : undefined,
-      importantPoint: importantCol !== -1 ? (r[importantCol] || '').trim() : undefined,
-      commonMistakes: mistakesCol !== -1 ? (r[mistakesCol] || '').trim() : undefined,
-      examApplication: examAppCol !== -1 ? (r[examAppCol] || '').trim() : undefined,
-      difficulty: difficultyCol !== -1 ? (r[difficultyCol] || '').trim() : undefined,
-      examTip: examAppCol !== -1 ? (r[examAppCol] || '').trim() : undefined,
+      id: (id || `N-${i}`).trim(),
+      examId: (examId || '').trim(),
+      subjectId: (subjectId || '').trim(),
+      topicId: (topicId || '').trim(),
+      title: (title || '').trim(),
+      content: (content || '').trim(),
+      importantPoint: (importantPoint || '').trim(),
+      examTip: (examTip || '').trim(),
       status: 'PUBLISHED',
+      ...(diagramImageUrl ? { diagramImageUrl } : {}),
+      ...(diagramCaption ? { diagramCaption } : {}),
+      ...(diagramAltText ? { diagramAltText } : {}),
     });
   }
 
@@ -270,7 +272,7 @@ export function parseStudyNotesFromCSV(csvText: string): RawStudyNote[] {
 }
 
 /**
- * Initializes storage cache and triggers background fetch
+ * Initializes storage cache and starts background fetch
  */
 export function initStudyNotes(): void {
   if (typeof window === 'undefined') return;
@@ -278,18 +280,10 @@ export function initStudyNotes(): void {
   if (!isInitializedFromStorage) {
     try {
       const cached = localStorage.getItem(STUDY_NOTES_CACHE_KEY);
-      const cachedSyncTime = localStorage.getItem(STUDY_NOTES_LAST_SYNC_KEY);
-      if (cachedSyncTime) {
-        lastSyncTimestamp = parseInt(cachedSyncTime, 10);
-      }
       if (cached) {
         const parsed = JSON.parse(cached) as RawStudyNote[];
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge cached notes with initial notes (avoiding duplicates by id)
-          const map = new Map<string, RawStudyNote>();
-          INITIAL_STUDY_NOTES.forEach((n) => map.set(n.id, n));
-          parsed.forEach((n) => map.set(n.id, n));
-          inMemoryNotes = Array.from(map.values());
+          inMemoryNotes = parsed;
         }
       }
     } catch {
@@ -305,9 +299,14 @@ export function initStudyNotes(): void {
 }
 
 /**
- * Fetches latest notes from all configured Google Sheet CSV sources
+ * Fetches latest notes from Google Sheet CSV
  */
 export async function fetchStudyNotesFromSheet(forceUrl?: string): Promise<RawStudyNote[]> {
+  const targetUrl = forceUrl ? normalizeSheetUrl(forceUrl) : getEffectiveStudyNotesUrl();
+  if (!targetUrl || targetUrl.includes('PASTE_YOUR_')) {
+    return inMemoryNotes;
+  }
+
   if (isFetchingFromSheet) {
     return inMemoryNotes;
   }
@@ -315,47 +314,24 @@ export async function fetchStudyNotesFromSheet(forceUrl?: string): Promise<RawSt
   isFetchingFromSheet = true;
 
   try {
-    const sourcesToFetch = forceUrl
-      ? [{ id: 'custom', name: 'Custom URL', url: normalizeSheetUrl(forceUrl) }]
-      : GOOGLE_SHEET_NOTES_SOURCES;
+    const res = await fetch(targetUrl, {
+      method: 'GET',
+      headers: { Accept: 'text/csv, text/plain, */*' },
+      cache: 'no-cache',
+    });
 
-    const allFetchedNotes: RawStudyNote[] = [];
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+    }
 
-    await Promise.all(
-      sourcesToFetch.map(async (src) => {
-        try {
-          const res = await fetch(src.url, {
-            method: 'GET',
-            headers: { Accept: 'text/csv, text/plain, */*' },
-            cache: 'no-cache',
-          });
+    const text = await res.text();
+    const freshNotes = parseStudyNotesFromCSV(text);
 
-          if (res.ok) {
-            const text = await res.text();
-            const parsed = parseStudyNotesFromCSV(text);
-            if (parsed.length > 0) {
-              allFetchedNotes.push(...parsed);
-            }
-          }
-        } catch (err) {
-          console.warn(`[StudyNotesLoader] Failed to fetch source ${src.name}:`, err);
-        }
-      })
-    );
-
-    if (allFetchedNotes.length > 0) {
-      // Merge with in-memory notes using Map by id
-      const map = new Map<string, RawStudyNote>();
-      inMemoryNotes.forEach((n) => map.set(n.id, n));
-      allFetchedNotes.forEach((n) => map.set(n.id, n));
-      inMemoryNotes = Array.from(map.values());
-
-      lastSyncTimestamp = Date.now();
-
+    if (freshNotes.length > 0) {
+      inMemoryNotes = freshNotes;
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem(STUDY_NOTES_CACHE_KEY, JSON.stringify(inMemoryNotes));
-          localStorage.setItem(STUDY_NOTES_LAST_SYNC_KEY, lastSyncTimestamp.toString());
+          localStorage.setItem(STUDY_NOTES_CACHE_KEY, JSON.stringify(freshNotes));
         } catch (e) {
           console.warn('[StudyNotesLoader] LocalStorage quota exceeded:', e);
         }
@@ -379,42 +355,13 @@ function normalizeId(id: string): string {
     .replace(/^child-development-/, '')
     .replace(/^teaching-skills-/, '')
     .replace(/^st-cd-top-/, '')
-    .replace(/^st-sk-top-/, '')
-    .replace(/^cbse-class-10-mathematics-/, '')
-    .replace(/^cbse-10-maths-/, '')
-    .replace(/^cbse-10-math-/, '')
-    .replace(/^ch1-/, '')
-    .replace(/^chapter-?/, '');
+    .replace(/^st-sk-top-/, '');
 }
 
 /**
  * Maps standard topic IDs to sheet topic IDs and vice-versa
  */
 const TOPIC_ALIASES: Record<string, string[]> = {
-  // CBSE Class 10 Maths: Chapter 1 Real Numbers
-  'real-numbers': [
-    'real-numbers',
-    'real-number',
-    'cbse-class-10-mathematics-1',
-    'ch1-real-numbers',
-    'chapter-1',
-    'cbse-10-math-1',
-    'cbse-10-maths-1',
-    'maths-ch-1',
-    '1',
-  ],
-  'cbse-class-10-mathematics-1': [
-    'real-numbers',
-    'real-number',
-    'cbse-class-10-mathematics-1',
-    'ch1-real-numbers',
-    'chapter-1',
-    'cbse-10-math-1',
-    'cbse-10-maths-1',
-    'maths-ch-1',
-    '1',
-  ],
-  // Super TET CDP
   'bal-vikas-arth-prakriti': [
     'bal-vikas-arth-prakriti',
     'super-tet-child-development-1',
@@ -453,35 +400,11 @@ const TOPIC_ALIASES: Record<string, string[]> = {
  * Checks if a note matches the requested topic
  */
 function doesNoteMatchTopic(note: RawStudyNote, requestedTopicId: string): boolean {
-  if (!requestedTopicId) return false;
   const noteTopicNorm = normalizeId(note.topicId);
   const reqTopicNorm = normalizeId(requestedTopicId);
 
   if (noteTopicNorm === reqTopicNorm) return true;
   if (note.topicId.toLowerCase() === requestedTopicId.toLowerCase()) return true;
-
-  if (note.chapterId && (normalizeId(note.chapterId) === reqTopicNorm || note.chapterId === requestedTopicId)) {
-    return true;
-  }
-
-  // Maths Real Numbers specific check
-  const isReqMathsCh1 =
-    reqTopicNorm === 'realnumbers' ||
-    reqTopicNorm === 'real-numbers' ||
-    reqTopicNorm === '1' ||
-    requestedTopicId === 'cbse-class-10-mathematics-1' ||
-    requestedTopicId === 'real-numbers' ||
-    requestedTopicId === 'ch1-real-numbers';
-
-  const isNoteMathsCh1 =
-    note.subjectId === 'cbse-class-10-mathematics' &&
-    (note.topicId === 'real-numbers' ||
-      note.chapterId === 'cbse-class-10-mathematics-1' ||
-      (note.topicCode && note.topicCode.startsWith('RN-')));
-
-  if (isReqMathsCh1 && isNoteMathsCh1) {
-    return true;
-  }
 
   // Check aliases
   for (const [key, aliases] of Object.entries(TOPIC_ALIASES)) {
@@ -520,14 +443,10 @@ export function getStudyNotesForTopic(
     if (subjectId) {
       const sNorm = subjectId.toLowerCase().replace(/[-_]/g, '');
       const noteSNorm = note.subjectId.toLowerCase().replace(/[-_]/g, '');
-      const isMaths =
-        (sNorm.includes('math') || sNorm.includes('ganit')) &&
-        (noteSNorm.includes('math') || noteSNorm.includes('ganit'));
       const isCdp =
         (sNorm.includes('childdevelopment') || sNorm.includes('balvikas')) &&
         (noteSNorm.includes('childdevelopment') || noteSNorm.includes('balvikas'));
-
-      if (!isMaths && !isCdp && noteSNorm && !noteSNorm.includes(sNorm) && !sNorm.includes(noteSNorm)) {
+      if (!isCdp && noteSNorm && !noteSNorm.includes(sNorm) && !sNorm.includes(noteSNorm)) {
         return false;
       }
     }
@@ -538,82 +457,60 @@ export function getStudyNotesForTopic(
 
 /**
  * Converts a list of raw notes into the comprehensive StudyMaterial shape
- * CRITICAL USER INTENT: Supports combining base notes (app ke banaye notes)
- * with the Google Sheet notes in seamless continuity (app ke notes ke baad Google sheet notes)!
  */
 export function convertNotesToStudyMaterial(
   topicId: string,
-  notes: RawStudyNote[],
-  baseMaterial?: StudyMaterial
+  notes: RawStudyNote[]
 ): StudyMaterial | undefined {
-  if ((!notes || notes.length === 0) && !baseMaterial) return undefined;
-  if (!notes || notes.length === 0) return baseMaterial;
+  if (!notes || notes.length === 0) return undefined;
 
-  const baseSections = baseMaterial?.sections || [];
-  const baseCallouts = baseMaterial?.callouts || [];
-  const baseTakeaways = baseMaterial?.keyTakeaways || [];
-  const baseQuickRevision = baseMaterial?.quickRevision || [];
+  const firstNote = notes[0];
+  const intro =
+    firstNote.content.length > 180
+      ? `${firstNote.content.slice(0, 180)}...`
+      : firstNote.content;
 
-  // Convert Google Sheet notes into rich MaterialSection items
-  const sheetSections: MaterialSection[] = notes.map((note, index) => {
-    const codeBadge = note.topicCode ? `[${note.topicCode}] ` : '';
-    const diffBadge = note.difficulty ? ` (${note.difficulty})` : '';
-    const typeBadge = note.contentType ? ` • ${note.contentType}` : '';
+  const sections: MaterialSection[] = notes.map((note, index) => {
+    // Break up content into paragraphs or bullet points if it has multiple sentences or semicolons
+    const sentences = note.content
+      .split(/(?<=[।?!])\s+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     const paragraphs: string[] = [];
-    if (note.content) paragraphs.push(note.content);
-    if (note.formulaRule) {
-      paragraphs.push(`📌 सूत्र / नियम (Formula/Rule): ${note.formulaRule}`);
-    }
-    if (note.whyWhenToUse) {
-      paragraphs.push(`💡 कब और क्यों प्रयोग करें (When to Use): ${note.whyWhenToUse}`);
-    }
-
     const bullets: string[] = [];
-    if (note.solvedExample) {
-      bullets.push(`📝 हल किया हुआ उदाहरण (Solved Example): ${note.solvedExample}`);
-    }
-    if (note.advancedExample) {
-      bullets.push(`🚀 उच्च स्तरीय उदाहरण (Advanced / HOTS): ${note.advancedExample}`);
-    }
-    if (note.importantPoint) {
-      bullets.push(`⭐ महत्वपूर्ण परीक्षा बिंदु (Key Point): ${note.importantPoint}`);
-    }
-    if (note.commonMistakes) {
-      bullets.push(`⚠️ सामान्य गलतियाँ (Mistakes to Avoid): ${note.commonMistakes}`);
-    }
-    if (note.examApplication) {
-      bullets.push(`🎯 बोर्ड परीक्षा उपयोग (Board Exam Focus): ${note.examApplication}`);
+
+    if (sentences.length > 2 && note.content.includes(';')) {
+      paragraphs.push(sentences[0]);
+      const bulletParts = note.content
+        .split(';')
+        .map((p) => p.trim())
+        .filter(Boolean);
+      bullets.push(...bulletParts);
+    } else {
+      paragraphs.push(note.content);
     }
 
     return {
-      heading: `${codeBadge}${note.title || `Concept ${index + 1}`}${typeBadge}${diffBadge}`,
-      subheading: note.topic ? `विषय: ${note.topic}` : (note.importantPoint ? `परीक्षा बिंदु: ${note.importantPoint}` : undefined),
+      heading: note.title || `Concept ${index + 1}`,
+      subheading: note.importantPoint ? `मुख्य परीक्षा बिंदु: ${note.importantPoint}` : undefined,
       paragraphs,
       bullets: bullets.length > 0 ? bullets : undefined,
+      images: note.diagramImageUrl
+        ? [
+            {
+              src: note.diagramImageUrl,
+              alt: note.diagramAltText || note.diagramCaption || note.title,
+              caption: note.diagramCaption,
+            },
+          ]
+        : undefined,
     };
   });
 
-  // Combine sections: Base Material (App Notes) FIRST, followed by Google Sheet notes in continuity!
-  const combinedSections: MaterialSection[] = [
-    ...baseSections,
-    ...(baseSections.length > 0 && sheetSections.length > 0
-      ? [
-          {
-            heading: `📊 Google Sheet सिंक स्टडी नोट्स: विस्तृत अवधारणाएं एवं हल उदाहरण (${notes.length} Topics in Continuity)`,
-            subheading: 'आपके द्वारा Google Sheet में जोड़े गए सभी विस्तृत टॉपिक्स, सूत्र, हल किए गए उदाहरण व परीक्षा टिप्स',
-            paragraphs: [
-              'नीचे दिए गए सभी नोट्स सीधे आपकी Google Sheet से सिंक किए गए हैं। प्रत्येक टॉपिक में बेसिक कांसेप्ट, सूत्र, सोल्व्ड उदाहरण, सामान्य गलतियां और बोर्ड परीक्षा उपयोग शामिल हैं।'
-            ],
-          },
-          ...sheetSections,
-        ]
-      : sheetSections),
-  ];
-
-  const callouts: StudyMaterialCallout[] = [...baseCallouts];
-  const quickRevision: string[] = [...baseQuickRevision];
-  const keyTakeaways: string[] = [...baseTakeaways];
+  const callouts: StudyMaterialCallout[] = [];
+  const quickRevision: string[] = [];
+  const keyTakeaways: string[] = [];
 
   notes.forEach((note) => {
     if (note.importantPoint && !keyTakeaways.includes(note.importantPoint)) {
@@ -622,48 +519,52 @@ export function convertNotesToStudyMaterial(
     if (note.examTip && !quickRevision.includes(note.examTip)) {
       quickRevision.push(note.examTip);
     }
-    if (note.formulaRule && !keyTakeaways.includes(note.formulaRule)) {
-      keyTakeaways.push(`सूत्र: ${note.formulaRule}`);
-    }
   });
 
-  const firstNote = notes[0];
-  if (firstNote?.importantPoint && callouts.length < 4) {
+  // Highlight first two callouts if present
+  if (firstNote.importantPoint) {
     callouts.push({
-      label: 'Google Sheet Live Note',
+      label: 'Exam Focus (परीक्षा बिंदु)',
       title: firstNote.title,
       body: firstNote.importantPoint,
+    });
+  }
+  if (firstNote.examTip) {
+    callouts.push({
+      label: 'Exam Tip (परीक्षा टिप)',
+      title: 'स्मार्ट तैयारी संकेत',
+      body: firstNote.examTip,
     });
   }
 
   return {
     topicId,
-    intro:
-      baseMaterial?.intro ||
-      (firstNote.content.length > 180
-        ? `${firstNote.content.slice(0, 180)}...`
-        : firstNote.content),
-    sections: combinedSections,
+    intro,
+    sections,
     callouts,
-    keyTakeaways: keyTakeaways.slice(0, 16),
-    quickRevision: quickRevision.slice(0, 16),
+    keyTakeaways:
+      keyTakeaways.length > 0
+        ? keyTakeaways.slice(0, 8)
+        : ['सभी अवधारणाओं को ध्यानपूर्वक पढ़ें व समझें।', 'परीक्षा के दृष्टिकोण से महत्वपूर्ण बिंदुओं को दोहराएं।'],
+    quickRevision:
+      quickRevision.length > 0
+        ? quickRevision.slice(0, 8)
+        : ['मुख्य परिभाषाओं को याद रखें।', 'विभिन्न अवधारणाओं के अंतर को समझें।'],
   };
 }
 
 /**
- * React hook to access Study Notes for a topic with live updates & continuity
+ * React hook to access Study Notes for a topic with live updates
  */
 export function useTopicStudyNotes(
   topicId: string,
   examId?: string,
-  subjectId?: string,
-  baseMaterial?: StudyMaterial
+  subjectId?: string
 ) {
   const [notes, setNotes] = useState<RawStudyNote[]>(() =>
     getStudyNotesForTopic(topicId, examId, subjectId)
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [lastSync, setLastSync] = useState<number | null>(() => lastSyncTimestamp);
 
   useEffect(() => {
     initStudyNotes();
@@ -674,7 +575,6 @@ export function useTopicStudyNotes(
       }
       return initial;
     });
-    setLastSync(lastSyncTimestamp);
 
     const unsubscribe = (_allNotes: RawStudyNote[]) => {
       const filtered = getStudyNotesForTopic(topicId, examId, subjectId);
@@ -684,7 +584,6 @@ export function useTopicStudyNotes(
         }
         return filtered;
       });
-      setLastSync(lastSyncTimestamp);
     };
 
     subscribers.add(unsubscribe);
@@ -694,15 +593,14 @@ export function useTopicStudyNotes(
   }, [topicId, examId, subjectId]);
 
   const material = useMemo(
-    () => convertNotesToStudyMaterial(topicId, notes, baseMaterial),
-    [topicId, notes, baseMaterial]
+    () => convertNotesToStudyMaterial(topicId, notes),
+    [topicId, notes]
   );
 
   const refresh = async () => {
     setIsLoading(true);
     try {
       await fetchStudyNotesFromSheet();
-      setLastSync(Date.now());
     } finally {
       setIsLoading(false);
     }
@@ -715,7 +613,6 @@ export function useTopicStudyNotes(
     totalNotes: notes.length,
     totalBankNotes: inMemoryNotes.length,
     sheetUrl: getEffectiveStudyNotesUrl(),
-    lastSync,
     refresh,
   };
 }
@@ -729,8 +626,40 @@ export function getAllStudyNotes(): RawStudyNote[] {
 }
 
 /**
- * Returns the last sync timestamp
+ * Generates sample CSV template content for Study Notes with Diagram columns
  */
-export function getLastSyncTimestamp(): number | null {
-  return lastSyncTimestamp;
+export function generateSampleStudyNotesCSV(): string {
+  const headers = ALL_STUDY_NOTES_HEADERS.join(',');
+  const sampleRows = [
+    [
+      'NOTE-BIO-12-01',
+      'cbse-class-12',
+      'biology',
+      'sexual-reproduction-in-flowering-plants',
+      '"Structure of an Anatropous Ovule"',
+      '"An anatropous ovule is the most common type of ovule found in angiosperms (approx. 82% of families). It consists of funicle (stalk), hilum (junction between ovule and stalk), integuments (outer and inner protective coats), micropyle (small opening for pollen tube entry), chalaza (basal part), nucellus (nutritive tissue), and the female gametophyte (embryo sac)."',
+      '"In anatropous ovule, the body of the ovule turns completely through 180 degrees so that the micropyle comes close to the funicle."',
+      '"Remember: Typical angiosperm embryo sac at maturity is 8-nucleate and 7-celled."',
+      'PUBLISHED',
+      '"https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&w=800&q=80"',
+      '"Figure 2.1: Diagrammatic view of a typical anatropous ovule showing integuments, micropyle and embryo sac"',
+      '"Anatropous ovule diagram with labeled micropyle and chalaza"',
+    ].join(','),
+    [
+      'NOTE-CDP-01',
+      'super-tet',
+      'bal-vikas-shikshan-vidhiyan',
+      'bal-vikas-arth-prakriti',
+      '"वृद्धि और विकास में अंतर (Growth vs Development)"',
+      '"वृद्धि (Growth) शारीरिक और मात्रात्मक परिवर्तन है जिसे प्रत्यक्ष मापा जा सकता है (जैसे ऊँचाई और वजन)। विकास (Development) एक व्यापक व बहुआयामी प्रक्रिया है जिसमें शारीरिक, संज्ञानात्मक, संवेगात्मक, नैतिक और सामाजिक सभी प्रकार के गुणात्मक व मात्रात्मक परिवर्तन शामिल हैं।"',
+      '"विकास गर्भधारण से लेकर जीवनपर्यंत (Womb to Tomb) चलने वाली निरंतर प्रक्रिया है।"',
+      '"विकास के सिद्धांत: सिर से पैर की ओर (Cephalocaudal) तथा केंद्र से बाहर की ओर (Proximodistal)।"',
+      'PUBLISHED',
+      '""',
+      '""',
+      '""',
+    ].join(','),
+  ];
+
+  return [headers, ...sampleRows].join('\n');
 }

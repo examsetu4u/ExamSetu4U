@@ -24,6 +24,9 @@ export interface RawStudyNote {
   difficulty?: string;
   examTip?: string;
   status: "PUBLISHED" | "DRAFT" | "REVIEW" | "ARCHIVED" | string;
+  diagramImageUrl?: string;
+  diagramCaption?: string;
+  diagramAltText?: string;
 }
 
 const BASE_STUDY_NOTES: RawStudyNote[] = [

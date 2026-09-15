@@ -11,7 +11,7 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useSearch } from 'wouter';
 import { Breadcrumbs } from '@/components/curriculum-ui';
 import { FinishConfirmModal } from '@/components/quiz/FinishConfirmModal';
@@ -100,6 +100,23 @@ export default function MistakesPracticePage() {
     getQuestionPaletteStatus,
     setActiveResult,
   } = useQuizEngine();
+
+  const revisionSectionRef = useRef<HTMLDivElement>(null);
+
+  // Smoothly scroll to question top whenever currentIndex changes
+  useEffect(() => {
+    if (session && revisionSectionRef.current) {
+      const headerOffset = 76;
+      const rect = revisionSectionRef.current.getBoundingClientRect();
+      if (rect.top < 65 || rect.top > 250) {
+        const targetY = rect.top + window.scrollY - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [session?.currentIndex]);
 
   // Keyboard shortcut listener during active session
   useEffect(() => {
@@ -203,7 +220,7 @@ export default function MistakesPracticePage() {
             />
           ) : session && currentQuestion ? (
             /* Active Revision Quiz Layout */
-            <div className="grid gap-8 lg:grid-cols-12">
+            <div ref={revisionSectionRef} className="grid gap-8 lg:grid-cols-12 scroll-mt-24">
               <div className="lg:col-span-8">
                 <QuestionScreen
                   question={currentQuestion}

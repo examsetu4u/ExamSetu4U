@@ -28,6 +28,7 @@ import {
   getEffectiveSheetUrl,
   setSessionSheetUrlOverride,
 } from '@/services/google-sheet-loader';
+import { generateSampleStudyNotesCSV } from '@/services/study-notes-loader';
 import type { GoogleSheetRowValidation } from '@/types/google-sheet';
 
 export function GoogleSheetManager() {
@@ -111,6 +112,19 @@ export function GoogleSheetManager() {
     URL.revokeObjectURL(url);
   };
 
+  const handleDownloadNotesCSV = () => {
+    const csvContent = generateSampleStudyNotesCSV();
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'examsetu4u-study-notes-template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // Filter validations / questions
   const filteredValidations = useMemo(() => {
     if (!report?.validations) return [];
@@ -157,6 +171,12 @@ export function GoogleSheetManager() {
     { name: 'examName', req: 'Required for PYQ', example: 'Super TET Official', desc: 'Display name of official exam. Mandatory if sourceType is PYQ.' },
     { name: 'status', req: 'Required', example: 'PUBLISHED', desc: 'DRAFT | REVIEW | PUBLISHED | ARCHIVED. Only PUBLISHED rows reach students!' },
     { name: 'sourceName', req: 'Optional', example: 'ExamSetu Question Team', desc: 'Attribution or contributor name.' },
+    { name: 'diagramRequired', req: 'Optional', example: 'true / false', desc: 'Whether this question includes a diagram / image (defaults to false).' },
+    { name: 'diagramType', req: 'Optional', example: 'image', desc: 'Type of diagram: image, circuit, geometry, biology, etc.' },
+    { name: 'diagramData', req: 'Optional', example: '', desc: 'Optional structured JSON or parameters for procedural diagram renderers.' },
+    { name: 'diagramCaption', req: 'Optional', example: 'Figure 1.6: Setup of Electrolysis', desc: 'Caption displayed underneath the diagram.' },
+    { name: 'diagramAltText', req: 'Optional', example: 'Diagram showing anode, cathode...', desc: 'Screen reader accessibility description.' },
+    { name: 'diagramImageUrl', req: 'Optional', example: 'https://images.unsplash.com/...', desc: 'Direct public image URL (Google Drive direct link, Cloudinary, Imgur, S3, or public CDN).' },
   ];
 
   return (
@@ -192,10 +212,21 @@ export function GoogleSheetManager() {
           <button
             id="download-template-csv-btn"
             onClick={handleDownloadSampleCSV}
+            title="Download Questions CSV template with 26 columns (including diagram support)"
             className="inline-flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2 text-xs font-semibold text-[hsl(var(--foreground))] shadow-sm transition hover:bg-[hsl(var(--muted))]"
           >
             <Download className="h-4 w-4 text-emerald-600" />
-            <span>Download CSV Template</span>
+            <span>Download Questions CSV</span>
+          </button>
+
+          <button
+            id="download-notes-csv-btn"
+            onClick={handleDownloadNotesCSV}
+            title="Download Study Notes & Theory CSV template with 12 columns (including diagram support)"
+            className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/40 dark:bg-blue-950/30 px-3.5 py-2 text-xs font-semibold text-blue-700 dark:text-blue-300 shadow-sm transition hover:bg-blue-100/70"
+          >
+            <Download className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span>Download Notes CSV</span>
           </button>
         </div>
       </div>

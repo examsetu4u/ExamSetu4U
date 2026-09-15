@@ -4,6 +4,7 @@ import {
   BookOpen,
   CheckCircle,
   CheckCircle2,
+  Download,
   Edit2,
   ExternalLink,
   Eye,
@@ -18,6 +19,7 @@ import {
 import { useState } from 'react';
 import { STUDY_NOTES_SHEET_CSV_URL } from '@/config/google-sheet-config';
 import { FALLBACK_STUDY_NOTES } from '@/data/notes/study-notes-data';
+import { generateSampleStudyNotesCSV } from '@/services/study-notes-loader';
 import {
   archiveAdminStudyMaterial,
   getAdminExams,
@@ -48,6 +50,19 @@ export function StudyMaterialManager() {
 
   // Archive modal
   const [archiveTarget, setArchiveTarget] = useState<AdminStudyMaterial | null>(null);
+
+  const handleDownloadNotesTemplate = () => {
+    const csvContent = generateSampleStudyNotesCSV();
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'examsetu4u-study-notes-template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const refreshList = () => {
     setMaterials(getAdminStudyMaterials(selectedExamId));
@@ -178,6 +193,13 @@ export function StudyMaterialManager() {
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={handleDownloadNotesTemplate}
+              title="Download Study Notes & Theory CSV template with diagram support"
+              className="inline-flex items-center gap-1 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 font-medium text-emerald-800 shadow-2xs hover:bg-emerald-100 transition"
+            >
+              <Download className="h-3.5 w-3.5 text-emerald-600" /> Download CSV Template
+            </button>
             <a
               href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrE6G3jc232hi18YHGANDvdgyjs1xyYw-UCbvYg2gCvrmtvpSXnDVA_FDG3izHZKk3dU2Q2L1awAAC/pubhtml?gid=867134801&single=true"
               target="_blank"

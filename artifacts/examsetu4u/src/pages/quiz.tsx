@@ -1,5 +1,5 @@
 import { ArrowLeft, BookOpen, ChevronRight, HelpCircle, History, RotateCcw, Sparkles } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { Breadcrumbs } from '@/components/curriculum-ui';
 import { FinishConfirmModal } from '@/components/quiz/FinishConfirmModal';
@@ -65,6 +65,23 @@ export default function QuizPage() {
     getQuestionPaletteStatus,
     setActiveResult,
   } = useQuizEngine();
+
+  const quizSectionRef = useRef<HTMLDivElement>(null);
+
+  // When question index changes, smoothly scroll to top of the question
+  useEffect(() => {
+    if (session && quizSectionRef.current) {
+      const headerOffset = 76;
+      const rect = quizSectionRef.current.getBoundingClientRect();
+      if (rect.top < 65 || rect.top > 250) {
+        const targetY = rect.top + window.scrollY - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [session?.currentIndex]);
 
   // Refresh history whenever result is displayed or history modal opens
   useEffect(() => {
@@ -206,7 +223,7 @@ export default function QuizPage() {
             />
           ) : session && currentQuestion ? (
             /* Active Question Screen + Navigator Layout */
-            <div className="grid gap-8 lg:grid-cols-12">
+            <div ref={quizSectionRef} className="grid gap-8 lg:grid-cols-12 scroll-mt-24">
               {/* Question Screen (8 columns on desktop) */}
               <div className="lg:col-span-8">
                 <QuestionScreen

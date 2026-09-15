@@ -18,7 +18,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ProgressBar } from '@/components/curriculum-ui';
 import { Button, Card } from '@/components/site';
 import type { MCQQuestion } from '@/data/quiz/types';
@@ -67,14 +67,51 @@ export function QuestionScreen({
   onFinishRequest,
   onExit,
 }: QuestionScreenProps) {
+  const screenTopRef = useRef<HTMLDivElement>(null);
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === totalQuestions - 1;
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
 
   const isAnswerCorrect = isSubmitted && selectedAnswer === question.correctAnswer;
 
+  // Automatically scroll to the top of the question whenever the question changes
+  useEffect(() => {
+    if (screenTopRef.current) {
+      const headerOffset = 76;
+      const rect = screenTopRef.current.getBoundingClientRect();
+      // Scroll if the question start is scrolled past or hidden behind sticky site header
+      if (rect.top < 65 || rect.top > 250) {
+        const targetY = rect.top + window.scrollY - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [currentIndex, question.id]);
+
+  const handleNextWithScroll = () => {
+    onNext();
+    // Promptly scroll to top of next question
+    requestAnimationFrame(() => {
+      if (screenTopRef.current) {
+        const headerOffset = 76;
+        const rect = screenTopRef.current.getBoundingClientRect();
+        const targetY = rect.top + window.scrollY - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: 'smooth',
+        });
+      }
+    });
+  };
+
   return (
-    <div className="flex flex-col gap-6" data-testid="quiz-question-screen">
+    <div
+      ref={screenTopRef}
+      className="flex flex-col gap-6 scroll-mt-24"
+      data-testid="quiz-question-screen"
+    >
       {/* Header bar with Quiz Info, Progress & Exit */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -275,7 +312,7 @@ export function QuestionScreen({
           })}
         </div>
 
-        {/* Submit / Clear Action Bar */}
+        {/* Submit / Next Action Bar */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
           <div className="flex items-center gap-2">
             {!isSubmitted && selectedAnswer && (
@@ -290,9 +327,21 @@ export function QuestionScreen({
                 <span>उत्तर हटाएँ (Clear)</span>
               </Button>
             )}
+            {isSubmitted && !isFirst && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={onPrevious}
+                className="text-xs font-bold inline-flex items-center gap-1.5"
+                data-testid="button-top-prev-question"
+              >
+                <ChevronLeft size={14} />
+                <span>पिछला प्रश्न</span>
+              </Button>
+            )}
           </div>
 
-          {!isSubmitted && (
+          {!isSubmitted ? (
             <Button
               type="button"
               variant="primary"
@@ -306,6 +355,17 @@ export function QuestionScreen({
               <Check size={16} />
               <span>उत्तर जमा करें</span>
             </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={!isLast ? handleNextWithScroll : onFinishRequest}
+              className="text-sm px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs inline-flex items-center gap-2"
+              data-testid="button-top-next-question"
+            >
+              <span>{!isLast ? 'अगला प्रश्न' : 'Quiz समाप्त करें'}</span>
+              <ChevronRight size={16} />
+            </Button>
           )}
         </div>
 
@@ -315,27 +375,40 @@ export function QuestionScreen({
             className="mt-6 space-y-4 rounded-2xl border border-blue-100 bg-slate-50/70 p-4 sm:p-6 animate-in fade-in-50 duration-200"
             data-testid="answer-explanation-panel"
           >
-            {/* Status Banner */}
+            {/* Status Banner with Quick Next Button */}
             <div
-              className={`flex items-center gap-3 rounded-xl p-3.5 text-sm font-bold ${
+              className={`flex flex-wrap items-center justify-between gap-3 rounded-xl p-3.5 text-sm font-bold ${
                 isAnswerCorrect
                   ? 'bg-emerald-100/90 text-emerald-900 border border-emerald-300'
                   : 'bg-rose-100/90 text-rose-900 border border-rose-300'
               }`}
             >
-              {isAnswerCorrect ? (
-                <>
-                  <CheckCircle2 size={20} className="text-emerald-700 shrink-0" />
-                  <span>शाबाश! आपका उत्तर सही है (Option {question.correctAnswer})</span>
-                </>
-              ) : (
-                <>
-                  <XCircle size={20} className="text-rose-700 shrink-0" />
-                  <span>
-                    गलत उत्तर! सही उत्तर है: <strong>Option {question.correctAnswer}</strong>
-                  </span>
-                </>
-              )}
+              <div className="flex items-center gap-3">
+                {isAnswerCorrect ? (
+                  <>
+                    <CheckCircle2 size={20} className="text-emerald-700 shrink-0" />
+                    <span>शाबाश! आपका उत्तर सही है (Option {question.correctAnswer})</span>
+                  </>
+                ) : (
+                  <>
+                    <XCircle size={20} className="text-rose-700 shrink-0" />
+                    <span>
+                      गलत उत्तर! सही उत्तर है: <strong>Option {question.correctAnswer}</strong>
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <Button
+                type="button"
+                variant="primary"
+                onClick={!isLast ? handleNextWithScroll : onFinishRequest}
+                className="text-xs px-3.5 py-1.5 font-bold shadow-xs shrink-0 inline-flex items-center gap-1.5 ml-auto bg-slate-900 hover:bg-slate-800 text-white"
+                data-testid="button-banner-next-question"
+              >
+                <span>{!isLast ? 'अगला प्रश्न' : 'समाप्त करें'}</span>
+                <ArrowRight size={14} />
+              </Button>
             </div>
 
             {/* Detailed Explanation */}
@@ -392,8 +465,8 @@ export function QuestionScreen({
         )}
       </Card>
 
-      {/* Navigation Controls Bar */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+      {/* Navigation Controls Bar - Pinned/Sticky at bottom so it's always accessible even when reading long explanations */}
+      <div className="sticky bottom-3 z-30 rounded-2xl border border-slate-200 bg-white/95 backdrop-blur-md p-3.5 sm:p-4 shadow-lg transition-all">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button
             type="button"
@@ -408,7 +481,7 @@ export function QuestionScreen({
           </Button>
 
           <div className="flex items-center gap-2">
-            {!isLast && (
+            {!isLast && !isSubmitted && (
               <Button
                 type="button"
                 variant="secondary"
@@ -424,8 +497,8 @@ export function QuestionScreen({
               <Button
                 type="button"
                 variant="primary"
-                onClick={onNext}
-                className="min-h-10 text-xs sm:text-sm font-bold shadow-xs"
+                onClick={handleNextWithScroll}
+                className="min-h-10 text-xs sm:text-sm font-bold shadow-xs bg-blue-700 hover:bg-blue-800 text-white px-5"
                 data-testid="button-next-question"
               >
                 <span>अगला</span>
@@ -436,7 +509,7 @@ export function QuestionScreen({
                 type="button"
                 variant="primary"
                 onClick={onFinishRequest}
-                className="min-h-10 text-xs sm:text-sm bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs"
+                className="min-h-10 text-xs sm:text-sm bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-xs px-5"
                 data-testid="button-finish-quiz"
               >
                 <Check size={16} />

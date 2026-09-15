@@ -316,6 +316,22 @@ export default function StudyMaterialPage() {
                         <p className="whitespace-pre-line">{note.content}</p>
                       </div>
 
+                      {note.diagramImageUrl && (
+                        <figure className="my-5 overflow-hidden rounded-xl border border-slate-200 bg-slate-50/80 p-3 text-center">
+                          <img
+                            src={note.diagramImageUrl}
+                            alt={note.diagramAltText || note.diagramCaption || note.title || 'Diagram'}
+                            className="mx-auto max-h-96 w-auto max-w-full rounded-lg object-contain shadow-2xs border border-slate-200/80 bg-white"
+                            loading="lazy"
+                          />
+                          {note.diagramCaption && (
+                            <figcaption className="mt-2.5 text-xs font-semibold text-slate-600">
+                              {note.diagramCaption}
+                            </figcaption>
+                          )}
+                        </figure>
+                      )}
+
                       {note.importantPoint && (
                         <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50/70 p-4 sm:p-5">
                           <div className="flex items-start gap-3">
